@@ -1,6 +1,7 @@
 package pl.polsl.gk.tabletopSimulator.Scenes;
 
 import org.lwjgl.glfw.GLFWKeyCallback;
+import pl.polsl.gk.tabletopSimulator.Entities.Camera;
 import pl.polsl.gk.tabletopSimulator.Entities.InputHandler;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -10,6 +11,7 @@ public class SceneLoading implements IScene {
 
     private GLFWKeyCallback keyCallback;
     public InputHandler inputHandler = new InputHandler();
+    public Camera camera = new Camera();
     public SceneLoading(SceneManager sceneManager){
         this.sceneManager = sceneManager;
         this.window = this.sceneManager.getWindow();
@@ -43,6 +45,7 @@ public class SceneLoading implements IScene {
             if(InputHandler.isKeyReleased(GLFW_KEY_ESCAPE)){
                 glfwSetWindowShouldClose(window, true);
             }
+            camera.move();
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }

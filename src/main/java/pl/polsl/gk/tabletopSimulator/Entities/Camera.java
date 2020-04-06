@@ -1,6 +1,5 @@
 package pl.polsl.gk.tabletopSimulator.Entities;
-import org.lwjgl.glfw.GLFW;
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector2f;
+import pl.polsl.gk.tabletopSimulator.Handlers.KeyboardInput;
 import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector3f;
 
 import java.awt.*;
@@ -66,20 +65,20 @@ public class Camera {
     public void input(Window window){
 
         cameraInc.set(0,0,0);
-        if(InputHandler.isKeyPressed(GLFW_KEY_W)){
+        if(KeyboardInput.isKeyPressed(GLFW_KEY_W)){
             cameraInc.z = -1;
         }
-        else if (InputHandler.isKeyPressed(GLFW_KEY_S)){
+        else if (KeyboardInput.isKeyPressed(GLFW_KEY_S)){
             cameraInc.z = 1;
         }
-        if (InputHandler.isKeyPressed(GLFW_KEY_A)){
+        if (KeyboardInput.isKeyPressed(GLFW_KEY_A)){
             cameraInc.x = -1;
-        } else if (InputHandler.isKeyPressed(GLFW_KEY_D)){
+        } else if (KeyboardInput.isKeyPressed(GLFW_KEY_D)){
             cameraInc.x = 1;
         }
-        if (InputHandler.isKeyPressed(GLFW_KEY_Z)){
+        if (KeyboardInput.isKeyPressed(GLFW_KEY_Z)){
             cameraInc.y = 1;
-        } else if (InputHandler.isKeyPressed(GLFW_KEY_X)){
+        } else if (KeyboardInput.isKeyPressed(GLFW_KEY_X)){
             cameraInc.y = 1;
         }
 

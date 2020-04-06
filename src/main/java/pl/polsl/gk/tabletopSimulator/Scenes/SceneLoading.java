@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import pl.polsl.gk.tabletopSimulator.Entities.Camera;
 import pl.polsl.gk.tabletopSimulator.Entities.InputHandler;
 
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -16,6 +17,8 @@ public class SceneLoading implements IScene {
         this.sceneManager = sceneManager;
         this.window = this.sceneManager.getWindow();
     }
+
+
 
     @Override
     public void Init() {
@@ -45,7 +48,6 @@ public class SceneLoading implements IScene {
             if(InputHandler.isKeyReleased(GLFW_KEY_ESCAPE)){
                 glfwSetWindowShouldClose(window, true);
             }
-            camera.move();
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }
@@ -63,6 +65,7 @@ public class SceneLoading implements IScene {
         if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
             glfwSetWindowShouldClose(window, true);
     }
+
     private SceneManager sceneManager;
     long window;
 }

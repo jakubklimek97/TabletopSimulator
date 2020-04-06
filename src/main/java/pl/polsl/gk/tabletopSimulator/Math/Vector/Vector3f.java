@@ -193,4 +193,8 @@ public class Vector3f {
         buffer.flip();
     }
 
+    public Vector3f set (float x, float y, float z){
+        return new Vector3f(x,y,z);
+    }
+
 }

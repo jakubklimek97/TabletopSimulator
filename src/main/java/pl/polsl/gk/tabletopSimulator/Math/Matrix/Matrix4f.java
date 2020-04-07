@@ -35,6 +35,10 @@ import java.nio.FloatBuffer;
  * @author Heiko Brumme
  */
 public class Matrix4f {
+    public static final double PI = java.lang.Math.PI;
+    static final float PI_f = (float) java.lang.Math.PI;
+    static final float PI2_f = PI_f * 2.0f;
+    static final float PIHalf_f = (float) ( PI * 0.5);
 
     private float m00, m01, m02, m03;
     private float m10, m11, m12, m13;
@@ -446,6 +450,128 @@ public class Matrix4f {
         scaling.m22 = z;
 
         return scaling;
+    }
+
+
+    private Matrix4f rotateX(float ang, Matrix4f dest){
+
+    float sin = (float) Math.sin(ang), cos = cosFromSin(sin,ang);
+    float lm10 = m10, lm11 = m11, lm12 = m12, lm13 = m13, lm20 = m20, lm21 = m21, lm22 = m22, lm23 = m23;
+
+        dest.m20 = (lm10 * -sin + lm20 * cos);
+        dest.m21 = (lm11 * -sin + lm21 * cos);
+        dest.m22 = (lm12 * -sin + lm22 * cos);
+        dest.m23 = (lm13 * -sin + lm23 * cos);
+        dest.m10 = (lm10 * cos + lm20 * sin);
+        dest.m11 = (lm11 * cos + lm21 * sin);
+        dest.m12 = (lm12 * cos + lm22 * sin);
+        dest.m13 = (lm13 * cos + lm23 * sin);
+        dest.m00 = m00;
+        dest.m01 = m01;
+        dest.m02 = m02;
+        dest.m03 = m03;
+        dest.m30 = m30;
+        dest.m31 = m31;
+        dest.m32 = m32;
+        dest.m33 = m33;
+
+    return dest;
+
+    }
+
+    private Matrix4f rotateY(float ang, Matrix4f dest){
+
+        float sin = (float) Math.sin(ang);
+        float cos = cosFromSin(sin, ang);
+        // add temporaries for dependent values
+        float nm00 = m00 * cos + m20 * -sin;
+        float nm01 = m01 * cos + m21 * -sin;
+        float nm02 = m02 * cos + m22 * -sin;
+        float nm03 = m03 * cos + m23 * -sin;
+        // set non-dependent values directly
+
+                dest.m20 = (m00 * sin + m20 * cos);
+                dest.m21 = (m01 * sin + m21 * cos);
+                dest.m21 = (m01 * sin + m21 * cos);
+                dest.m22 = (m02 * sin + m22 * cos);
+                dest.m23 = (m03 * sin + m23 * cos);
+                // set other values
+                dest.m00 = (nm00);
+                dest.m01 = (nm01);
+                dest.m02 = (nm02);
+                dest.m03 = (nm03);
+                dest.m10 = (m10);
+                dest.m11 = (m11);
+                dest.m12 = (m12);
+                dest.m13 = (m13);
+                dest.m30 = (m30);
+                dest.m31 = (m31);
+                dest.m32 = (m32);
+                dest.m33 = (m33);
+
+        return dest;
+    }
+
+    private Matrix4f rotateZ(float ang, Matrix4f dest){
+        float sin = (float)Math.sin(ang);
+        float cos = cosFromSin(sin,ang);
+
+        return rotateTowardsXY(sin, cos, dest);
+
+    }
+
+    private Matrix4f rotateTowardsXY(float dirX, float dirY, Matrix4f dest){
+
+        float nm00 = m00 * dirY + m10 * dirX;
+        float nm01 = m01 * dirY + m11 * dirX;
+        float nm02 = m02 * dirY + m12 * dirX;
+        float nm03 = m03 * dirY + m13 * dirX;
+
+        dest.m10 = (m00 * -dirX + m10 * dirY);
+        dest.m11 = (m01 * -dirX + m11 * dirY);
+        dest.m12 = (m02 * -dirX + m12 * dirY);
+        dest.m13 = (m03 * -dirX + m13 * dirY);
+        dest.m00 = (nm00);
+        dest.m01 = (nm01);
+        dest.m02 = (nm02);
+        dest.m03 = (nm03);
+        dest.m20 = (m20);
+        dest.m21 = (m21);
+        dest.m22 = (m22);
+        dest.m23 = (m23);
+        dest.m30 = (m30);
+        dest.m31 = (m31);
+        dest.m32 = (m32);
+        dest.m33 = (m33);
+
+        return dest;
+    }
+
+    private static float cosFromSin(float sin, float angle){
+        // sin(x)^2 + cos(x)^2 = 1
+        float cos = sqrt(1.0f - sin * sin);
+        float a = angle + PIHalf_f;
+        float b = a - (int)(a / PI2_f) * PI2_f;
+        if (b < 0.0)
+            b = PI2_f + b;
+        if (b >= PI_f)
+            return -cos;
+        return cos;
+    }
+
+    public static float sqrt(float r){
+        return (float) java.lang.Math.sqrt(r);
+    }
+
+    public Matrix4f rotateX(float ang){
+       return rotateX(ang, this);
+    }
+    public Matrix4f rotateY(float ang){
+        return rotateY(ang, this);
+
+    }
+    public Matrix4f rotateZ(float ang){
+        return rotateX(ang, this);
     }
 
 }

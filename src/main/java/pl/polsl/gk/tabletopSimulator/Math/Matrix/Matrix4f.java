@@ -24,6 +24,7 @@ package pl.polsl.gk.tabletopSimulator.Math.Matrix;
  * SOFTWARE.
  */
 
+import org.lwjgl.system.MemoryUtil;
 import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector3f;
 import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector4f;
 
@@ -80,6 +81,32 @@ public class Matrix4f {
         m13 = col4.y;
         m23 = col4.z;
         m33 = col4.w;
+    }
+
+    public Matrix4f(Matrix4f matrix){
+        m00 = matrix.m00;
+        m10 = matrix.m10;
+        m20 = matrix.m20;
+        m30 = matrix.m30;
+
+        m01 = matrix.m01;
+        m11 = matrix.m11;
+        m21 = matrix.m21;
+        m31 = matrix.m31;
+
+        m02 = matrix.m02;
+        m12 = matrix.m12;
+        m22 = matrix.m22;
+        m32 = matrix.m32;
+
+        m03 = matrix.m03;
+        m13 = matrix.m13;
+        m23 = matrix.m23;
+        m33 = matrix.m33;
+    }
+
+    public Matrix4f getMatrix(Matrix4f matrix){
+        return matrix;
     }
 
     /**
@@ -565,6 +592,7 @@ public class Matrix4f {
 
     public Matrix4f rotateX(float ang){
        return rotateX(ang, this);
+
     }
     public Matrix4f rotateY(float ang){
         return rotateY(ang, this);
@@ -573,5 +601,10 @@ public class Matrix4f {
     public Matrix4f rotateZ(float ang){
         return rotateX(ang, this);
     }
+
+   // public FloatBuffer get (FloatBuffer buffer){
+     //   MemoryUtil instance = new MemoryUtilNIO();
+     //   mem.p
+  //  }
 
 }

@@ -5,6 +5,7 @@ import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector3f;
 
 public class Items {
 
+
     private final Mesh mesh;
 
     private final Vector3f position;
@@ -21,6 +22,10 @@ public class Items {
         rotation = new Vector3f();
     }
 
+    public Mesh getMesh() {
+        return mesh;
+    }
+
     public Vector3f getPosition(){
         return position;
     }
@@ -34,6 +39,7 @@ public class Items {
     public float getScale(){
         return  scale;
     }
+
     public  Vector3f getRotation(){
         return  rotation;
     }

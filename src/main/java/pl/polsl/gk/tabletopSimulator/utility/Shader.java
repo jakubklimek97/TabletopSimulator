@@ -1,14 +1,30 @@
 package pl.polsl.gk.tabletopSimulator.utility;
 import org.lwjgl.system.MemoryStack;
+import pl.polsl.gk.tabletopSimulator.Math.Matrix.Matrix4f;
+import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector2f;
+import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector3f;
+import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector4f;
 
+import java.awt.desktop.SystemEventListener;
 import java.io.*;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL33C.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Shader {
+
+    private final Map<String, Integer> uniforms;
+
+    private int shaderId;
+
+    private boolean isGood;
+
     public Shader(String name){
+        uniforms = new HashMap<>();
         this.isGood = false;
         String vertexCode = new String();
         String fragmentCode = new String();
@@ -93,10 +109,68 @@ public class Shader {
         glUseProgram(shaderId);
         return true;
     }
-    private int shaderId;
-    private boolean isGood;
 
     public boolean isGood() {
         return isGood;
     }
+
+    public void createUniform(String uniform) {
+        int uniformLocation = glGetUniformLocation(shaderId, uniform);
+        if(uniformLocation < 0) {
+
+            System.out.println("ERROR::UNIFORM::"+ uniform);
+        }
+        uniforms.put(uniform,uniformLocation);
+    }
+
+    public void setUniform(String uniform, int value){
+        glUniform1i(uniforms.get(uniform), value);
+    }
+
+    public void setUniform(String uniform, Matrix4f value){
+        // Send matrix into a float buffer
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            FloatBuffer buffer = stack.mallocFloat(16);
+            value.toBuffer(buffer);
+            glUniformMatrix4fv(uniforms.get(uniform), false, buffer);
+        }
+    }
+
+    public void setUniform(String uniform, float x)
+    {
+        glUniform1f(uniforms.get(uniform), x);
+    }
+
+    public void setUniform(String uniform, boolean x)
+    {
+        glUniform1i(uniforms.get(uniform), x ? 1 : 0);
+    }
+
+    public void setUniform(String uniform, Vector2f vec)
+    {
+        glUniform2f(uniforms.get(uniform), vec.x, vec.y);
+    }
+
+    public void setUniform(String uniform, Vector3f vec)
+    {
+        glUniform3f(uniforms.get(uniform), vec.x, vec.y, vec.z);
+    }
+
+    public void setUniform(String uniform, Vector4f vec)
+    {
+        glUniform4f(uniforms.get(uniform), vec.x, vec.y, vec.z, vec.w);
+    }
+
+
+    public void unbind(){
+        glUseProgram(0);
+    }
+
+    public void cleanup(){
+        unbind();
+        if(shaderId != 0){
+            glDeleteProgram(shaderId);
+        }
+    }
+
 }

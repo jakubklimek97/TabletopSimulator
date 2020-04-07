@@ -1,5 +1,7 @@
 package pl.polsl.gk.tabletopSimulator.Entities;
 import pl.polsl.gk.tabletopSimulator.Handlers.KeyboardInput;
+import pl.polsl.gk.tabletopSimulator.Handlers.MouseInput;
+import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector2f;
 import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector3f;
 
 import java.awt.*;
@@ -11,6 +13,7 @@ public class Camera {
     private final Vector3f position;
     private final Vector3f rotation;
     public static float CAMERA_POS_STEP = 0.2f;
+    public static final float MOUSE_SENSITIVITY = 0.2f;
     private final Vector3f cameraInc;
     public Camera() {
         position = new Vector3f(0,0,0);
@@ -62,7 +65,7 @@ public class Camera {
 
     }
 
-    public void input(Window window){
+    public void input(long window){
 
         cameraInc.set(0,0,0);
         if(KeyboardInput.isKeyPressed(GLFW_KEY_W)){
@@ -84,10 +87,16 @@ public class Camera {
 
     }
 
-    public void update(){
+    public void update(MouseInput mouseInput){
         // Update camera position
         movePosition(cameraInc.x * CAMERA_POS_STEP,
                 cameraInc.y * CAMERA_POS_STEP,
                 cameraInc.z * CAMERA_POS_STEP);
+
+
+        if(mouseInput.isRightButtonPressed()){
+            Vector2f rotVec = mouseInput.getDisplVec();
+            moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+        }
     }
 }

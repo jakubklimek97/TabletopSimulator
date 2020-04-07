@@ -19,7 +19,7 @@ public class Mesh {
 
     private final int vertexCount;
 
-    public Mesh(int[] indices, float[] texCoords, float[] positions, float[] textureCoords, float[] normals) {
+    public Mesh(int[] indices, float[] positions, float[] textureCoords) {
         IntBuffer indicesBuffer = null;
         FloatBuffer texCoordsBuffer = null;
         FloatBuffer normalsVecBuffer = null;
@@ -54,14 +54,14 @@ public class Mesh {
             glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
             // Vertex normals VBO
-            vboId = glGenBuffers();
-            vboIdList.add(vboId);
-            normalsVecBuffer = MemoryUtil.memAllocFloat(normals.length);
-            normalsVecBuffer.put(normals).flip();
-            glBindBuffer(GL_ARRAY_BUFFER, vboId);
-            glBufferData(GL_ARRAY_BUFFER, normalsVecBuffer, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(2);
-            glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
+           // vboId = glGenBuffers();
+          //  vboIdList.add(vboId);
+          //  normalsVecBuffer = MemoryUtil.memAllocFloat(normals.length);
+          //  normalsVecBuffer.put(normals).flip();
+          //  glBindBuffer(GL_ARRAY_BUFFER, vboId);
+          //  glBufferData(GL_ARRAY_BUFFER, normalsVecBuffer, GL_STATIC_DRAW);
+          //  glEnableVertexAttribArray(2);
+          //  glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
 
             //Index VBO
             vboId = glGenBuffers();
@@ -80,9 +80,9 @@ public class Mesh {
             if (texCoordsBuffer != null) {
                 MemoryUtil.memFree(texCoordsBuffer);
             }
-            if (normalsVecBuffer != null) {
-                MemoryUtil.memFree(normalsVecBuffer);
-            }
+      //      if (normalsVecBuffer != null) {
+      //          MemoryUtil.memFree(normalsVecBuffer);
+      //      }
             if (indicesBuffer != null) {
                 MemoryUtil.memFree(indicesBuffer);
             }

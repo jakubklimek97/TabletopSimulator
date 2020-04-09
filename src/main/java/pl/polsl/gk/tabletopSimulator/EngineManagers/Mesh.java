@@ -22,7 +22,6 @@ public class Mesh {
     public Mesh(int[] indices, float[] positions, float[] textureCoords) {
         IntBuffer indicesBuffer = null;
         FloatBuffer texCoordsBuffer = null;
-      //  FloatBuffer normalsVecBuffer = null;
         FloatBuffer positionsBuffer = null;
 
         try {
@@ -53,15 +52,6 @@ public class Mesh {
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
-            // Vertex normals VBO
-           // vboId = glGenBuffers();
-          //  vboIdList.add(vboId);
-          //  normalsVecBuffer = MemoryUtil.memAllocFloat(normals.length);
-          //  normalsVecBuffer.put(normals).flip();
-          //  glBindBuffer(GL_ARRAY_BUFFER, vboId);
-          //  glBufferData(GL_ARRAY_BUFFER, normalsVecBuffer, GL_STATIC_DRAW);
-          //  glEnableVertexAttribArray(2);
-          //  glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
 
             //Index VBO
             vboId = glGenBuffers();
@@ -80,9 +70,6 @@ public class Mesh {
             if (texCoordsBuffer != null) {
                 MemoryUtil.memFree(texCoordsBuffer);
             }
-      //      if (normalsVecBuffer != null) {
-      //          MemoryUtil.memFree(normalsVecBuffer);
-      //      }
             if (indicesBuffer != null) {
                 MemoryUtil.memFree(indicesBuffer);
             }
@@ -99,10 +86,9 @@ public class Mesh {
     }
 
     public void render(){
+        
 
-      // glActiveTexture(GL_TEXTURE0);
-
-     //  glBindTexture(GL_TEXTURE_2D,);
+       glBindVertexArray(getVaoId());
 
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT,0);
 

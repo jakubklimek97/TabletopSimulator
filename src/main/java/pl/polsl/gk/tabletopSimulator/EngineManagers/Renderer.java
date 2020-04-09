@@ -58,7 +58,8 @@ public class Renderer {
 
             Matrix4f modelViewMatrix = transformation.getModelViewMatrix(item,viewMatrix);
             shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
-            item.getMesh().render();
+           Mesh mesh =  item.getMesh();
+           mesh.render();
         }
 
         shaderProgram.unbind();

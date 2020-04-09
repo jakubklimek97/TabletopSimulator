@@ -24,6 +24,10 @@ public class Mesh {
     public Mesh(int[] indices, float[] positions, float[] textureCoords, TextureManager texture) {
         IntBuffer indicesBuffer = null;
         FloatBuffer texCoordsBuffer = null;
+<<<<<<< HEAD
+=======
+        this.texture = texture;
+>>>>>>> cf892b14e6bfa4a6040eb5a4014cf95dc05b3fe4
         FloatBuffer positionsBuffer = null;
 
         try {
@@ -54,6 +58,10 @@ public class Mesh {
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> cf892b14e6bfa4a6040eb5a4014cf95dc05b3fe4
             //Index VBO
             vboId = glGenBuffers();
             vboIdList.add(vboId);
@@ -87,14 +95,18 @@ public class Mesh {
     }
 
     public void render(){
+<<<<<<< HEAD
+        
+
+       glBindVertexArray(getVaoId());
+=======
         // activate texture pack
        glActiveTexture(GL_TEXTURE0);
         // bind texture
-     //  glBindTexture(GL_TEXTURE_2D,);
-       glBindVertexArray(getVaoId());
        glBindTexture(GL_TEXTURE_2D,texture.getId());
         // draw the mesh
         glBindVertexArray(getVaoId());
+>>>>>>> cf892b14e6bfa4a6040eb5a4014cf95dc05b3fe4
 
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT,0);
         // restore state

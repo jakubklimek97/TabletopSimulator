@@ -22,7 +22,7 @@ public class Mesh {
     public Mesh(int[] indices, float[] positions, float[] textureCoords) {
         IntBuffer indicesBuffer = null;
         FloatBuffer texCoordsBuffer = null;
-        FloatBuffer normalsVecBuffer = null;
+      //  FloatBuffer normalsVecBuffer = null;
         FloatBuffer positionsBuffer = null;
 
         try {
@@ -100,14 +100,13 @@ public class Mesh {
 
     public void render(){
 
-        // draw the mesh
-        glBindVertexArray(getVaoId());
+      // glActiveTexture(GL_TEXTURE0);
 
-        glDrawElements(GL_TRIANGLES,getVertexCount(), GL_UNSIGNED_INT,0);
+     //  glBindTexture(GL_TEXTURE_2D,);
 
-        //Restore state
+        glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT,0);
+
         glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D,0);
     }
 
     public void clean(){

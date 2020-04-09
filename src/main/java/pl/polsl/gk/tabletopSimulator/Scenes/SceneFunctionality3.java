@@ -126,10 +126,10 @@ public class SceneFunctionality3 implements IScene {
         Mesh mesh = new Mesh(indices,positions,textCoords);
         Items item1 = new Items(mesh);
         item1.setScale(0.5f);
-        item1.setPosition(0,0,-2);
+        item1.setPosition(0,0,0);
         Items item2 = new Items(mesh);
-        item2.setPosition(1,4,2);
-        item2.setScale(1.0f);
+        item2.setPosition(1,40,2);
+        item2.setScale(4.0f);
         items = new Items[]{item1,item2};
 
     }
@@ -146,9 +146,9 @@ public class SceneFunctionality3 implements IScene {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
             glfwPollEvents();
             glfwSwapBuffers(window);
-            render(window);
             camera.input(window);
             camera.update(mouseInput);
+            render(window);
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }

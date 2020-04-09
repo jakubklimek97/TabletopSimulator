@@ -4,6 +4,7 @@ import org.lwjgl.system.MemoryStack;
 import pl.polsl.gk.tabletopSimulator.EngineManagers.Items;
 import pl.polsl.gk.tabletopSimulator.EngineManagers.Mesh;
 import pl.polsl.gk.tabletopSimulator.EngineManagers.Renderer;
+import pl.polsl.gk.tabletopSimulator.EngineManagers.TextureManager;
 import pl.polsl.gk.tabletopSimulator.Entities.Camera;
 import pl.polsl.gk.tabletopSimulator.Handlers.KeyboardInput;
 import pl.polsl.gk.tabletopSimulator.Handlers.MouseInput;
@@ -123,7 +124,8 @@ public class SceneFunctionality3 implements IScene {
                 4, 6, 7, 5, 4, 7,};
 
         setCallbacks();
-        Mesh mesh = new Mesh(indices,positions,textCoords);
+        TextureManager texture = new TextureManager("E:/Studia/TabletopSimulatorProject/TabletopSimulator/src/main/resources/textures/grassblock.png");
+        Mesh mesh = new Mesh(indices,positions,textCoords,texture);
         Items item1 = new Items(mesh);
         item1.setScale(0.5f);
         item1.setPosition(0,0,0);

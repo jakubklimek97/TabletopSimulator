@@ -124,7 +124,7 @@ public class SceneFunctionality3 implements IScene {
                 4, 6, 7, 5, 4, 7,};
 
         setCallbacks();
-        TextureManager texture = new TextureManager("E:/Studia/TabletopSimulatorProject/TabletopSimulator/src/main/resources/textures/grassblock.png");
+        TextureManager texture = new TextureManager("src\\main\\resources\\textures\\grassblock.png");
         Mesh mesh = new Mesh(indices,positions,textCoords,texture);
         Items item1 = new Items(mesh);
         item1.setScale(0.5f);

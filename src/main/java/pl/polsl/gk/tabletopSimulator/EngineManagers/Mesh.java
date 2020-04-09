@@ -25,7 +25,7 @@ public class Mesh {
         IntBuffer indicesBuffer = null;
         FloatBuffer texCoordsBuffer = null;
         FloatBuffer positionsBuffer = null;
-
+        this.texture = texture;
         try {
 
             vertexCount = indices.length;

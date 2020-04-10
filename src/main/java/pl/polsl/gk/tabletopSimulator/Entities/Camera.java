@@ -12,11 +12,11 @@ public class Camera {
 
     private final Vector3f position;
     private final Vector3f rotation;
-    public static float CAMERA_POS_STEP = 0.2f;
-    public static final float MOUSE_SENSITIVITY = 0.2f;
+    public static float CAMERA_POS_STEP = 0.05f;
+    public static final float MOUSE_SENSITIVITY = 0.06f;
     private final Vector3f cameraInc;
     public Camera() {
-        position = new Vector3f(0,0,0);
+        position = new Vector3f(0,0.5f,120.0F);
         rotation = new Vector3f(0,0,0);
         cameraInc = new Vector3f(0,0,0);
     }
@@ -65,25 +65,31 @@ public class Camera {
 
     }
 
-    public void input(long window){
+    public void input(){
 
         cameraInc.set(0,0,0);
         if(KeyboardInput.isKeyPressed(GLFW_KEY_W)){
-            cameraInc.z = -1;
+            cameraInc.z += -.1f;
         }
         else if (KeyboardInput.isKeyPressed(GLFW_KEY_S)){
-            cameraInc.z = 1;
+            cameraInc.z += .1f;
         }
         if (KeyboardInput.isKeyPressed(GLFW_KEY_A)){
-            cameraInc.x = -1;
+            cameraInc.x += -.005f;
         } else if (KeyboardInput.isKeyPressed(GLFW_KEY_D)){
-            cameraInc.x = 1;
+            cameraInc.x += .005f;
         }
         if (KeyboardInput.isKeyPressed(GLFW_KEY_Z)){
-            cameraInc.y = 1;
+            cameraInc.y += .005f;
         } else if (KeyboardInput.isKeyPressed(GLFW_KEY_X)){
-            cameraInc.y = 1;
+            cameraInc.y += -.005f;
         }
+        if(KeyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
+            cameraInc.z = 0;
+            cameraInc.x = 0;
+            cameraInc.y = 0;
+        }
+
 
     }
 
@@ -94,9 +100,10 @@ public class Camera {
                 cameraInc.z * CAMERA_POS_STEP);
 
 
-        if(mouseInput.isRightButtonPressed()){
+
+        if(mouseInput.isLeftButtonPressed()){
             Vector2f rotVec = mouseInput.getDisplVec();
-            moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
-        }
+            moveRotation( rotVec.x * MOUSE_SENSITIVITY ,rotVec.y* MOUSE_SENSITIVITY, 0);
+       }
     }
 }

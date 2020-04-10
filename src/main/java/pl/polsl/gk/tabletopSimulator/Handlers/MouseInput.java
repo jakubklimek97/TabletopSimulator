@@ -29,7 +29,7 @@ public class MouseInput {
     private boolean rightButtonPressed = false;
 
     public MouseInput() {
-        previousPos = new Vector2f(0, 0);
+        previousPos = new Vector2f(-1, -1);
         currentPos = new Vector2f(0, 0);
         displVec = new Vector2f();
 
@@ -101,7 +101,7 @@ public void input(long window){
 
 }
 
-    public GLFWCursorPosCallback getPosCallback() {
+    public GLFWCursorPosCallback getCursorPosCallback() {
         return posCallback;
     }
 
@@ -121,7 +121,4 @@ public void input(long window){
         return currentPos;
     }
 
-    public boolean isInWindow() {
-        return inWindow;
-    }
 }

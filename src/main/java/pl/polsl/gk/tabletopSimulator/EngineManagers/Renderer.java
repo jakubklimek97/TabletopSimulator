@@ -39,15 +39,14 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(long window, Camera camera, Items[] items) {
+    public void render(Camera camera, Items[] items, int width, int height) {
         clear();
-        // 800 x 600
-        glViewport(0, 0, 800, 600);
+        glViewport(0, 0, width, height);
 
         shaderProgram.Use();
 
         // update projection matrix
-        Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV,800,600, Z_NEAR,Z_FAR);
+        Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV,width,height, Z_NEAR,Z_FAR);
         shaderProgram.setUniform("projectionMatrix",projectionMatrix);
         // update view matrix
         Matrix4f viewMatrix = transformation.getViewMatrix(camera);
@@ -58,8 +57,7 @@ public class Renderer {
 
             Matrix4f modelViewMatrix = transformation.getModelViewMatrix(item,viewMatrix);
             shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
-           Mesh mesh =  item.getMesh();
-           mesh.render();
+            item.getMesh().render();
         }
 
         shaderProgram.unbind();

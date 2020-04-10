@@ -90,9 +90,8 @@ public class Mesh {
         // activate texture pack
        glActiveTexture(GL_TEXTURE0);
         // bind texture
-     //  glBindTexture(GL_TEXTURE_2D,);
-       glBindVertexArray(getVaoId());
        glBindTexture(GL_TEXTURE_2D,texture.getId());
+
         // draw the mesh
         glBindVertexArray(getVaoId());
 

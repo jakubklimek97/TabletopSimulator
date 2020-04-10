@@ -1,5 +1,6 @@
 package pl.polsl.gk.tabletopSimulator.Scenes;
 
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 import pl.polsl.gk.tabletopSimulator.EngineManagers.Items;
 import pl.polsl.gk.tabletopSimulator.EngineManagers.Mesh;
@@ -31,11 +32,9 @@ public class SceneFunctionality3 implements IScene {
     private final MouseInput mouseInput;
 
 
-    private static final float CAMERA_POS_STEP = 0.05f;
-
     @Override
     public void Init() {
-
+        setCallbacks();
         renderer.init();
 
         float[] positions = new float[]{
@@ -123,16 +122,23 @@ public class SceneFunctionality3 implements IScene {
                 // Back face
                 4, 6, 7, 5, 4, 7,};
 
-        setCallbacks();
+
         TextureManager texture = new TextureManager("src\\main\\resources\\textures\\grassblock.png");
         Mesh mesh = new Mesh(indices,positions,textCoords,texture);
         Items item1 = new Items(mesh);
-        item1.setScale(0.5f);
-        item1.setPosition(0,0,0);
+        item1.setScale(.5f);
+        item1.setRotation(1f,5.5f,1.1f);
+        item1.setPosition(0,0,-2f);
         Items item2 = new Items(mesh);
-        item2.setPosition(1,40,2);
-        item2.setScale(4.0f);
-        items = new Items[]{item1,item2};
+        item2.setPosition(1.5f, 2.5f, 1f);
+        item2.setScale(.5f);
+        item2.setRotation(3f,5f,1.1f);
+        Items item3 = new Items(mesh);
+        item3.setScale(.5f);
+        item3.setPosition(0, 0, -2.5f);
+        item3.setRotation(7f,7f,7.1f);
+
+        items = new Items[]{item1, item2, item3};
 
     }
 
@@ -145,11 +151,17 @@ public class SceneFunctionality3 implements IScene {
     public void Run() {
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
         while ( !glfwWindowShouldClose(window) ) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+            mouseInput.input(window);
+          //  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
             glfwPollEvents();
             glfwSwapBuffers(window);
-            camera.input(window);
+           // GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+          //  glDisable(GL_TEXTURE_2D);
+
+
+             camera.input();
             camera.update(mouseInput);
+
             render(window);
         }
         sceneManager.SwitchScene(SceneList.QUIT);
@@ -168,7 +180,7 @@ public class SceneFunctionality3 implements IScene {
     }
     private void setCallbacks(){
         glfwSetKeyCallback(window, keyboardInput.getKeyboardCallback());
-        glfwSetCursorPosCallback(window, mouseInput.getPosCallback());
+        glfwSetCursorPosCallback(window, mouseInput.getCursorPosCallback());
         glfwSetMouseButtonCallback(window, mouseInput.getMouseCallback());
         glfwSetCursorEnterCallback(window, mouseInput.getEnterCallback());
     }
@@ -180,7 +192,7 @@ public class SceneFunctionality3 implements IScene {
     private long window;
 
     public void render(long window){
-        renderer.render(window,camera,items);
+        renderer.render(camera,items,1280, 720);
     }
 
     private int vao, vbo;

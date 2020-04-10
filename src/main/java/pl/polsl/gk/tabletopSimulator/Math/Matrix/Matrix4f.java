@@ -240,30 +240,30 @@ public class Matrix4f {
      *
      * @return Matrix product of this * other
      */
-    public Matrix4f multiply(Matrix4f other) {
-        Matrix4f result = new Matrix4f();
+    public Matrix4f multiply(Matrix4f other, Matrix4f matrix) {
+       // Matrix4f result = new Matrix4f();
 
-        result.m00 = this.m00 * other.m00 + this.m01 * other.m10 + this.m02 * other.m20 + this.m03 * other.m30;
-        result.m10 = this.m10 * other.m00 + this.m11 * other.m10 + this.m12 * other.m20 + this.m13 * other.m30;
-        result.m20 = this.m20 * other.m00 + this.m21 * other.m10 + this.m22 * other.m20 + this.m23 * other.m30;
-        result.m30 = this.m30 * other.m00 + this.m31 * other.m10 + this.m32 * other.m20 + this.m33 * other.m30;
+        matrix.m00 = this.m00 * other.m00 + this.m01 * other.m10 + this.m02 * other.m20 + this.m03 * other.m30;
+        matrix.m10 = this.m10 * other.m00 + this.m11 * other.m10 + this.m12 * other.m20 + this.m13 * other.m30;
+        matrix.m20 = this.m20 * other.m00 + this.m21 * other.m10 + this.m22 * other.m20 + this.m23 * other.m30;
+        matrix.m30 = this.m30 * other.m00 + this.m31 * other.m10 + this.m32 * other.m20 + this.m33 * other.m30;
 
-        result.m01 = this.m00 * other.m01 + this.m01 * other.m11 + this.m02 * other.m21 + this.m03 * other.m31;
-        result.m11 = this.m10 * other.m01 + this.m11 * other.m11 + this.m12 * other.m21 + this.m13 * other.m31;
-        result.m21 = this.m20 * other.m01 + this.m21 * other.m11 + this.m22 * other.m21 + this.m23 * other.m31;
-        result.m31 = this.m30 * other.m01 + this.m31 * other.m11 + this.m32 * other.m21 + this.m33 * other.m31;
+        matrix.m01 = this.m00 * other.m01 + this.m01 * other.m11 + this.m02 * other.m21 + this.m03 * other.m31;
+        matrix.m11 = this.m10 * other.m01 + this.m11 * other.m11 + this.m12 * other.m21 + this.m13 * other.m31;
+        matrix.m21 = this.m20 * other.m01 + this.m21 * other.m11 + this.m22 * other.m21 + this.m23 * other.m31;
+        matrix.m31 = this.m30 * other.m01 + this.m31 * other.m11 + this.m32 * other.m21 + this.m33 * other.m31;
 
-        result.m02 = this.m00 * other.m02 + this.m01 * other.m12 + this.m02 * other.m22 + this.m03 * other.m32;
-        result.m12 = this.m10 * other.m02 + this.m11 * other.m12 + this.m12 * other.m22 + this.m13 * other.m32;
-        result.m22 = this.m20 * other.m02 + this.m21 * other.m12 + this.m22 * other.m22 + this.m23 * other.m32;
-        result.m32 = this.m30 * other.m02 + this.m31 * other.m12 + this.m32 * other.m22 + this.m33 * other.m32;
+        matrix.m02 = this.m00 * other.m02 + this.m01 * other.m12 + this.m02 * other.m22 + this.m03 * other.m32;
+        matrix.m12 = this.m10 * other.m02 + this.m11 * other.m12 + this.m12 * other.m22 + this.m13 * other.m32;
+        matrix.m22 = this.m20 * other.m02 + this.m21 * other.m12 + this.m22 * other.m22 + this.m23 * other.m32;
+        matrix.m32 = this.m30 * other.m02 + this.m31 * other.m12 + this.m32 * other.m22 + this.m33 * other.m32;
 
-        result.m03 = this.m00 * other.m03 + this.m01 * other.m13 + this.m02 * other.m23 + this.m03 * other.m33;
-        result.m13 = this.m10 * other.m03 + this.m11 * other.m13 + this.m12 * other.m23 + this.m13 * other.m33;
-        result.m23 = this.m20 * other.m03 + this.m21 * other.m13 + this.m22 * other.m23 + this.m23 * other.m33;
-        result.m33 = this.m30 * other.m03 + this.m31 * other.m13 + this.m32 * other.m23 + this.m33 * other.m33;
+        matrix.m03 = this.m00 * other.m03 + this.m01 * other.m13 + this.m02 * other.m23 + this.m03 * other.m33;
+        matrix.m13 = this.m10 * other.m03 + this.m11 * other.m13 + this.m12 * other.m23 + this.m13 * other.m33;
+        matrix.m23 = this.m20 * other.m03 + this.m21 * other.m13 + this.m22 * other.m23 + this.m23 * other.m33;
+        matrix.m33 = this.m30 * other.m03 + this.m31 * other.m13 + this.m32 * other.m23 + this.m33 * other.m33;
 
-        return result;
+        return matrix;
     }
 
     /**
@@ -388,19 +388,19 @@ public class Matrix4f {
      *
      * @return Perspective matrix
      */
-    public static Matrix4f perspective(float fovy, float aspect, float near, float far) {
-        Matrix4f perspective = new Matrix4f();
+    public static Matrix4f perspective(float fovy, float aspect, float near, float far, Matrix4f matrix) {
+       // Matrix4f perspective = new Matrix4f();
 
         float f = (float) (1f / Math.tan(Math.toRadians(fovy) / 2f));
 
-        perspective.m00 = f / aspect;
-        perspective.m11 = f;
-        perspective.m22 = (far + near) / (near - far);
-        perspective.m32 = -1f;
-        perspective.m23 = (2f * far * near) / (near - far);
-        perspective.m33 = 0f;
+        matrix.m00 = f / aspect;
+        matrix.m11 = f;
+        matrix.m22 = (far + near) / (near - far);
+        matrix.m32 = -1f;
+        matrix.m23 = (2f * far * near) / (near - far);
+        matrix.m33 = 0f;
 
-        return perspective;
+        return matrix;
     }
 
     /**
@@ -413,14 +413,14 @@ public class Matrix4f {
      *
      * @return Translation matrix
      */
-    public static Matrix4f translate(float x, float y, float z) {
-        Matrix4f translation = new Matrix4f();
+    public static Matrix4f translate(float x, float y, float z, Matrix4f matrix) {
+        //Matrix4f translation = new Matrix4f();
 
-        translation.m03 = x;
-        translation.m13 = y;
-        translation.m23 = z;
+        matrix.m03 = x;
+        matrix.m13 = y;
+        matrix.m23 = z;
 
-        return translation;
+        return matrix;
     }
 
     /**
@@ -434,8 +434,8 @@ public class Matrix4f {
      *
      * @return Rotation matrix
      */
-    public static Matrix4f rotate(float angle, float x, float y, float z) {
-        Matrix4f rotation = new Matrix4f();
+    public static Matrix4f rotate(float angle, float x, float y, float z, Matrix4f matrix) {
+      //  Matrix4f rotation = new Matrix4f();
 
         float c = (float) Math.cos(Math.toRadians(angle));
         float s = (float) Math.sin(Math.toRadians(angle));
@@ -447,21 +447,22 @@ public class Matrix4f {
             z = vec.z;
         }
 
-        rotation.m00 = x * x * (1f - c) + c;
-        rotation.m10 = y * x * (1f - c) + z * s;
-        rotation.m20 = x * z * (1f - c) - y * s;
-        rotation.m01 = x * y * (1f - c) - z * s;
-        rotation.m11 = y * y * (1f - c) + c;
-        rotation.m21 = y * z * (1f - c) + x * s;
-        rotation.m02 = x * z * (1f - c) + y * s;
-        rotation.m12 = y * z * (1f - c) - x * s;
-        rotation.m22 = z * z * (1f - c) + c;
+        matrix.m00 = x * x * (1f - c) + c;
+        matrix.m10 = y * x * (1f - c) + z * s;
+        matrix.m20 = x * z * (1f - c) - y * s;
+        matrix.m01 = x * y * (1f - c) - z * s;
+        matrix.m11 = y * y * (1f - c) + c;
+        matrix.m21 = y * z * (1f - c) + x * s;
+        matrix.m02 = x * z * (1f - c) + y * s;
+        matrix.m12 = y * z * (1f - c) - x * s;
+        matrix.m22 = z * z * (1f - c) + c;
 
-        return rotation;
+        return matrix;
     }
 
     /**
-     * Creates a scaling matrix. Similar to <code>glScale(x, y, z)</code>.
+     * Creates a scaling matrix. Similar to <code>gl
+     * le(x, y, z)</code>.
      *
      * @param x Scale factor along the x coordinate
      * @param y Scale factor along the y coordinate
@@ -477,6 +478,15 @@ public class Matrix4f {
         scaling.m22 = z;
 
         return scaling;
+    }
+
+    public static Matrix4f scaleMatrix(float scale,Matrix4f matrix) {
+
+        matrix.m00 = scale;
+        matrix.m11 = scale;
+        matrix.m22 = scale;
+
+        return matrix;
     }
 
 
@@ -518,7 +528,6 @@ public class Matrix4f {
         // set non-dependent values directly
 
                 dest.m20 = (m00 * sin + m20 * cos);
-                dest.m21 = (m01 * sin + m21 * cos);
                 dest.m21 = (m01 * sin + m21 * cos);
                 dest.m22 = (m02 * sin + m22 * cos);
                 dest.m23 = (m03 * sin + m23 * cos);
@@ -601,10 +610,5 @@ public class Matrix4f {
     public Matrix4f rotateZ(float ang){
         return rotateX(ang, this);
     }
-
-   // public FloatBuffer get (FloatBuffer buffer){
-     //   MemoryUtil instance = new MemoryUtilNIO();
-     //   mem.p
-  //  }
 
 }

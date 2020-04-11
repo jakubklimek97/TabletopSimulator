@@ -25,9 +25,9 @@ public class Mesh {
         IntBuffer indicesBuffer = null;
         FloatBuffer texCoordsBuffer = null;
         FloatBuffer positionsBuffer = null;
-        this.texture = texture;
-        try {
 
+        try {
+            this.texture = texture;
             vertexCount = indices.length;
             vboIdList = new ArrayList<>();
 

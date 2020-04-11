@@ -12,12 +12,15 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 public class SceneLoading implements IScene {
 
     private GLFWKeyCallback keyCallback;
-    public KeyboardInput keyboardInput = new KeyboardInput();
-    public MouseInput mouseInput = new MouseInput();
-    public Camera camera = new Camera();
+    public KeyboardInput keyboardInput;
+    public MouseInput mouseInput;
+    public Camera camera;
     public SceneLoading(SceneManager sceneManager){
         this.sceneManager = sceneManager;
         this.window = this.sceneManager.getWindow();
+          keyboardInput = new KeyboardInput(window);
+          mouseInput = new MouseInput();
+          camera = new Camera();
     }
 
 

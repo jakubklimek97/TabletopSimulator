@@ -1,11 +1,11 @@
 package pl.polsl.gk.tabletopSimulator.Handlers;
 
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWCursorEnterCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector2f;
 
-import java.awt.*;
+
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -92,7 +92,7 @@ public void input(long window){
                 displVec.y = (float) deltaX;
             }
             if(rotateY){
-                displVec.y = (float) deltaY;
+                displVec.x = (float) deltaY;
             }
 
         }

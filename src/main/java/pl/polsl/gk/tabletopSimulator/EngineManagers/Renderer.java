@@ -1,9 +1,6 @@
 package pl.polsl.gk.tabletopSimulator.EngineManagers;
-
-import org.lwjgl.system.CallbackI;
+import org.joml.Matrix4f;
 import pl.polsl.gk.tabletopSimulator.Entities.Camera;
-import pl.polsl.gk.tabletopSimulator.Math.Matrix.Matrix4f;
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector3f;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -41,7 +38,7 @@ public class Renderer {
 
     public void render(Camera camera, Items[] items, int width, int height) {
         clear();
-        glViewport(0, 0, width, height);
+       // glViewport(0, 0, width, height);
 
         shaderProgram.Use();
 

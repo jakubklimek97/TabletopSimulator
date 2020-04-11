@@ -1,8 +1,7 @@
 package pl.polsl.gk.tabletopSimulator.EngineManagers;
 
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector2f;
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector3f;
 
+import org.joml.Vector3f;
 public class Items {
 
 
@@ -40,7 +39,7 @@ public class Items {
         return  scale;
     }
 
-    public  Vector3f getRotation(){
+    public Vector3f getRotation(){
         return  rotation;
     }
 

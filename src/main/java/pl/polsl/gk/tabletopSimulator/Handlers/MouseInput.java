@@ -1,11 +1,11 @@
 package pl.polsl.gk.tabletopSimulator.Handlers;
 
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWCursorEnterCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector2f;
 
-import java.awt.*;
+
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -29,7 +29,7 @@ public class MouseInput {
     private boolean rightButtonPressed = false;
 
     public MouseInput() {
-        previousPos = new Vector2f(0, 0);
+        previousPos = new Vector2f(-1, -1);
         currentPos = new Vector2f(0, 0);
         displVec = new Vector2f();
 
@@ -92,7 +92,7 @@ public void input(long window){
                 displVec.y = (float) deltaX;
             }
             if(rotateY){
-                displVec.y = (float) deltaY;
+                displVec.x = (float) deltaY;
             }
 
         }
@@ -101,7 +101,7 @@ public void input(long window){
 
 }
 
-    public GLFWCursorPosCallback getPosCallback() {
+    public GLFWCursorPosCallback getCursorPosCallback() {
         return posCallback;
     }
 
@@ -121,7 +121,4 @@ public void input(long window){
         return currentPos;
     }
 
-    public boolean isInWindow() {
-        return inWindow;
-    }
 }

@@ -1,9 +1,6 @@
 package pl.polsl.gk.tabletopSimulator.EngineManagers;
-
-import org.lwjgl.system.CallbackI;
+import org.joml.Matrix4f;
 import pl.polsl.gk.tabletopSimulator.Entities.Camera;
-import pl.polsl.gk.tabletopSimulator.Math.Matrix.Matrix4f;
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector3f;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -39,15 +36,14 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(long window, Camera camera, Items[] items) {
+    public void render(Camera camera, Items[] items, int width, int height) {
         clear();
-        // 800 x 600
-        glViewport(0, 0, 800, 600);
+
 
         shaderProgram.Use();
 
         // update projection matrix
-        Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV,800,600, Z_NEAR,Z_FAR);
+        Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV,width,height, Z_NEAR,Z_FAR);
         shaderProgram.setUniform("projectionMatrix",projectionMatrix);
         // update view matrix
         Matrix4f viewMatrix = transformation.getViewMatrix(camera);

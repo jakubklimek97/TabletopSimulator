@@ -1,46 +1,37 @@
 package pl.polsl.gk.tabletopSimulator.Handlers;
 
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
+
+import java.util.Arrays;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 
 public final class KeyboardInput {
-
-    private static boolean[] keys = new boolean[GLFW.GLFW_KEY_LAST];
-
-    private static int[] keyStates = new int[GLFW.GLFW_KEY_LAST];
+    
+    private static long window;
 
     private GLFWKeyCallback keyboard;
 
 
-    private static int NO_STATE = -1;
-
-    public KeyboardInput() {
+    public KeyboardInput(long window) {
+        KeyboardInput.window = window;
         init();
     }
 
     public static boolean isKeyDown(int key) {
-        return keys[key];
+        return glfwGetKey(window, key) == GLFW_REPEAT;
     }
 
     public static boolean isKeyPressed(int key)
     {
-        return keyStates[key] == GLFW.GLFW_PRESS;
+        return glfwGetKey(window, key) == GLFW_PRESS;
     }
 
     public static boolean isKeyReleased(int key)
     {
-        return keyStates[key] == GLFW.GLFW_RELEASE;
-    }
-
-    private static void resetKeyboard()
-    {
-        for (int i = 0; i < keyStates.length; i++)
-        {
-            keyStates[i] = NO_STATE;
-        }
+        return glfwGetKey(window, key) == GLFW_RELEASE;
     }
 
 
@@ -52,13 +43,13 @@ public final class KeyboardInput {
 
         keyboard = new GLFWKeyCallback() {
             public void invoke(long window, int key, int scancode, int action, int mods) {
-                keys[key] = (action != org.lwjgl.glfw.GLFW.GLFW_RELEASE);
-                keyStates[key] = action;
+                if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+                    glfwSetWindowShouldClose(window, true);
+                }
 
             }
         };
 
-        resetKeyboard();
 
     }
 

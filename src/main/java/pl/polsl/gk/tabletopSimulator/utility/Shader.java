@@ -1,13 +1,10 @@
 package pl.polsl.gk.tabletopSimulator.utility;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
-import pl.polsl.gk.tabletopSimulator.Math.Matrix.Matrix4f;
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector2f;
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector3f;
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector4f;
-
-import java.awt.desktop.SystemEventListener;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector2f;
 import java.io.*;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -130,9 +127,8 @@ public class Shader {
     public void setUniform(String uniform, Matrix4f value){
         // Send matrix into a float buffer
         try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer buffer = stack.mallocFloat(16);
-            value.toBuffer(buffer);
-            glUniformMatrix4fv(uniforms.get(uniform), false, buffer);
+            glUniformMatrix4fv(uniforms.get(uniform), false,
+                    value.get(stack.mallocFloat(16)));
         }
     }
 

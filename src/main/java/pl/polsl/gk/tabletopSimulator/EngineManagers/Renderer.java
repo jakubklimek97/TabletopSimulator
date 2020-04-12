@@ -38,7 +38,7 @@ public class Renderer {
 
     public void render(Camera camera, Items[] items, int width, int height) {
         clear();
-       // glViewport(0, 0, width, height);
+
 
         shaderProgram.Use();
 

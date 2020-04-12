@@ -1,6 +1,6 @@
 package pl.polsl.gk.tabletopSimulator.gui;
 
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector4f;
+import org.joml.Vector4f;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 public class ColoredQuad2D extends GuiElement{

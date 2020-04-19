@@ -4,8 +4,8 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
-import pl.polsl.gk.tabletopSimulator.Scenes.SceneList;
-import pl.polsl.gk.tabletopSimulator.Scenes.SceneManager;
+import pl.polsl.gk.tabletopSimulator.scenes.SceneList;
+import pl.polsl.gk.tabletopSimulator.scenes.SceneManager;
 
 import java.nio.IntBuffer;
 
@@ -30,16 +30,16 @@ public class Game {
 
     private void init() {
         GLFWErrorCallback.createPrint(System.err).set();
-        if ( !glfwInit() )
+        if (!glfwInit())
             throw new IllegalStateException("ERROR::Failed to initialize GLFW");
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         window = glfwCreateWindow(1280, 720, "Tabletop Simulator", NULL, NULL);
-        if ( window == NULL )
+        if (window == NULL)
             throw new RuntimeException("ERROR::Failed to create the GLFW window");
 
-        try ( MemoryStack stack = stackPush() ) {
+        try (MemoryStack stack = stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1);
             IntBuffer pHeight = stack.mallocInt(1);
 

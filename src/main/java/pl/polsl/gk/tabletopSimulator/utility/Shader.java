@@ -1,9 +1,12 @@
 package pl.polsl.gk.tabletopSimulator.utility;
+
 import org.joml.Vector4f;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector2f;
+
 import java.io.*;
 import java.nio.IntBuffer;
 import java.util.HashMap;
@@ -12,7 +15,7 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL33C.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-public class Shader {
+public abstract class Shader {
 
     private final Map<String, Integer> uniforms;
 
@@ -20,14 +23,14 @@ public class Shader {
 
     private boolean isGood;
 
-    public Shader(String name){
+    public Shader(String name) {
         uniforms = new HashMap<>();
         this.isGood = false;
         String vertexCode = new String();
         String fragmentCode = new String();
-        InputStream vertexUrl = getClass().getClassLoader().getResourceAsStream("shaders/"+name+".vs");
-        InputStream fragmentUrl = getClass().getClassLoader().getResourceAsStream("shaders/"+name+".fs");
-        if(!(vertexUrl != null && fragmentUrl != null)){
+        InputStream vertexUrl = getClass().getClassLoader().getResourceAsStream("shaders/" + name + ".vs");
+        InputStream fragmentUrl = getClass().getClassLoader().getResourceAsStream("shaders/" + name + ".fs");
+        if (!(vertexUrl != null && fragmentUrl != null)) {
             System.err.println("ERROR::Couldn't load shader " + name);
         }
         try {
@@ -45,62 +48,71 @@ public class Shader {
         glCompileShader(vertexShader);
         glCompileShader(fragmentShader);
         int vertexCompileStatus, fragmentCompileStatus;
-        try(MemoryStack stack = stackPush()){
+        try (MemoryStack stack = stackPush()) {
             IntBuffer ip = stack.callocInt(1);
             glGetShaderiv(vertexShader, GL_COMPILE_STATUS, ip);
             vertexCompileStatus = ip.get(0);
             glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, ip);
             fragmentCompileStatus = ip.get(0);
         }
-        if(fragmentCompileStatus != 1){
-            System.out.println("ERROR::FRAGMENTSHADER::"+name);
+        if (fragmentCompileStatus != 1) {
+            System.out.println("ERROR::FRAGMENTSHADER::" + name);
             System.out.println(glGetShaderInfoLog(fragmentShader));
             glDeleteShader(vertexShader);
             glDeleteShader(fragmentShader);
-        }
-        else if(vertexCompileStatus != 1){
-            System.out.println("ERROR::VERTEXSHADER::"+name);
+        } else if (vertexCompileStatus != 1) {
+            System.out.println("ERROR::VERTEXSHADER::" + name);
             System.out.println(glGetShaderInfoLog(fragmentShader));
             glDeleteShader(vertexShader);
             glDeleteShader(fragmentShader);
-        }
-        else{
+        } else {
             shaderId = glCreateProgram();
             glAttachShader(shaderId, vertexShader);
             glAttachShader(shaderId, fragmentShader);
+            bindAttributes();
             glLinkProgram(shaderId);
             int shaderCompileStatus;
-            try(MemoryStack stack = stackPush()){
+            try (MemoryStack stack = stackPush()) {
                 IntBuffer ip = stack.callocInt(1);
                 glGetProgramiv(shaderId, GL_LINK_STATUS, ip);
                 shaderCompileStatus = ip.get(0);
             }
-            if(shaderCompileStatus != 1){
-                System.out.println("ERROR::SHADER_LINK::"+name);
+            if (shaderCompileStatus != 1) {
+                System.out.println("ERROR::SHADER_LINK::" + name);
                 System.out.println(glGetProgramInfoLog(shaderId));
                 glDeleteShader(vertexShader);
                 glDeleteShader(fragmentShader);
-            }
-            else{
+            } else {
                 this.isGood = true;
+                getAllUniformLocations();
+                bindAllUniforms();
+
             }
             glDeleteShader(vertexShader);
             glDeleteShader(fragmentShader);
         }
 
     }
+
+    protected abstract void bindAttributes();
+
+    protected abstract void getAllUniformLocations();
+
+    protected abstract void bindAllUniforms();
+
     private String ParseFileToString(InputStream file) throws IOException {
         StringBuilder strB = new StringBuilder();
-        try(      BufferedReader br = new BufferedReader(new InputStreamReader(file));){
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(file));) {
             String tmp;
-            while((tmp = br.readLine()) != null) {
+            while ((tmp = br.readLine()) != null) {
                 strB.append(tmp).append("\n");
             }
         }
         return strB.toString();
     }
-    public boolean Use(){
-        if(!isGood){
+
+    public boolean use() {
+        if (!isGood) {
             return false;
         }
         glUseProgram(shaderId);
@@ -111,62 +123,64 @@ public class Shader {
         return isGood;
     }
 
-    public void createUniform(String uniform) {
-        int uniformLocation = glGetUniformLocation(shaderId, uniform);
-        if(uniformLocation < 0) {
+    public void bindAttribute(int attribute, String variableName) {
+        GL20.glBindAttribLocation(shaderId, attribute, variableName);
+    }
 
-            System.out.println("ERROR::UNIFORM::"+ uniform);
+    public void createUniform(String uniform, int uniformLocation) {
+        if (uniformLocation < 0) {
+
+            System.out.println("ERROR::UNIFORM::" + uniform);
         }
-        uniforms.put(uniform,uniformLocation);
+        uniforms.put(uniform, uniformLocation);
     }
 
-    public void setUniform(String uniform, int value){
-        glUniform1i(uniforms.get(uniform), value);
-    }
-
-    public void setUniform(String uniform, Matrix4f value){
+    public void loadMatrix(String uniform, Matrix4f value) {
         // Send matrix into a float buffer
-        try(MemoryStack stack = MemoryStack.stackPush()){
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             glUniformMatrix4fv(uniforms.get(uniform), false,
                     value.get(stack.mallocFloat(16)));
         }
     }
 
-    public void setUniform(String uniform, float x)
-    {
-        glUniform1f(uniforms.get(uniform), x);
+    public void loadInt(String uniform, int value) {
+        glUniform1i(uniforms.get(uniform), value);
     }
 
-    public void setUniform(String uniform, boolean x)
-    {
-        glUniform1i(uniforms.get(uniform), x ? 1 : 0);
+    public void loadFloat(String uniform, float value) {
+        glUniform1f(uniforms.get(uniform), value);
     }
 
-    public void setUniform(String uniform, Vector2f vec)
-    {
+    public void loadBoolean(String uniform, boolean value) {
+        glUniform1i(uniforms.get(uniform), value ? 1 : 0);
+    }
+
+    public void loadVector(String uniform, Vector2f vec) {
         glUniform2f(uniforms.get(uniform), vec.x, vec.y);
     }
 
-    public void setUniform(String uniform, Vector3f vec)
-    {
+    public void loadVector(String uniform, Vector3f vec) {
         glUniform3f(uniforms.get(uniform), vec.x, vec.y, vec.z);
     }
 
-    public void setUniform(String uniform, Vector4f vec)
-    {
+    public void loadVector(String uniform, Vector4f vec) {
         glUniform4f(uniforms.get(uniform), vec.x, vec.y, vec.z, vec.w);
     }
 
+    public int getUniformLocation(String uniformName) {
+        return GL20.glGetUniformLocation(shaderId, uniformName);
+    }
 
-    public void unbind(){
+    public void unbind() {
         glUseProgram(0);
     }
 
-    public void cleanup(){
+    public void cleanup() {
         unbind();
-        if(shaderId != 0){
+        if (shaderId != 0) {
             glDeleteProgram(shaderId);
         }
     }
+
 
 }

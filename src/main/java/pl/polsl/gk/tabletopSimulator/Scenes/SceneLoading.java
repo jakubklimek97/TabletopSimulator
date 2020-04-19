@@ -2,7 +2,8 @@ package pl.polsl.gk.tabletopSimulator.Scenes;
 
 import org.lwjgl.glfw.GLFWKeyCallback;
 import pl.polsl.gk.tabletopSimulator.Entities.Camera;
-import pl.polsl.gk.tabletopSimulator.Entities.InputHandler;
+import pl.polsl.gk.tabletopSimulator.Handlers.KeyboardInput;
+import pl.polsl.gk.tabletopSimulator.Handlers.MouseInput;
 
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -11,11 +12,15 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 public class SceneLoading implements IScene {
 
     private GLFWKeyCallback keyCallback;
-    public InputHandler inputHandler = new InputHandler();
-    public Camera camera = new Camera();
+    public KeyboardInput keyboardInput;
+    public MouseInput mouseInput;
+    public Camera camera;
     public SceneLoading(SceneManager sceneManager){
         this.sceneManager = sceneManager;
         this.window = this.sceneManager.getWindow();
+          keyboardInput = new KeyboardInput(window);
+          mouseInput = new MouseInput();
+          camera = new Camera();
     }
 
 
@@ -33,21 +38,23 @@ public class SceneLoading implements IScene {
     public void Run(){
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
         while ( !glfwWindowShouldClose(window) ) {
-
+             mouseInput.input(window);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
             glfwSwapBuffers(window);
             glfwPollEvents();
 
-            if(InputHandler.isKeyPressed(GLFW_KEY_J)){
+            if(KeyboardInput.isKeyPressed(GLFW_KEY_J)){
                System.out.println("J");
             }
-            if(InputHandler.isKeyDown((GLFW_KEY_E))){
+            if(KeyboardInput.isKeyDown((GLFW_KEY_E))){
                 System.out.println("E");
             }
 
-            if(InputHandler.isKeyReleased(GLFW_KEY_ESCAPE)){
+            if(KeyboardInput.isKeyReleased(GLFW_KEY_ESCAPE)){
                 glfwSetWindowShouldClose(window, true);
             }
+            System.out.println("X:" + mouseInput.getPreviousPos().x + "Y:" + mouseInput.getPreviousPos().y);
+
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }
@@ -56,9 +63,10 @@ public class SceneLoading implements IScene {
         glfwSetKeyCallback(window, null);
     }
     private void setCallbacks(){
-        glfwSetKeyCallback(window, inputHandler.getKeyboardCallback());
-        glfwSetCursorPosCallback(window, inputHandler.getMouseMoveCallback());
-        glfwSetMouseButtonCallback(window, inputHandler.getMouseButtonsCallback());
+        glfwSetKeyCallback(window, keyboardInput.getKeyboardCallback());
+        glfwSetCursorPosCallback(window, mouseInput.getCursorPosCallback());
+        glfwSetMouseButtonCallback(window, mouseInput.getMouseCallback());
+        glfwSetCursorEnterCallback(window, mouseInput.getEnterCallback());
     }
     //Not in use
     public void handleEvents(long window, int key,  int scancode, int action, int mods){

@@ -1,54 +1,49 @@
 package pl.polsl.gk.tabletopSimulator.EngineManagers;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+
 
 import pl.polsl.gk.tabletopSimulator.Entities.Camera;
-import pl.polsl.gk.tabletopSimulator.Math.Matrix.Matrix4f;
-import pl.polsl.gk.tabletopSimulator.Math.Vector.Vector3f;
 
 public class TransformManager {
-
-    private final  Matrix4f worldMatrix;
     private final Matrix4f projectionMatrix;
+
+    private final Matrix4f modelViewMatrix;
+
     private final Matrix4f viewMatrix;
 
-    public TransformManager(){
+    public TransformManager() {
         projectionMatrix = new Matrix4f();
-        worldMatrix = new Matrix4f();
+        modelViewMatrix = new Matrix4f();
         viewMatrix = new Matrix4f();
     }
 
-
-    public Matrix4f getWorldMatrix(Vector3f offset, Vector3f rotation, float scale){
-        worldMatrix.setIdentity();
-        Matrix4f.translate(offset.x,offset.y,offset.z);
-        worldMatrix.rotateX((float)Math.toRadians(rotation.x));
-        worldMatrix.rotateY((float)Math.toRadians(rotation.y));
-        worldMatrix.rotateZ((float)Math.toRadians(rotation.z));
-        Matrix4f.scale(scale,scale,scale);
-
-        return worldMatrix;
+    public final Matrix4f getProjectionMatrix(float fov, float width, float height, float zNear, float zFar) {
+        return projectionMatrix.setPerspective(fov, width / height, zNear, zFar);
     }
 
-    public final Matrix4f getProjectionMatrix(float fov, float width, float height, float zNear, float zFar){
-
-        float aspectRatio = width / height;
-        projectionMatrix.setIdentity();
-        Matrix4f.perspective(fov,aspectRatio,zNear,zFar);
-        return projectionMatrix;
-
-    }
-
-    public  Matrix4f getViewMatrix(Camera camera){
+    public Matrix4f getViewMatrix(Camera camera) {
         Vector3f cameraPos = camera.getPosition();
         Vector3f rotation = camera.getRotation();
+        viewMatrix.identity();
+        // First do the rotation so camera rotates over its position
+        viewMatrix.rotate((float)Math.toRadians(rotation.x), new Vector3f(1, 0, 0))
+                .rotate((float)Math.toRadians(rotation.y), new Vector3f(0, 1, 0));
+        // Then do the translation
+        viewMatrix.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+        return viewMatrix;
+    }
 
-        viewMatrix.setIdentity();
-
-        Matrix4f.rotate((float)Math.toRadians(rotation.x),1,0,0);
-        Matrix4f.rotate((float)Math.toRadians(rotation.y),0,1,0);
-
-        Matrix4f.translate(-cameraPos.x,-cameraPos.y,-cameraPos.z);
-
-        return  viewMatrix;
+    public Matrix4f getModelViewMatrix(Items item, Matrix4f viewMatrix) {
+         Vector3f rotation = item.getRotation();
+        modelViewMatrix.identity().translate(item.getPosition()).
+                rotateX((float)Math.toRadians(-rotation.x)).
+                rotateY((float)Math.toRadians(-rotation.y)).
+                rotateZ((float)Math.toRadians(-rotation.z)).
+                scale(item.getScale());
+        Matrix4f viewCurr = new Matrix4f(viewMatrix);
+        return viewCurr.mul(modelViewMatrix);
     }
 
 

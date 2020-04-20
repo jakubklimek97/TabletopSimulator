@@ -18,8 +18,6 @@ public class Shader {
     protected boolean isGood;
     public Shader(){}
 
-    private boolean isGood;
-
     public Shader(String name){
         uniforms = new HashMap<>();
         this.isGood = false;

@@ -21,7 +21,7 @@ import static org.lwjgl.opengl.GL33C.*;
 
 public class SceneFunctionality3 implements IScene {
 
-    private SkyboxManager skybox;
+    private final SkyboxManager skybox;
 
     private TransformManager transformManager;
 
@@ -198,8 +198,8 @@ public class SceneFunctionality3 implements IScene {
         if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
             glfwSetWindowShouldClose(window, true);
     }
-    private SceneManager sceneManager;
-    private long window;
+    private final SceneManager sceneManager;
+    private final long window;
 
     public void render(long window){
         renderer.render(camera,items,1280, 720);

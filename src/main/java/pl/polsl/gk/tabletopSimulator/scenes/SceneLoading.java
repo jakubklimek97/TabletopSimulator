@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 public class SceneLoading implements IScene {
 
-    private GLFWKeyCallback keyCallback;
+
     public KeyboardInput keyboardInput;
     public MouseInput mouseInput;
     public Camera camera;
@@ -74,6 +74,6 @@ public class SceneLoading implements IScene {
             glfwSetWindowShouldClose(window, true);
     }
 
-    private SceneManager sceneManager;
+    private final SceneManager sceneManager;
     long window;
 }

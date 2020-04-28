@@ -43,6 +43,12 @@ public class SceneFunctionality3 implements IScene {
 
     private static  final float Z_FAR = 1000.0f;
 
+    private static final float R = 0.544f;
+
+    private  static final float G = 0.62f;
+
+    private  static final float B = 0.69f;
+
 
     @Override
     public void Init() {
@@ -169,7 +175,7 @@ public class SceneFunctionality3 implements IScene {
             camera.input();
             camera.update(mouseInput);
             render(window);
-            skybox.render(camera);
+            skybox.render(camera,R,G,B);
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }

@@ -10,6 +10,7 @@ import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.handlers.KeyboardInput;
 import pl.polsl.gk.tabletopSimulator.handlers.MouseInput;
+import pl.polsl.gk.tabletopSimulator.loaders.OBJLoader;
 import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
@@ -48,108 +49,29 @@ public class SceneFunctionality3 implements IScene {
     public void Init() {
 
         setCallbacks();
-        float[] positions = new float[]{
-                // V0
-                -0.5f, 0.5f, 0.5f,
-                // V1
-                -0.5f, -0.5f, 0.5f,
-                // V2
-                0.5f, -0.5f, 0.5f,
-                // V3
-                0.5f, 0.5f, 0.5f,
-                // V4
-                -0.5f, 0.5f, -0.5f,
-                // V5
-                0.5f, 0.5f, -0.5f,
-                // V6
-                -0.5f, -0.5f, -0.5f,
-                // V7
-                0.5f, -0.5f, -0.5f,
-                // For text coords in top face
-                // V8: V4 repeated
-                -0.5f, 0.5f, -0.5f,
-                // V9: V5 repeated
-                0.5f, 0.5f, -0.5f,
-                // V10: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V11: V3 repeated
-                0.5f, 0.5f, 0.5f,
-                // For text coords in right face
-                // V12: V3 repeated
-                0.5f, 0.5f, 0.5f,
-                // V13: V2 repeated
-                0.5f, -0.5f, 0.5f,
-                // For text coords in left face
-                // V14: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V15: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-                // For text coords in bottom face
-                // V16: V6 repeated
-                -0.5f, -0.5f, -0.5f,
-                // V17: V7 repeated
-                0.5f, -0.5f, -0.5f,
-                // V18: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-                // V19: V2 repeated
-                0.5f, -0.5f, 0.5f,};
-        float[] textCoords = new float[]{
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.5f, 0.0f,
-                0.0f, 0.0f,
-                0.5f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                // For text coords in top face
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.0f, 1.0f,
-                0.5f, 1.0f,
-                // For text coords in right face
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-                // For text coords in left face
-                0.5f, 0.0f,
-                0.5f, 0.5f,
-                // For text coords in bottom face
-                0.5f, 0.0f,
-                1.0f, 0.0f,
-                0.5f, 0.5f,
-                1.0f, 0.5f,};
 
-        int[] indices = new int[]{
-                // Front face
-                0, 1, 3, 3, 1, 2,
-                // Top Face
-                8, 10, 11, 9, 8, 11,
-                // Right face
-                12, 13, 7, 5, 12, 7,
-                // Left face
-                14, 15, 6, 4, 14, 6,
-                // Bottom face
-                16, 18, 19, 17, 16, 19,
-                // Back face
-                4, 6, 7, 5, 4, 7,};
-
-
-        TextureManager texture = new TextureManager("src\\main\\resources\\textures\\grassblock.png");
-        Mesh mesh = new Mesh(indices,positions,textCoords,texture);
-        Entity item1 = new Entity(mesh);
-        item1.setScale(1f);
-        item1.setRotation(1f,5.5f,1.1f);
-        item1.setPosition(0,0,-2f);
+        TextureManager texture = new TextureManager("src\\main\\resources\\textures\\moon.png");
+        TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\sun.png");
+        Mesh mesh = null;
+        Mesh mesh2 = null;
+        try{ mesh = OBJLoader.load("/OBJs/sphere.obj");
+            mesh2 = OBJLoader.load("/OBJs/sphere.obj");
+        }
+        catch (Exception e){
+            System.out.println("ERROR");
+        }
+        mesh.setTexture(texture);
+        mesh2.setTexture(texture2);
+        Entity item1 = new Entity(mesh2);
+        item1.setScale(.1f);
+        item1.setRotation(1f,5.5f,10f);
+        item1.setPosition(1f,5.5f,10f);
         Entity item2 = new Entity(mesh);
-        item2.setPosition(15f, 25f, 13f);
-        item2.setScale(1f);
+        item2.setPosition(1f,5.5f,5.1f);
+        item2.setScale(.1f);
         item2.setRotation(3f,5f,1.1f);
-        Entity item3 = new Entity(mesh);
-        item3.setScale(.5f);
-        item3.setPosition(7, 6, -2.5f);
-        item3.setRotation(7f,7f,7.1f);
 
-        items = new Entity[]{item1, item2, item3};
+        items = new Entity[]{item1, item2};
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     }
 

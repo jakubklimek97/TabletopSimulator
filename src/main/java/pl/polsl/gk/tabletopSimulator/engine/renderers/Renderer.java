@@ -40,6 +40,7 @@ public class Renderer {
         projectionMatrix = transformation.getProjectionMatrix(FOV, width, height, Z_NEAR, Z_FAR);
         shaderProgram.loadProjectionMatrix(projectionMatrix);
         // update view matrix
+        items[0].setPosition(items[0].getPosition().x,items[0].getPosition().y,items[0].getPosition().z -= 0.01f);
         viewMatrix = transformation.getViewMatrix(camera);
         shaderProgram.loadTextureSampler(0);
         // Render each Item in game

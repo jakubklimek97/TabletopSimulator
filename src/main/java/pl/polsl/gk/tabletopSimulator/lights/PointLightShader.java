@@ -2,14 +2,13 @@ package pl.polsl.gk.tabletopSimulator.lights;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import pl.polsl.gk.tabletopSimulator.lights.Material;
-import pl.polsl.gk.tabletopSimulator.lights.PointLight;
+
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 
 public class PointLightShader extends Shader {
 
-    private static final String FILE = "secondShader";
+    private static final String FILE = "pointLightShader";
     private int textureSampler;
     private int projectionMatrix;
     private int modelViewMatrix;
@@ -48,17 +47,17 @@ public class PointLightShader extends Shader {
         super.loadVector(uniformName + ".position", pointLight.getPosition());
         super.loadFloat(uniformName + ".intensity", pointLight.getIntensity());
         PointLight.Attenuation attenuation = pointLight.getAttenuation();
-        super.loadFloat(uniformName + ".att.constant", attenuation.getConstant());
-        super.loadFloat(uniformName + ".att.linear", attenuation.getLinear());
-        super.loadFloat(uniformName + ".att.exponent", attenuation.getExponent());
+        super.loadFloat(uniformName + ".attenuation.constant", attenuation.getConstant());
+        super.loadFloat(uniformName + ".attenuation.linear", attenuation.getLinear());
+        super.loadFloat(uniformName + ".attenuation.exponent", attenuation.getExponent());
     }
 
     public void loadMaterial(String uniformName, Material material) {
         super.loadVector(uniformName + ".ambient", material.getAmbientLight());
         super.loadVector(uniformName + ".diffuse", material.getDiffuseLight());
         super.loadVector(uniformName + ".specular", material.getSpecularLight());
-        super.loadInt( uniformName +  ".hasTexture", material.CheckTexture() ? 1 : 0);
-        super.loadFloat(uniformName + ".reflectance", material.getReflectFactor());
+        super.loadInt( uniformName +  ".checkTexture", material.CheckTexture() ? 1 : 0);
+        super.loadFloat(uniformName + ".reflectanceFactor", material.getReflectFactor());
     }
 
 
@@ -66,17 +65,17 @@ public class PointLightShader extends Shader {
         super.createUniform(uniformName + ".colour");
         super.createUniform(uniformName + ".position");
         super.createUniform(uniformName + ".intensity");
-        super.createUniform(uniformName + ".att.constant");
-        super.createUniform(uniformName + ".att.linear");
-        super.createUniform(uniformName + ".att.exponent");
+        super.createUniform(uniformName + ".attenuation.constant");
+        super.createUniform(uniformName + ".attenuation.linear");
+        super.createUniform(uniformName + ".attenuation.exponent");
     }
 
     public void createMaterialUniform(String uniformName)  {
         super.createUniform(uniformName + ".ambient");
         super.createUniform(uniformName + ".diffuse");
         super.createUniform(uniformName + ".specular");
-        super.createUniform(uniformName + ".hasTexture");
-        super.createUniform(uniformName + ".reflectance");
+        super.createUniform(uniformName + ".checkTexture");
+        super.createUniform(uniformName + ".reflectanceFactor");
     }
 
     public void loadMaterial(Material material){

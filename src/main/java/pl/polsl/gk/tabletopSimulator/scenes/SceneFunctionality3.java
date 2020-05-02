@@ -56,7 +56,7 @@ public class SceneFunctionality3 implements IScene {
     public void Init() {
 
         setCallbacks();
-        float reflectFactor = 1.0f;
+        float reflectFactor = 9.0f;
         TextureManager texture = new TextureManager("src\\main\\resources\\textures\\moon.png");
         TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\sun.png");
         Mesh mesh = null;
@@ -77,9 +77,17 @@ public class SceneFunctionality3 implements IScene {
         item1.setRotation(1f,5.5f,10f);
         item1.setPosition(1f,5.5f,10f);
         Entity item2 = new Entity(mesh);
-        item2.setPosition(1f,5.5f,5.1f);
+        item2.setPosition(1f,5.5f,5f);
         item2.setScale(.1f);
-        item2.setRotation(3f,5f,1.1f);
+        item2.setRotation(1f,5.5f,10f);
+
+        ambientLight = new Vector3f(0.5f, 0.6f, 0.8f);
+        Vector3f lightColour = new Vector3f(1, 1, 1);
+        Vector3f lightPosition = new Vector3f(1f,8.5f,5f);
+        float lightIntensity = 35.2f;
+        pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
+        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
+        pointLight.setAttenuation(att);
 
         items = new Entity[]{item1, item2};
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -134,7 +142,7 @@ public class SceneFunctionality3 implements IScene {
     private final long window;
 
     public void render(long window){
-        renderer.render(camera,items,1280, 720);
+        renderer.render(camera,items,1280, 720, ambientLight, pointLight);
     }
 
     private int vao, vbo;

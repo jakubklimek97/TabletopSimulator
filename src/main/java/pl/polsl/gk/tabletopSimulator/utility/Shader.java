@@ -135,6 +135,14 @@ public abstract class Shader {
         uniforms.put(uniform, uniformLocation);
     }
 
+    public void createUniform(String uniformName)  {
+        int uniformLocation = glGetUniformLocation(shaderId, uniformName);
+        if (uniformLocation < 0) {
+            System.out.println("ERROR::UNIFORM::" + uniformName);
+        }
+        uniforms.put(uniformName, uniformLocation);
+    }
+
     public void loadMatrix(String uniform, Matrix4f value) {
         // Send matrix into a float buffer
         try (MemoryStack stack = MemoryStack.stackPush()) {

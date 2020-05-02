@@ -47,6 +47,10 @@ public class SceneFunctionality3 implements IScene {
 
     private static  final float Z_FAR = 1000.0f;
 
+    private PointLight pointLight;
+
+    private Vector3f ambientLight;
+
 
     @Override
     public void Init() {

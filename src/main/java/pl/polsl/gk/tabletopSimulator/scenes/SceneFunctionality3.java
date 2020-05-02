@@ -1,6 +1,7 @@
 package pl.polsl.gk.tabletopSimulator.scenes;
 
 
+import org.joml.Vector3f;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TransformManager;
 import pl.polsl.gk.tabletopSimulator.entities.Entity;
 import pl.polsl.gk.tabletopSimulator.entities.Loader;
@@ -10,6 +11,8 @@ import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.handlers.KeyboardInput;
 import pl.polsl.gk.tabletopSimulator.handlers.MouseInput;
+import pl.polsl.gk.tabletopSimulator.lights.Material;
+import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.loaders.OBJLoader;
 import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
@@ -44,32 +47,47 @@ public class SceneFunctionality3 implements IScene {
 
     private static  final float Z_FAR = 1000.0f;
 
+    private PointLight pointLight;
+
+    private Vector3f ambientLight;
+
 
     @Override
     public void Init() {
 
         setCallbacks();
-
+        float reflectFactor = 9.0f;
         TextureManager texture = new TextureManager("src\\main\\resources\\textures\\moon.png");
         TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\sun.png");
         Mesh mesh = null;
         Mesh mesh2 = null;
+        Material material = new Material(texture, reflectFactor);
+        Material material2 = new Material(texture2, reflectFactor);
+
         try{ mesh = OBJLoader.load("/OBJs/sphere.obj");
             mesh2 = OBJLoader.load("/OBJs/sphere.obj");
         }
         catch (Exception e){
             System.out.println("ERROR");
         }
-        mesh.setTexture(texture);
-        mesh2.setTexture(texture2);
+        mesh.setMaterial(material);
+        mesh2.setMaterial(material2);
         Entity item1 = new Entity(mesh2);
         item1.setScale(.1f);
         item1.setRotation(1f,5.5f,10f);
         item1.setPosition(1f,5.5f,10f);
         Entity item2 = new Entity(mesh);
-        item2.setPosition(1f,5.5f,5.1f);
+        item2.setPosition(1f,5.5f,5f);
         item2.setScale(.1f);
-        item2.setRotation(3f,5f,1.1f);
+        item2.setRotation(1f,5.5f,10f);
+
+        ambientLight = new Vector3f(0.5f, 0.6f, 0.8f);
+        Vector3f lightColour = new Vector3f(1, 1, 1);
+        Vector3f lightPosition = new Vector3f(1f,8.5f,5f);
+        float lightIntensity = 35.2f;
+        pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
+        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
+        pointLight.setAttenuation(att);
 
         items = new Entity[]{item1, item2};
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -124,7 +142,7 @@ public class SceneFunctionality3 implements IScene {
     private final long window;
 
     public void render(long window){
-        renderer.render(camera,items,1280, 720);
+        renderer.render(camera,items,1280, 720, ambientLight, pointLight);
     }
 
     private int vao, vbo;

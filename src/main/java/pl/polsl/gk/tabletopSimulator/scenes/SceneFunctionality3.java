@@ -93,20 +93,20 @@ public class SceneFunctionality3 implements IScene {
         item2.setScale(.1f);
         item2.setRotation(1f,5.5f,10f);
 
-        ambientLight = new Vector3f(0.5f, 0.6f, 0.8f);
-        Vector3f lightColour = new Vector3f(1, 1, 1);
+        ambientLight = new Vector3f(1f, 1f, 1f);
+        Vector3f lightColour = new Vector3f(0.1f, 0.1f, 0.1f);
         Vector3f lightPosition = new Vector3f(1f,8.5f,5f);
-        float lightIntensity = 23f;
+        float lightIntensity = 15f;
         pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
         PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
         pointLight.setAttenuation(att);
-        float lightIntensity2 = 12.2f;
-        Vector3f lightColour2 = new Vector3f(1, 0, 0);
+        float lightIntensity2 = 15f;
+        Vector3f lightColour2 = new Vector3f(0.1f, 0.1f, 0.1f);
          Vector3f lightDirection = new Vector3f(-1, 0, 0);
          directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
          fog = new Fog();
          Vector3f fogColour = new Vector3f(0,1,0);
-         float density = 0.17f;
+         float density = 0.0f;
          fog.setColour(fogColour);
          fog.setDensityFactor(density);
          fog.setFogStart(2);

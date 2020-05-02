@@ -41,6 +41,10 @@ public class Renderer {
     public void render(Camera camera, Entity[] items, int width, int height, Vector3f ambientLight,
                        PointLight light, DirectionalLight directionalLight, Fog fog) {
         clear();
+        ambientLight.x -= 0.003f;
+        ambientLight.y -= 0.003f;
+        ambientLight.z -= 0.003f;
+
         lightShader.use();
         Matrix4f  projectionMatrix = transformation.getProjectionMatrix(FOV, width, height, Z_NEAR, Z_FAR);
         lightShader.loadProjectionMatrix(projectionMatrix);

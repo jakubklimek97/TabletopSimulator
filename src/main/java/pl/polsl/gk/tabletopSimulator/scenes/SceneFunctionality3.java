@@ -55,7 +55,6 @@ public class SceneFunctionality3 implements IScene {
     private DirectionalLight directionalLight;
 
 
-
     @Override
     public void Init() {
 
@@ -118,7 +117,7 @@ public class SceneFunctionality3 implements IScene {
             camera.input();
             camera.update(mouseInput);
             render(window);
-            skybox.render(camera);
+            skybox.render(camera,R,G,B);
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }

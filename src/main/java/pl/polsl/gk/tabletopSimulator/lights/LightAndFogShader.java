@@ -3,13 +3,13 @@ package pl.polsl.gk.tabletopSimulator.lights;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import pl.polsl.gk.tabletopSimulator.fog.FogRenderer;
+import pl.polsl.gk.tabletopSimulator.fog.Fog;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 
-public class LightShader extends Shader {
+public class LightAndFogShader extends Shader {
 
-    private static final String FILE = "lightShader";
+    private static final String FILE = "lightAndFogShader";
     private int textureSampler;
     private int projectionMatrix;
     private int modelViewMatrix;
@@ -17,7 +17,7 @@ public class LightShader extends Shader {
     private int ambientLight;
 
 
-    public LightShader() {
+    public LightAndFogShader() {
         super(FILE);
 
     }
@@ -31,7 +31,7 @@ public class LightShader extends Shader {
         super.createUniform("ambientLight", ambientLight);
         createPointLightUniform("pointLight");
         createDirectionalLightUniform("directionalLight");
-
+        createFogUniform("fog");
 
     }
 
@@ -94,15 +94,22 @@ public class LightShader extends Shader {
     }
 
     public void createFogUniform(String uniformName){
-        super.createUniform(uniformName + ".density");
+        super.createUniform(uniformName + ".densityFactor");
         super.createUniform(uniformName + ".colour");
-        super.createUniform(uniformName + ".active");
+        super.createUniform(uniformName + ".activeFog");
+        super.createUniform(uniformName + ".fogStart");
+        super.createUniform(uniformName + ".fogEnd");
+        super.createUniform(uniformName + ".equationType");
 
     }
-    public void loadFog(String uniformName, FogRenderer fog){
+    public void loadFog(String uniformName, Fog fog){
+        super.loadInt(uniformName + ".equationType", fog.getEquationType());
         super.loadVector(uniformName + ".colour", fog.getColour());
-        super.loadFloat(uniformName + ".density", fog.getDensityFactor());
+        super.loadFloat(uniformName + ".densityFactor", fog.getDensityFactor());
         super.loadInt(uniformName + ".activeFog", fog.isActive() ? 1 : 0);
+        super.loadFloat(uniformName + ".fogStart", fog.getFogStart());
+        super.loadFloat(uniformName + ".fogEnd", fog.getFogEnd());
+
 
 
     }
@@ -123,7 +130,7 @@ public class LightShader extends Shader {
         loadLight("pointLight",pointLight);
     }
 
-    public void loadFog(FogRenderer fog) {
+    public void loadFog(Fog fog) {
         loadFog("fog", fog);
     }
 

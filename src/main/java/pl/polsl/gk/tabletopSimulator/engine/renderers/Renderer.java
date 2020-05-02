@@ -6,9 +6,10 @@ import org.joml.Vector4f;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TransformManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.entities.Entity;
+import pl.polsl.gk.tabletopSimulator.fog.Fog;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
-import pl.polsl.gk.tabletopSimulator.lights.LightShader;
+import pl.polsl.gk.tabletopSimulator.lights.LightAndFogShader;
 
 
 import static org.lwjgl.opengl.GL11.*;
@@ -22,11 +23,11 @@ public class Renderer {
     private final TransformManager transformation;
      private final float specularPower;
 
-    private final LightShader lightShader;
+    private final LightAndFogShader lightShader;
 
     public Renderer() {
         transformation = new TransformManager();
-        lightShader = new LightShader();
+        lightShader = new LightAndFogShader();
         lightShader.use();
         lightShader.bindAllUniforms();
         lightShader.unbind();
@@ -38,7 +39,7 @@ public class Renderer {
     }
 
     public void render(Camera camera, Entity[] items, int width, int height, Vector3f ambientLight,
-                       PointLight light, DirectionalLight directionalLight) {
+                       PointLight light, DirectionalLight directionalLight, Fog fog) {
         clear();
         lightShader.use();
         Matrix4f  projectionMatrix = transformation.getProjectionMatrix(FOV, width, height, Z_NEAR, Z_FAR);
@@ -62,7 +63,7 @@ public class Renderer {
         lightShader.loadPointLight(currPointLight);
 
         lightShader.loadTextureSampler(0);
-
+        lightShader.loadFog(fog);
         DirectionalLight currDirLight = new DirectionalLight(directionalLight);
         Vector4f direction = new Vector4f(currDirLight.getDirection(), 0);
         direction.mul(viewMatrix);

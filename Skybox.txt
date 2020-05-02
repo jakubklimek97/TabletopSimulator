@@ -1,0 +1,11 @@
+Program do skyboxow:
+https://jaxry.github.io/panorama-to-cubemap/
+Zrobienie skyboxa:
+parametry:
+Lanczos
+PNG
+Cube rotation: 0
+
+Obrobka w gimpie:
+1. top obrocic o 180 stopni,( bottom tak samo z niego nie korzystamy, shader skyboxa nam zaslania go).
+2. Zamienic left z right facem zamienić.

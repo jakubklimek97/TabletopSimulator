@@ -54,6 +54,12 @@ public class SceneFunctionality3 implements IScene {
 
     private DirectionalLight directionalLight;
 
+    private static final float R = 0.544f;
+
+    private  static final float G = 0.62f;
+
+    private  static final float B = 0.69f;
+
 
     @Override
     public void Init() {

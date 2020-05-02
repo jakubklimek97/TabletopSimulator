@@ -11,6 +11,7 @@ public class DirectionalLightShader extends Shader {
     private int textureSampler;
     private int projectionMatrix;
     private int modelViewMatrix;
+    private int specularPower;
     private int ambientLight;
 
 
@@ -25,6 +26,7 @@ public class DirectionalLightShader extends Shader {
         super.createUniform("texture_sampler", textureSampler);
         createMaterialUniform("material");
         super.createUniform("ambientLight", ambientLight);
+        super.createUniform("specularPower", specularPower);
         createPointLightUniform("directionalLight");
 
     }
@@ -34,7 +36,7 @@ public class DirectionalLightShader extends Shader {
         projectionMatrix = super.getUniformLocation("projectionMatrix");
         modelViewMatrix = super.getUniformLocation("modelViewMatrix");
         ambientLight = super.getUniformLocation("ambientLight");
-
+        specularPower = super.getUniformLocation("specularPower");
 
     }
 
@@ -72,6 +74,9 @@ public class DirectionalLightShader extends Shader {
         loadMaterial("material",material);
     }
 
+    public void loadSpecularPower(float specularPower){
+        super.loadFloat("specularPower", specularPower);
+    }
 
     public void loadAmbientLight(Vector3f ambientLight){
         super.loadVector("ambientLight", ambientLight);

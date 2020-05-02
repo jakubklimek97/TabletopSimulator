@@ -9,14 +9,30 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class TextureManager {
 
     private final int textureId;
-
+    private int width;
+    private int height;
     public TextureManager(String fileName) {
         this(loadTexture(fileName));
+    }
+
+    public TextureManager(int width, int height, int pixelFormat){
+        this.textureId = glGenTextures();
+        this.width = width;
+        this.height = height;
+        glBindTexture(GL_TEXTURE_2D, this.getTextureId());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, this.width,this.height,0,pixelFormat, GL_FLOAT, (ByteBuffer) null);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+
     }
 
     public TextureManager(int textureId) {

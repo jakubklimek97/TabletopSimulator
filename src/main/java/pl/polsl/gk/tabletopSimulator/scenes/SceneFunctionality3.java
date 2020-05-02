@@ -88,7 +88,7 @@ public class SceneFunctionality3 implements IScene {
         ambientLight = new Vector3f(0.5f, 0.6f, 0.8f);
         Vector3f lightColour = new Vector3f(1, 1, 1);
         Vector3f lightPosition = new Vector3f(1f,8.5f,5f);
-        float lightIntensity = 0f;
+        float lightIntensity = 23f;
         pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
         PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
         pointLight.setAttenuation(att);

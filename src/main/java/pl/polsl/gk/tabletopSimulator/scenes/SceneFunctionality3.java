@@ -11,6 +11,7 @@ import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.handlers.KeyboardInput;
 import pl.polsl.gk.tabletopSimulator.handlers.MouseInput;
+import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
 import pl.polsl.gk.tabletopSimulator.lights.Material;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.loaders.OBJLoader;
@@ -51,6 +52,9 @@ public class SceneFunctionality3 implements IScene {
 
     private Vector3f ambientLight;
 
+    private DirectionalLight directionalLight;
+
+
 
     @Override
     public void Init() {
@@ -84,12 +88,17 @@ public class SceneFunctionality3 implements IScene {
         ambientLight = new Vector3f(0.5f, 0.6f, 0.8f);
         Vector3f lightColour = new Vector3f(1, 1, 1);
         Vector3f lightPosition = new Vector3f(1f,8.5f,5f);
-        float lightIntensity = 35.2f;
+        float lightIntensity = 23f;
         pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
         PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
         pointLight.setAttenuation(att);
+        float lightIntensity2 = 12.2f;
+        Vector3f lightColour2 = new Vector3f(1, 0, 0);
+         Vector3f lightDirection = new Vector3f(-1, 0, 0);
+         directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
 
-        items = new Entity[]{item1, item2};
+
+    items = new Entity[]{item1, item2};
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     }
 
@@ -142,7 +151,7 @@ public class SceneFunctionality3 implements IScene {
     private final long window;
 
     public void render(long window){
-        renderer.render(camera,items,1280, 720, ambientLight, pointLight);
+        renderer.render(camera,items,1280, 720, ambientLight, pointLight, directionalLight);
     }
 
     private int vao, vbo;

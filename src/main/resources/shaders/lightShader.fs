@@ -21,6 +21,7 @@ struct PointLight
     Attenuation attenuation;
 };
 
+
 //MATERIAL PARAMETERS
 struct Material
 {
@@ -31,11 +32,20 @@ struct Material
     float reflectanceFactor;
 };
 
+//DIRECTIONAL LIGHT PARAMETERS
+struct DirectionalLight
+{
+    vec3 colour;
+    vec3 direction;
+    float intensity;
+};
+
 uniform sampler2D texture_sampler;
 uniform vec3 ambientLight;
 uniform float specularPower;
 uniform Material material;
 uniform PointLight pointLight;
+uniform DirectionalLight directionalLight;
 
 vec4 ambientMaterialColour;
 vec4 diffuseMaterialColour;
@@ -97,12 +107,19 @@ vec4 calculationPointLight(PointLight pointlight, vec3 position, vec3 normal)
     return attenuationResult;
 }
 
+// CALCULATE DIRECTIONA LIGHT BASED ON LIGHT COLOUR
+vec4 calcDirectionalLight(DirectionalLight directionalLight, vec3 position, vec3 normal)
+{
+    return calcLightColour(directionalLight.colour, directionalLight.intensity, position, normalize(directionalLight.direction), normal);
+}
 
 void main()
 {   // CHANGE ENTITY COLOUR BASED ON MATERIAL
     setupMaterialColours(material, vertexTextureCoordinates);
+    // CALCULATE DIFFUSE  SPECULAR  FOR DIRECTIONAL  LIGHT
+     vec4 diffuseSpecularComponent = calcDirectionalLight(directionalLight, vertexPosition, vertexNormals);
     // CALCULATE DIFFUSE  SPECULAR AND ATTENUATION FOR POINT LIGHT
-    vec4 diffuseSpecularComponent = calculationPointLight(pointLight, vertexPosition, vertexNormals);
+     diffuseSpecularComponent += calculationPointLight(pointLight, vertexPosition, vertexNormals);
     // ADD AMBIENT LIGHT TO FINAL CALCULATION
     fragColor = diffuseSpecularComponent + ambientMaterialColour * vec4(ambientLight, 1) ;
 }

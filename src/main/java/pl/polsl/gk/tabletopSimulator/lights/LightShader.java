@@ -6,9 +6,9 @@ import org.joml.Vector3f;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 
-public class PointLightShader extends Shader {
+public class LightShader extends Shader {
 
-    private static final String FILE = "pointLightShader";
+    private static final String FILE = "lightShader";
     private int textureSampler;
     private int projectionMatrix;
     private int modelViewMatrix;
@@ -16,7 +16,7 @@ public class PointLightShader extends Shader {
     private int ambientLight;
 
 
-    public PointLightShader() {
+    public LightShader() {
         super(FILE);
 
     }
@@ -29,6 +29,8 @@ public class PointLightShader extends Shader {
         super.createUniform("specularPower", specularPower);
         super.createUniform("ambientLight", ambientLight);
         createPointLightUniform("pointLight");
+        createDirectionalLightUniform("directionalLight");
+
 
     }
 
@@ -60,6 +62,18 @@ public class PointLightShader extends Shader {
         super.loadFloat(uniformName + ".reflectanceFactor", material.getReflectFactor());
     }
 
+    public void createDirectionalLightUniform(String uniformName)  {
+        super.createUniform(uniformName + ".colour");
+        super.createUniform(uniformName + ".direction");
+        super.createUniform(uniformName + ".intensity");
+
+    }
+
+    public void loadDirectionalLight(String uniformName, DirectionalLight directionalLight) {
+        super.loadVector(uniformName + ".colour", directionalLight.getColour());
+        super.loadVector(uniformName + ".direction", directionalLight.getDirection());
+        super.loadFloat(uniformName + ".intensity", directionalLight.getIntensity());
+    }
 
     public void createPointLightUniform(String uniformName)  {
         super.createUniform(uniformName + ".colour");

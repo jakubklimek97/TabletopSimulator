@@ -1,6 +1,7 @@
 package pl.polsl.gk.tabletopSimulator.scenes;
 
 
+import org.joml.Vector3f;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TransformManager;
 import pl.polsl.gk.tabletopSimulator.entities.Entity;
 import pl.polsl.gk.tabletopSimulator.entities.Loader;
@@ -10,6 +11,8 @@ import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.handlers.KeyboardInput;
 import pl.polsl.gk.tabletopSimulator.handlers.MouseInput;
+import pl.polsl.gk.tabletopSimulator.lights.Material;
+import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.loaders.OBJLoader;
 import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
@@ -49,19 +52,22 @@ public class SceneFunctionality3 implements IScene {
     public void Init() {
 
         setCallbacks();
-
+        float reflectFactor = 1.0f;
         TextureManager texture = new TextureManager("src\\main\\resources\\textures\\moon.png");
         TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\sun.png");
         Mesh mesh = null;
         Mesh mesh2 = null;
+        Material material = new Material(texture, reflectFactor);
+        Material material2 = new Material(texture2, reflectFactor);
+
         try{ mesh = OBJLoader.load("/OBJs/sphere.obj");
             mesh2 = OBJLoader.load("/OBJs/sphere.obj");
         }
         catch (Exception e){
             System.out.println("ERROR");
         }
-        mesh.setTexture(texture);
-        mesh2.setTexture(texture2);
+        mesh.setMaterial(material);
+        mesh2.setMaterial(material2);
         Entity item1 = new Entity(mesh2);
         item1.setScale(.1f);
         item1.setRotation(1f,5.5f,10f);

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
+import pl.polsl.gk.tabletopSimulator.lights.Material;
 
 
 import static org.lwjgl.opengl.GL15.*;
@@ -22,9 +23,8 @@ public class Mesh {
     private final List<Integer> vboIdList;
     private final int vaoId;
     private final int vertexCount;
-    private static final Vector3f DEFAULT_COLOUR = new Vector3f(1.0f, 1.0f, 1.0f);
     private TextureManager texture;
-
+    private Material material;
 
     private Vector3f colour;
 
@@ -34,7 +34,7 @@ public class Mesh {
         FloatBuffer positionsBuffer = null;
         FloatBuffer vecNormalsBuffer = null;
         try {
-            colour = Mesh.DEFAULT_COLOUR;
+
             vertexCount = indices.length;
             vboIdList = new ArrayList<>();
 
@@ -108,6 +108,14 @@ public class Mesh {
 
     }
 
+    public Material getMaterial(){
+        return material;
+    }
+
+    public void setMaterial(Material material){
+        this.material = material;
+    }
+
     public TextureManager getTexture() {
         return texture;
     }
@@ -137,6 +145,7 @@ public class Mesh {
     }
 
     public void render() {
+        TextureManager texture = material.getTexture();
         if (texture != null) {
             // Activate firs texture bank
             glActiveTexture(GL_TEXTURE0);

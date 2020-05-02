@@ -9,6 +9,7 @@ import pl.polsl.gk.tabletopSimulator.entities.Mesh;
 import pl.polsl.gk.tabletopSimulator.engine.renderers.Renderer;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
+import pl.polsl.gk.tabletopSimulator.fog.Fog;
 import pl.polsl.gk.tabletopSimulator.handlers.KeyboardInput;
 import pl.polsl.gk.tabletopSimulator.handlers.MouseInput;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
@@ -53,6 +54,8 @@ public class SceneFunctionality3 implements IScene {
     private Vector3f ambientLight;
 
     private DirectionalLight directionalLight;
+
+    private Fog fog;
 
     private static final float R = 0.544f;
 
@@ -101,7 +104,15 @@ public class SceneFunctionality3 implements IScene {
         Vector3f lightColour2 = new Vector3f(1, 0, 0);
          Vector3f lightDirection = new Vector3f(-1, 0, 0);
          directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
-
+         fog = new Fog();
+         Vector3f fogColour = new Vector3f(0,1,0);
+         float density = 0.17f;
+         fog.setColour(fogColour);
+         fog.setDensityFactor(density);
+         fog.setFogStart(2);
+         fog.setFogEnd(10);
+         fog.setEquationType(2);
+         fog.setActive(true);
 
     items = new Entity[]{item1, item2};
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -156,7 +167,7 @@ public class SceneFunctionality3 implements IScene {
     private final long window;
 
     public void render(long window){
-        renderer.render(camera,items,1280, 720, ambientLight, pointLight, directionalLight);
+        renderer.render(camera,items,1280, 720, ambientLight, pointLight, directionalLight, fog);
     }
 
     private int vao, vbo;

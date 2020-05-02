@@ -31,13 +31,24 @@ struct Material
     int checkTexture;
     float reflectanceFactor;
 };
-
 //DIRECTIONAL LIGHT PARAMETERS
 struct DirectionalLight
 {
     vec3 colour;
     vec3 direction;
     float intensity;
+};
+// FOG PARAMETERS
+struct Fog
+{
+    float densityFactor;
+    vec3 colour;
+    int activeFog;
+    int equationType;
+    float fogStart;
+    float fogEnd;
+
+
 };
 
 uniform sampler2D texture_sampler;
@@ -46,6 +57,7 @@ uniform float specularPower;
 uniform Material material;
 uniform PointLight pointLight;
 uniform DirectionalLight directionalLight;
+uniform Fog fog;
 
 vec4 ambientMaterialColour;
 vec4 diffuseMaterialColour;
@@ -112,6 +124,40 @@ vec4 calcDirectionalLight(DirectionalLight directionalLight, vec3 position, vec3
 {
     return calcLightColour(directionalLight.colour, directionalLight.intensity, position, normalize(directionalLight.direction), normal);
 }
+// CALCULATE FOG
+vec4 calculateFog( vec3 position, vec4 colour, vec3 ambientLight, Fog fog, DirectionalLight dirLight )
+{
+
+    vec3 fogColour = fog.colour * (ambientLight + dirLight.colour * dirLight.intensity);
+    float distance = length(position);
+    float fogFunction;
+    if(fog.equationType == 1)
+    {
+        fogFunction = ( (fog.fogEnd - distance)  / (fog.fogEnd - fog.fogStart) );
+    }
+    else if(fog.equationType == 2)
+    {
+        fogFunction = exp(-pow((distance * fog.densityFactor),2.0));
+    }
+     else if(fog.equationType == 3)
+    {
+        fogFunction = exp(-pow((distance * fog.densityFactor) * (distance * fog.densityFactor),2.0));
+
+    }
+    else
+    {
+        fogFunction = exp(-pow((distance * fog.densityFactor) * (distance * fog.densityFactor),2.0));
+
+     }
+    float fogFactor = fogFunction;
+    fogFactor = clamp( fogFactor, 0.0, 1.0);
+
+    vec3 resultColour = mix(fog.colour, colour.xyz, fogFactor);
+    vec4 finalResultFog = vec4(resultColour.xyz, colour.w);
+    return finalResultFog;
+
+}
+
 
 void main()
 {   // CHANGE ENTITY COLOUR BASED ON MATERIAL
@@ -122,4 +168,10 @@ void main()
      diffuseSpecularComponent += calculationPointLight(pointLight, vertexPosition, vertexNormals);
     // ADD AMBIENT LIGHT TO FINAL CALCULATION
     fragColor = diffuseSpecularComponent + ambientMaterialColour * vec4(ambientLight, 1) ;
+    // ADD FOG IF ACTIVE
+   if(fog.activeFog == 1)
+   {
+    fragColor = calculateFog(vertexPosition, fragColor, ambientLight, fog, directionalLight);
+   }
+
 }

@@ -15,7 +15,7 @@ public class DirectionalLight {
     }
 
     public DirectionalLight(DirectionalLight dirLight){
-        this(new Vector3f(dirLight.getDirection()),new Vector3f(dirLight.getColour()), dirLight.getIntensity());
+        this(new Vector3f(dirLight.getColour()), new Vector3f(dirLight.getDirection()), dirLight.getIntensity());
     }
 
     public Vector3f getColour() {

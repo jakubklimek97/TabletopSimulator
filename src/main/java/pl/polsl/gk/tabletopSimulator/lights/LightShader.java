@@ -3,6 +3,7 @@ package pl.polsl.gk.tabletopSimulator.lights;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import pl.polsl.gk.tabletopSimulator.fog.FogRenderer;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 
@@ -92,6 +93,20 @@ public class LightShader extends Shader {
         super.createUniform(uniformName + ".reflectanceFactor");
     }
 
+    public void createFogUniform(String uniformName){
+        super.createUniform(uniformName + ".density");
+        super.createUniform(uniformName + ".colour");
+        super.createUniform(uniformName + ".active");
+
+    }
+    public void loadFog(String uniformName, FogRenderer fog){
+        super.loadVector(uniformName + ".colour", fog.getColour());
+        super.loadFloat(uniformName + ".density", fog.getDensityFactor());
+        super.loadInt(uniformName + ".activeFog", fog.isActive() ? 1 : 0);
+
+
+    }
+
     public void loadMaterial(Material material){
         loadMaterial("material",material);
     }
@@ -107,6 +122,11 @@ public class LightShader extends Shader {
     public void loadPointLight(PointLight pointLight){
         loadLight("pointLight",pointLight);
     }
+
+    public void loadFog(FogRenderer fog) {
+        loadFog("fog", fog);
+    }
+
 
     public void bindAttributes() {
     }

@@ -113,6 +113,7 @@ vec4 calcDirectionalLight(DirectionalLight directionalLight, vec3 position, vec3
     return calcLightColour(directionalLight.colour, directionalLight.intensity, position, normalize(directionalLight.direction), normal);
 }
 
+
 void main()
 {   // CHANGE ENTITY COLOUR BASED ON MATERIAL
     setupMaterialColours(material, vertexTextureCoordinates);

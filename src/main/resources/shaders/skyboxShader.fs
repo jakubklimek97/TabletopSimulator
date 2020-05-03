@@ -8,8 +8,8 @@ uniform samplerCube cubeMapDay;
 uniform samplerCube cubeMapNight;
 uniform float blendFactor;
 
-const float lowerLimit = 10.0;
-const float upperLimit = 30.0;
+const float lowerLimit = 40.0;
+const float upperLimit = 10.0;
 
 void main(void){
 

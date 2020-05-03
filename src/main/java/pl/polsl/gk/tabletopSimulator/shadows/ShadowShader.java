@@ -25,7 +25,7 @@ public class ShadowShader extends Shader {
     }
 
     @Override
-    protected void bindAllUniforms() {
+    public void bindAllUniforms() {
     super.createUniform("orthoProjectionMatrix", orthoProjectionMatrix);
     super.createUniform("lightViewMatrix", lightViewMatrix);
     }

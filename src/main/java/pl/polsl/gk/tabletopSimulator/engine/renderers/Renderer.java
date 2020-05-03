@@ -9,9 +9,13 @@ import pl.polsl.gk.tabletopSimulator.entities.Entity;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.lights.LightShader;
+import pl.polsl.gk.tabletopSimulator.shadows.ShadowShader;
+import pl.polsl.gk.tabletopSimulator.shadows.Shadows;
 
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 public class Renderer {
 

@@ -11,11 +11,14 @@ public class Shadows {
 
     private TextureManager depthMap;
 
-    public Shadows() throws Exception {
+    public static final int mapWidth = 1024;
+
+    public static final int mapHeight = 1024;
+
+    public Shadows()  {
         FBO = glGenFramebuffers();
 
-        int mapHeight = 1024;
-        int mapWidth = 1024;
+
         depthMap = new TextureManager(mapWidth, mapHeight, GL_DEPTH_COMPONENT);
         glBindFramebuffer(GL_FRAMEBUFFER,FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, depthMap.getTextureId(),0);
@@ -24,7 +27,7 @@ public class Shadows {
         glReadBuffer(GL_NONE);
 
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-            throw new Exception("Could not create FrameBuffer!");
+            System.out.println("Could not create FrameBuffer!");
         }
 
     }

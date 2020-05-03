@@ -41,9 +41,9 @@ public class Renderer {
                        PointLight light, DirectionalLight directionalLight) {
         clear();
         lightShader.use();
-        Matrix4f  projectionMatrix = transformation.getProjectionMatrix(FOV, width, height, Z_NEAR, Z_FAR);
+        Matrix4f  projectionMatrix = transformation.setupProjectionMatrix(FOV, width, height, Z_NEAR, Z_FAR);
         lightShader.loadProjectionMatrix(projectionMatrix);
-        Matrix4f viewMatrix = transformation.getViewMatrix(camera);
+        Matrix4f viewMatrix = transformation.setupViewMatrix(camera);
 
 
         lightShader.loadAmbientLight(ambientLight);
@@ -71,7 +71,7 @@ public class Renderer {
 
         // Render each Item in game
         for (Entity item : items) {
-            Matrix4f  modelViewMatrix = transformation.getModelViewMatrix(item, viewMatrix);
+            Matrix4f  modelViewMatrix = transformation.setupModelViewMatrix(item, viewMatrix);
             lightShader.loadModelViewMatrix(modelViewMatrix);
             lightShader.loadMaterial(item.getMesh().getMaterial());
             item.getMesh().render();

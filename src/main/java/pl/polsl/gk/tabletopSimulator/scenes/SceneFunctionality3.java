@@ -136,7 +136,7 @@ public class SceneFunctionality3 implements IScene {
         camera = new Camera();
         transformManager = new TransformManager();
         loader = new Loader();
-        skybox = new SkyboxManager(loader, transformManager.getProjectionMatrix(FOV,1280,720,Z_NEAR,Z_FAR));
+        skybox = new SkyboxManager(loader, transformManager.setupProjectionMatrix(FOV,1280,720,Z_NEAR,Z_FAR));
     }
     private void freeCallbacks(){
 

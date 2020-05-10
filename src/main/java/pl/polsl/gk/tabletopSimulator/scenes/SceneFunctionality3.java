@@ -80,8 +80,8 @@ public class SceneFunctionality3 implements IScene {
         Material material2 = new Material(texture2, reflectFactor);
         Material material3 = new Material(texture3,reflectFactor);
         Material material4 = new Material(texture4,reflectFactor);
-        try{ mesh = OBJLoader.load("/OBJs/cube.obj");
-            mesh2 = OBJLoader.load("/OBJs/cube.obj");
+        try{ mesh = OBJLoader.load("/OBJs/sphere.obj");
+            mesh2 = OBJLoader.load("/OBJs/sphere.obj");
             mesh3 = OBJLoader.load("/OBJs/plane.obj");
             mesh4 = OBJLoader.load("/OBJs/cube.obj");
         }
@@ -93,12 +93,12 @@ public class SceneFunctionality3 implements IScene {
         mesh3.setMaterial(material3);
         mesh4.setMaterial(material4);
         Entity item1 = new Entity(mesh2);
-        item1.setScale(3f);
+        item1.setScale(.3f);
         item1.setRotation(0f,0f,0f);
-        item1.setPosition(-5f,8.5f,15f);
+        item1.setPosition(13f,8.5f,19f);
         Entity item2 = new Entity(mesh);
         item2.setPosition(1f,5.5f,15f);
-        item2.setScale(3f);
+        item2.setScale(.3f);
         item2.setRotation(1f,5.5f,10f);
         Entity item3 = new Entity(mesh3);
         item3.setPosition(0f,-3f,0f);
@@ -109,7 +109,7 @@ public class SceneFunctionality3 implements IScene {
         item4.setScale(3f);
         item4.setRotation(1f,5.5f,10f);
 
-        items = new Entity[]{item1,item2,item3};
+        items = new Entity[]{item1,item2,item3, item4};
 
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
         Vector3f lightColour = new Vector3f(1, 1, 1);

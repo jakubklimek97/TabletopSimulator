@@ -5,9 +5,9 @@ import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 public class ShadowShader extends Shader {
 
-    private static final String FILE = "shadowShader";
-    private int orthoProjectionMatrix;
-    private int lightViewMatrix;
+    private static final String FILE = "shadowsShader";
+    private int orthogonalProjectionMatrix;
+    private int modelLightViewMatrix;
 
     public ShadowShader(){
         super(FILE);
@@ -19,23 +19,23 @@ public class ShadowShader extends Shader {
 
     @Override
     protected void getAllUniformLocations() {
-        orthoProjectionMatrix = super.getUniformLocation("orthoProjectionMatrix");
-        lightViewMatrix = super.getUniformLocation("lightViewMatrix");
+        orthogonalProjectionMatrix = super.getUniformLocation("orthogonalProjectionMatrix");
+        modelLightViewMatrix = super.getUniformLocation("modelLightViewMatrix");
 
     }
 
     @Override
     public void bindAllUniforms() {
-    super.createUniform("orthoProjectionMatrix", orthoProjectionMatrix);
-    super.createUniform("lightViewMatrix", lightViewMatrix);
+    super.createUniform("orthogonalProjectionMatrix", orthogonalProjectionMatrix);
+    super.createUniform("modelLightViewMatrix", modelLightViewMatrix);
     }
 
     public void loadOrthoProjectionMatrix(Matrix4f orthoProjectionMatrix) {
-        super.loadMatrix("orthoProjectionMatrix", orthoProjectionMatrix);
+        super.loadMatrix("orthogonalProjectionMatrix", orthoProjectionMatrix);
     }
 
-    public void loadLightViewMatrix(Matrix4f lightViewMatrix) {
-        super.loadMatrix("lightViewMatrix", lightViewMatrix);
+    public void loadModelLightViewMatrix(Matrix4f modelLightViewMatrix) {
+        super.loadMatrix("modelLightViewMatrix", modelLightViewMatrix);
     }
 
 }

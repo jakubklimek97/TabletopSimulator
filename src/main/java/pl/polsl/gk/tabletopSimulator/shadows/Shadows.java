@@ -9,11 +9,11 @@ public class Shadows {
 
     private int FBO;
 
-    private TextureManager depthMap;
+    private final TextureManager depthMap;
 
-    public static final int mapWidth = 1024;
+    public static final int mapWidth = 400;
 
-    public static final int mapHeight = 1024;
+    public static final int mapHeight = 600;
 
     public Shadows()  {
         FBO = glGenFramebuffers();
@@ -30,22 +30,15 @@ public class Shadows {
             System.out.println("Could not create FrameBuffer!");
         }
 
+        glBindFramebuffer(GL_FRAMEBUFFER,0);
     }
 
     public int getFBO() {
         return FBO;
     }
 
-    public void setFBO(int FBO) {
-        this.FBO = FBO;
-    }
-
     public TextureManager getDepthMap() {
         return depthMap;
-    }
-
-    public void setDepthMap(TextureManager depthMap) {
-        this.depthMap = depthMap;
     }
 
     public void cleanup(){

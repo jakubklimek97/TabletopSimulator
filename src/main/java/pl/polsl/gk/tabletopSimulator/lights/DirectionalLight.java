@@ -7,11 +7,13 @@ public class DirectionalLight {
     private Vector3f colour;
     private Vector3f direction;
     private float intensity;
+    private float shadowPosotionMultiplier;
 
     public DirectionalLight(Vector3f colour, Vector3f direction, float intensity){
         this.direction = direction;
         this.colour = colour;
         this.intensity = intensity;
+        shadowPosotionMultiplier = 1;
     }
 
     public DirectionalLight(DirectionalLight dirLight){
@@ -42,6 +44,13 @@ public class DirectionalLight {
         this.intensity = intensity;
     }
 
+    public float getShadowPosotionMultiplier() {
+        return shadowPosotionMultiplier;
+    }
+
+    public void setShadowPosotionMultiplier(float shadowPosotionMultiplier) {
+        this.shadowPosotionMultiplier = shadowPosotionMultiplier;
+    }
 
 
 }

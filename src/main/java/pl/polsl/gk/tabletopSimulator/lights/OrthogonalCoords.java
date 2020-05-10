@@ -63,11 +63,11 @@ public class OrthogonalCoords {
         this.far = far;
     }
 
-    public float left;
-    public float right;
-    public float bottom;
-    public float top;
-    public float near;
-    public float far;
+    private float left;
+    private float right;
+    private float bottom;
+    private float top;
+    private float near;
+    private float far;
 
 }

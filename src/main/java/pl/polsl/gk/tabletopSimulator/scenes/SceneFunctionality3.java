@@ -148,7 +148,6 @@ public class SceneFunctionality3 implements IScene {
 
     @Override
     public void Run() {
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
         while ( !glfwWindowShouldClose(window) ) {
             mouseInput.input(window);
             glfwPollEvents();

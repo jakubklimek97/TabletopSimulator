@@ -110,13 +110,28 @@ public class TransformManager {
     public Matrix4f getModelViewMatrix() {
         return modelViewMatrix;
     }
-
+  
     public Matrix4f getViewMatrix() {
         return viewMatrix;
     }
 
     public Matrix4f getLightViewMatrix() {
         return lightViewMatrix;
+
     }
+
+    public Matrix4f setViewSpriteMatrix(Matrix4f modelMatrix, Matrix4f viewMatrix) {
+        modelMatrix.m00(viewMatrix.m00());
+        modelMatrix.m01(viewMatrix.m10());
+        modelMatrix.m02(viewMatrix.m20());
+        modelMatrix.m10(viewMatrix.m01());
+        modelMatrix.m11(viewMatrix.m11());
+        modelMatrix.m12(viewMatrix.m21());
+        modelMatrix.m20(viewMatrix.m02());
+        modelMatrix.m21(viewMatrix.m12());
+        modelMatrix.m22(viewMatrix.m22());
+        Matrix4f viewMulModelMatrix = new Matrix4f();
+        viewMatrix.mul(modelMatrix,viewMulModelMatrix);
+        return viewMulModelMatrix;
 
 }

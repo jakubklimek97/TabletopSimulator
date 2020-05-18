@@ -17,6 +17,8 @@ import pl.polsl.gk.tabletopSimulator.lights.Material;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.loaders.OBJLoader;
 import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
+import pl.polsl.gk.tabletopSimulator.sun.Light2DSprite;
+import pl.polsl.gk.tabletopSimulator.sun.Light2DSpriteRenderer;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 
@@ -63,18 +65,27 @@ public class SceneFunctionality3 implements IScene {
 
     private  static final float B = 0.69f;
 
+
+    private Light2DSpriteRenderer light2DSpriteRenderer;
+    private Light2DSpriteRenderer moonRenderer;
+    private Light2DSprite theLight2DSprite;
+    private Light2DSprite theMoon;
     private float lightAngle;
     private final float angleInc;
+
+
 
     @Override
     public void Init() {
 
         setCallbacks();
-        float reflectFactor = 5.0f;
-        TextureManager texture = new TextureManager("src\\main\\resources\\textures\\moon.png");
-        TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\sun.png");
-        TextureManager texture3 = new TextureManager("src\\main\\resources\\textures\\moon.png");
-        TextureManager texture4 = new TextureManager("src\\main\\resources\\textures\\moon.png");
+
+        float reflectFactor = 9.0f;
+        TextureManager texture = new TextureManager("src\\main\\resources\\textures\\Moon.png",1);
+        TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\Moon.png",1);
+        TextureManager sun2DSprite = new TextureManager("src\\main\\resources\\textures\\sun2D.png",0);
+        TextureManager moon2DSprite = new TextureManager("src\\main\\resources\\textures\\moon2D.png",0);
+
         Mesh mesh = null;
         Mesh mesh2 = null;
         Mesh mesh3 = null;
@@ -96,13 +107,16 @@ public class SceneFunctionality3 implements IScene {
         mesh3.setMaterial(material3);
         mesh4.setMaterial(material4);
         Entity item1 = new Entity(mesh2);
+
         item1.setScale(.3f);
         item1.setRotation(0f,0f,0f);
         item1.setPosition(13f,8.5f,19f);
+
         Entity item2 = new Entity(mesh);
         item2.setPosition(1f,5.5f,15f);
         item2.setScale(.3f);
         item2.setRotation(1f,5.5f,10f);
+
         Entity item3 = new Entity(mesh3);
         item3.setPosition(0f,-3f,0f);
         item3.setScale(30f);
@@ -130,6 +144,7 @@ public class SceneFunctionality3 implements IScene {
          fog = new Fog();
          Vector3f fogColour = new Vector3f(0.419f, 0.419f, 0.419f);
          float density = 0.019f;
+
          fog.setColour(fogColour);
          fog.setDensityFactor(density);
          fog.setFogStart(2);
@@ -137,6 +152,14 @@ public class SceneFunctionality3 implements IScene {
          fog.setEquationType(2);
          fog.setActive(true);
 
+
+       theLight2DSprite = new Light2DSprite(sun2DSprite,55);
+        light2DSpriteRenderer = new Light2DSpriteRenderer();
+        theLight2DSprite.setLightDir(directionalLight.getDirection());
+        moonRenderer = new Light2DSpriteRenderer();
+        theMoon = new Light2DSprite(moon2DSprite,35);
+        theMoon.setLightDir(directionalLight.getDirection().negate());
+      
          directionalLight.setShadowPosotionMultiplier(15);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -171,6 +194,15 @@ public class SceneFunctionality3 implements IScene {
             camera.update(mouseInput);
             render(window);
             skybox.render(camera,R,G,B);
+           
+            // Now zValue and yValue below displace directionalLight z and y
+            if(directionalLight.getDirection().z < 0.5f){
+            light2DSpriteRenderer.render(theLight2DSprite, camera);
+                theLight2DSprite.setLightDir(directionalLight.getDirection());}
+
+            if(directionalLight.getDirection().z > 0.5f) {
+                moonRenderer.render(theMoon, camera);
+                theMoon.setLightDir(directionalLight.getDirection());}
 
             // Update camera position
 
@@ -208,6 +240,7 @@ public class SceneFunctionality3 implements IScene {
         camera = new Camera();
         transformManager = new TransformManager();
         loader = new Loader();
+
         skybox = new SkyboxManager(loader, transformManager.updateProjectionMatrix(FOV,1280,720,Z_NEAR,Z_FAR));
         lightAngle = 45f;
         angleInc = 0.01f;

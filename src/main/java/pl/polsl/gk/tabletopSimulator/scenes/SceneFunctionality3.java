@@ -82,7 +82,7 @@ public class SceneFunctionality3 implements IScene {
 
         float reflectFactor = 9.0f;
         TextureManager texture = new TextureManager("src\\main\\resources\\textures\\Moon.png",1);
-        TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\Sun.png",1);
+        TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\colormap-lowres.png",1);
         TextureManager sun2DSprite = new TextureManager("src\\main\\resources\\textures\\sun2D.png",0);
         TextureManager moon2DSprite = new TextureManager("src\\main\\resources\\textures\\moon2D.png",0);
 
@@ -96,7 +96,7 @@ public class SceneFunctionality3 implements IScene {
         Material material4 = new Material(texture,reflectFactor);
         try{ mesh = OBJLoader.load("/OBJs/sphere.obj");
             mesh2 = OBJLoader.load("/OBJs/sphere.obj");
-            mesh3 = OBJLoader.load("/OBJs/plane.obj");
+            mesh3 = OBJLoader.load("/OBJs/Small Tropical Island.obj");
             mesh4 = OBJLoader.load("/OBJs/cube.obj");
         }
         catch (Exception e){
@@ -119,7 +119,7 @@ public class SceneFunctionality3 implements IScene {
 
         Entity item3 = new Entity(mesh3);
         item3.setPosition(0f,-3f,0f);
-        item3.setScale(30f);
+        item3.setScale(2f);
         item3.setRotation(1f,5.5f,10f);
         Entity item4 = new Entity(mesh4);
         item4.setPosition(-15f,9.5f,15f);
@@ -143,7 +143,7 @@ public class SceneFunctionality3 implements IScene {
          directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
          fog = new Fog();
          Vector3f fogColour = new Vector3f(0.419f, 0.419f, 0.419f);
-         float density = 0.019f;
+         float density = 0.005f;
 
          fog.setColour(fogColour);
          fog.setDensityFactor(density);

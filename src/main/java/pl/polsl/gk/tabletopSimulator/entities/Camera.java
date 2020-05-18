@@ -17,8 +17,8 @@ public class Camera {
     private final Vector3f cameraInc;
 
     public Camera() {
-        position = new Vector3f(0, 0, 0);
-        rotation = new Vector3f(0, 0, 0);
+        position = new Vector3f(77.87861f, 77.5f, -339.32f);
+        rotation = new Vector3f(-5.8f, -169.79f, 0);
         cameraInc = new Vector3f(0, 0, 0);
     }
 

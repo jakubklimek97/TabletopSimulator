@@ -8,7 +8,7 @@ import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.entities.Entity;
 import pl.polsl.gk.tabletopSimulator.fog.Fog;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
-import pl.polsl.gk.tabletopSimulator.lights.OrthogonalCoords;
+import pl.polsl.gk.tabletopSimulator.engine.managers.OrthogonalCoordsManager;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.lights.LightAndFogShader;
 import pl.polsl.gk.tabletopSimulator.shadows.ShadowShader;
@@ -31,9 +31,9 @@ public class Renderer {
     private final LightAndFogShader lightShader;
     private ShadowShader shadowShader;
     private Shadows shadows;
-    private final OrthogonalCoords orthogonalCoords;
+    private final OrthogonalCoordsManager orthogonalCoordsManager;
     public Renderer() {
-        orthogonalCoords = new OrthogonalCoords(-20.0f, 20.0f, -20.0f, 25.0f, -15.0f, 50.0f);
+        orthogonalCoordsManager = new OrthogonalCoordsManager(-20.0f, 20.0f, -20.0f, 25.0f, -15.0f, 50.0f);
         shadows = new Shadows();
         shadowShader = new ShadowShader();
         transformation = new TransformManager();
@@ -73,15 +73,15 @@ public class Renderer {
         shadowShader.use();
         DirectionalLight light1 = directionalLight;
         Vector3f lightDir = light1.getDirection();
-        OrthogonalCoords orthogonalCoords1 = orthogonalCoords;
+        OrthogonalCoordsManager orthogonalCoordsManager1 = orthogonalCoordsManager;
         float lightAngleX = (float)Math.toDegrees(Math.acos(lightDir.z));
         float lightAngleY = (float)Math.toDegrees(Math.asin(lightDir.x));
         float lightAngleZ = 0;
 
         Matrix4f lightViewMatrix = transformation.updateLightViewMatrix(new Vector3f(lightDir).mul(directionalLight.getShadowPosotionMultiplier()),
                 new Vector3f(lightAngleX,lightAngleY,lightAngleZ));
-        Matrix4f orthoProjectionMatrix = transformation.updateOrthoProjectionMatrix(orthogonalCoords1.getLeft(),orthogonalCoords1.getRight(),
-                orthogonalCoords1.getBottom(),orthogonalCoords1.getTop(),orthogonalCoords1.getNear(),orthogonalCoords1.getFar());
+        Matrix4f orthoProjectionMatrix = transformation.updateOrthoProjectionMatrix(orthogonalCoordsManager1.getLeft(), orthogonalCoordsManager1.getRight(),
+                orthogonalCoordsManager1.getBottom(), orthogonalCoordsManager1.getTop(), orthogonalCoordsManager1.getNear(), orthogonalCoordsManager1.getFar());
         shadowShader.loadOrthoProjectionMatrix(orthoProjectionMatrix);
 
         for (Entity item : items) {

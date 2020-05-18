@@ -18,10 +18,10 @@ public class SceneManager {
                 currentScene = new SceneQuit();
                 break;
             case TEST_FUNC_2:
-                currentScene = new SceneFunctionality2(this);
+                currentScene = new PreAlhpaSceneFunctionality(this);
                 break;
             case TEST_FUNC_3:
-                currentScene = new SceneFunctionality3(this);
+                currentScene = new BetaSceneFunctionality(this);
                 break;
 
         }

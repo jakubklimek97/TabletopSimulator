@@ -9,7 +9,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33C.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 
-public class SceneFunctionality2 implements IScene {
+public class PreAlhpaSceneFunctionality implements IScene {
     @Override
     public void Init() {
         setCallbacks();
@@ -50,7 +50,7 @@ public class SceneFunctionality2 implements IScene {
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }
-    public SceneFunctionality2(SceneManager sceneManager){
+    public PreAlhpaSceneFunctionality(SceneManager sceneManager){
         this.sceneManager = sceneManager;
         this.window = this.sceneManager.getWindow();
     }

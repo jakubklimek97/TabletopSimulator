@@ -213,11 +213,7 @@ void main()
     // CALCULATE DIFFUSE  SPECULAR  FOR DIRECTIONAL  LIGHT
      vec4 diffuseSpecularComponent = calcDirectionalLight(directionalLight, vertexPosition, vertexNormals);
     // CALCULATE DIFFUSE  SPECULAR AND ATTENUATION FOR POINT LIGHT
-
-    if(pointLight.intensity > 1f)
-    {
      diffuseSpecularComponent += calculationPointLight(pointLight, vertexPosition, vertexNormals);
-    }
 
     float shadow = calculateShadows(vertexLightViewPos);
     fragColor = clamp(ambientMaterialColour * vec4(ambientLight,1) + diffuseSpecularComponent *  shadow,0,1);

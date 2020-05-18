@@ -1,4 +1,4 @@
-package pl.polsl.gk.tabletopSimulator.lights;
+package pl.polsl.gk.tabletopSimulator.models;
 
 import org.joml.Vector4f;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;

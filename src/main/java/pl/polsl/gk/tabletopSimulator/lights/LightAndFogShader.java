@@ -4,12 +4,13 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import pl.polsl.gk.tabletopSimulator.fog.Fog;
+import pl.polsl.gk.tabletopSimulator.models.Material;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 
 public class LightAndFogShader extends Shader {
 
-    private static final String FILE = "lightAndFogShader";
+    private static final String FILE = "sceneShader";
     private int textureSampler;
     private int projectionMatrix;
     private int modelViewMatrix;

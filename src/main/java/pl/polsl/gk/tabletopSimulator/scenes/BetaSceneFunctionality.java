@@ -13,7 +13,7 @@ import pl.polsl.gk.tabletopSimulator.fog.Fog;
 import pl.polsl.gk.tabletopSimulator.handlers.KeyboardInput;
 import pl.polsl.gk.tabletopSimulator.handlers.MouseInput;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
-import pl.polsl.gk.tabletopSimulator.lights.Material;
+import pl.polsl.gk.tabletopSimulator.models.Material;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.loaders.OBJLoader;
 import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
@@ -27,7 +27,7 @@ import static org.lwjgl.opengl.ARBSeamlessCubeMap.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL33C.*;
 
-public class SceneFunctionality3 implements IScene {
+public class BetaSceneFunctionality implements IScene {
 
     private final SkyboxManager skybox;
 
@@ -59,12 +59,10 @@ public class SceneFunctionality3 implements IScene {
 
     private Fog fog;
 
-    private static final float R = 0.544f;
+    private Vector3f skyboxColourFog = new Vector3f(0.544f,0.62f,0.69f);
 
-    private  static final float G = 0.62f;
-
-    private  static final float B = 0.69f;
-
+    private boolean dayOn = false;
+    private boolean nightOn = true;
 
     private Light2DSpriteRenderer light2DSpriteRenderer;
     private Light2DSpriteRenderer moonRenderer;
@@ -81,10 +79,10 @@ public class SceneFunctionality3 implements IScene {
         setCallbacks();
 
         float reflectFactor = 9.0f;
-        TextureManager texture = new TextureManager("src\\main\\resources\\textures\\Moon.png",1);
-        TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\colormap-lowres.png",1);
-        TextureManager sun2DSprite = new TextureManager("src\\main\\resources\\textures\\sun2D.png",0);
-        TextureManager moon2DSprite = new TextureManager("src\\main\\resources\\textures\\moon2D.png",0);
+        TextureManager texture = new TextureManager("src\\main\\resources\\textures\\pngFiles\\Moon.png",1);
+        TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\pngFiles\\colormap-lowres.png",1);
+        TextureManager sun2DSprite = new TextureManager("src\\main\\resources\\textures\\sprites\\sun2D.png",0);
+        TextureManager moon2DSprite = new TextureManager("src\\main\\resources\\textures\\sprites\\moon2D.png",0);
 
         Mesh mesh = null;
         Mesh mesh2 = null;
@@ -107,31 +105,26 @@ public class SceneFunctionality3 implements IScene {
         mesh3.setMaterial(material3);
         mesh4.setMaterial(material4);
         Entity item1 = new Entity(mesh2);
-
-        item1.setScale(.3f);
-        item1.setRotation(0f,0f,0f);
-        item1.setPosition(13f,8.5f,19f);
+        item1.setPosition(60f,90f,-165f);
+        item1.setScale(2f);
+        item1.setRotation(1f,-20f,10f);
 
         Entity item2 = new Entity(mesh);
-        item2.setPosition(1f,5.5f,15f);
-        item2.setScale(.3f);
-        item2.setRotation(1f,5.5f,10f);
+        item2.setPosition(190f,90f,-150f);
+        item2.setScale(3f);
+        item2.setRotation(1f,-20f,10f);
 
         Entity item3 = new Entity(mesh3);
-        item3.setPosition(0f,-3f,0f);
-        item3.setScale(2f);
+        item3.setPosition(10f,-142f,0f);
+        item3.setScale(3f);
         item3.setRotation(1f,5.5f,10f);
-        Entity item4 = new Entity(mesh4);
-        item4.setPosition(-15f,9.5f,15f);
-        item4.setScale(3f);
-        item4.setRotation(1f,5.5f,10f);
 
-        items = new Entity[]{item1,item2,item3, item4};
+        items = new Entity[]{item1,item2,item3};
 
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
         Vector3f lightColour = new Vector3f(1, 1, 1);
         Vector3f lightPosition = new Vector3f(1f,8.5f,5f);
-        float lightIntensity = 0.5f;
+        float lightIntensity = 0.1f;
         pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
         PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
         pointLight.setAttenuation(att);
@@ -143,7 +136,7 @@ public class SceneFunctionality3 implements IScene {
          directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
          fog = new Fog();
          Vector3f fogColour = new Vector3f(0.419f, 0.419f, 0.419f);
-         float density = 0.005f;
+         float density = 0.002f;
 
          fog.setColour(fogColour);
          fog.setDensityFactor(density);
@@ -153,19 +146,18 @@ public class SceneFunctionality3 implements IScene {
          fog.setActive(true);
 
 
-       theLight2DSprite = new Light2DSprite(sun2DSprite,55);
+       theLight2DSprite = new Light2DSprite(sun2DSprite,15);
         light2DSpriteRenderer = new Light2DSpriteRenderer();
         theLight2DSprite.setLightDir(directionalLight.getDirection());
         moonRenderer = new Light2DSpriteRenderer();
-        theMoon = new Light2DSprite(moon2DSprite,35);
+        theMoon = new Light2DSprite(moon2DSprite,5);
         theMoon.setLightDir(directionalLight.getDirection().negate());
       
-         directionalLight.setShadowPosotionMultiplier(15);
+         directionalLight.setShadowPosotionMultiplier(10);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         // Set the clear color
         glEnable(GL_DEPTH_TEST);
-        //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
         // Support for transparencies
         glEnable(GL_BLEND);
@@ -184,7 +176,7 @@ public class SceneFunctionality3 implements IScene {
 
     @Override
     public void Run() {
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(1.0f, 0f, 0f, 1.0f);
         while ( !glfwWindowShouldClose(window) ) {
             mouseInput.input(window);
             glfwPollEvents();
@@ -193,14 +185,28 @@ public class SceneFunctionality3 implements IScene {
             camera.input();
             camera.update(mouseInput);
             render(window);
-            skybox.render(camera,R,G,B);
+            skybox.render(camera,skyboxColourFog.x,skyboxColourFog.y,skyboxColourFog.z,dayOn,nightOn);
            
             // Now zValue and yValue below displace directionalLight z and y
             if(directionalLight.getDirection().z < 0.5f){
-            light2DSpriteRenderer.render(theLight2DSprite, camera);
+                nightOn = false;
+                dayOn = true;
+                skyboxColourFog = new Vector3f(0.544f,0.62f,0.69f);
+                if(ambientLight.x <= 1.0f) ambientLight.x += 0.01f;
+                if(ambientLight.y <= 1.0f) ambientLight.y += 0.01f;
+                if(ambientLight.z <= 1.0f) ambientLight.z += 0.01f;
+
+                light2DSpriteRenderer.render(theLight2DSprite, camera);
                 theLight2DSprite.setLightDir(directionalLight.getDirection());}
 
             if(directionalLight.getDirection().z > 0.5f) {
+                dayOn = false;
+                nightOn = true;
+                skyboxColourFog = new Vector3f(0.419f,0.419f,0.419f);
+                if(ambientLight.x >= -1.0f) ambientLight.x -= 0.1f;
+                if(ambientLight.y >= -1.0f) ambientLight.y -= 0.1f;
+                if(ambientLight.z >= -1.0f) ambientLight.z -= 0.1f;
+
                 moonRenderer.render(theMoon, camera);
                 theMoon.setLightDir(directionalLight.getDirection());}
 
@@ -231,7 +237,7 @@ public class SceneFunctionality3 implements IScene {
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }
-    public SceneFunctionality3(SceneManager sceneManager){
+    public BetaSceneFunctionality(SceneManager sceneManager){
         this.sceneManager = sceneManager;
         this.window = this.sceneManager.getWindow();
         mouseInput = new MouseInput();

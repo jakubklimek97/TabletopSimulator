@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
-import pl.polsl.gk.tabletopSimulator.lights.Material;
+import pl.polsl.gk.tabletopSimulator.models.Material;
 
 
 import static org.lwjgl.opengl.GL15.*;

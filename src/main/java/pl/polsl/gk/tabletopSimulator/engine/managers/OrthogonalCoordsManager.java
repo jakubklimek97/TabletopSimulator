@@ -1,8 +1,8 @@
-package pl.polsl.gk.tabletopSimulator.lights;
+package pl.polsl.gk.tabletopSimulator.engine.managers;
 
-public class OrthogonalCoords {
+public class OrthogonalCoordsManager {
 
-    public OrthogonalCoords(float left, float right, float bottom, float top, float near, float far){
+    public OrthogonalCoordsManager(float left, float right, float bottom, float top, float near, float far){
         this.left = left;
         this.right = right;
         this.bottom = bottom;
@@ -10,9 +10,9 @@ public class OrthogonalCoords {
         this.near = near;
         this.far = far;
     }
-    public OrthogonalCoords(OrthogonalCoords orthogonalCoords){
-        this(orthogonalCoords.left,orthogonalCoords.right,orthogonalCoords.bottom,
-                orthogonalCoords.top,orthogonalCoords.near,orthogonalCoords.far);
+    public OrthogonalCoordsManager(OrthogonalCoordsManager orthogonalCoordsManager){
+        this(orthogonalCoordsManager.left, orthogonalCoordsManager.right, orthogonalCoordsManager.bottom,
+                orthogonalCoordsManager.top, orthogonalCoordsManager.near, orthogonalCoordsManager.far);
     }
 
     public float getLeft() {

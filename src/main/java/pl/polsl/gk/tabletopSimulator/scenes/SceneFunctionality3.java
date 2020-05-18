@@ -82,7 +82,7 @@ public class SceneFunctionality3 implements IScene {
 
         float reflectFactor = 9.0f;
         TextureManager texture = new TextureManager("src\\main\\resources\\textures\\Moon.png",1);
-        TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\Moon.png",1);
+        TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\Sun.png",1);
         TextureManager sun2DSprite = new TextureManager("src\\main\\resources\\textures\\sun2D.png",0);
         TextureManager moon2DSprite = new TextureManager("src\\main\\resources\\textures\\moon2D.png",0);
 
@@ -92,8 +92,8 @@ public class SceneFunctionality3 implements IScene {
         Mesh mesh4 = null;
         Material material = new Material(texture, reflectFactor);
         Material material2 = new Material(texture2, reflectFactor);
-        Material material3 = new Material(texture3,reflectFactor);
-        Material material4 = new Material(texture4,reflectFactor);
+        Material material3 = new Material(texture2,reflectFactor);
+        Material material4 = new Material(texture,reflectFactor);
         try{ mesh = OBJLoader.load("/OBJs/sphere.obj");
             mesh2 = OBJLoader.load("/OBJs/sphere.obj");
             mesh3 = OBJLoader.load("/OBJs/plane.obj");

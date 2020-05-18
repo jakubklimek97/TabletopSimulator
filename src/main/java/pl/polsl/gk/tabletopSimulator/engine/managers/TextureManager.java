@@ -18,15 +18,12 @@ public class TextureManager {
     private final int textureId;
     private int width;
     private int height;
-  
-   public TextureManager(String fileName) {
-        this(loadTexture(fileName));
-    }
+
 
     public TextureManager(String fileName, int type) {
-            this(loadTexture(fileName,type));
-  
+        this(loadTexture(fileName, type));
 
+    }
     public TextureManager(int width, int height, int pixelFormat){
         this.textureId = glGenTextures();
         this.width = width;

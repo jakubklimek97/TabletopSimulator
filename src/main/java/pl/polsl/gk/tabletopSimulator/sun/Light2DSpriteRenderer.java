@@ -58,9 +58,9 @@ public class Light2DSpriteRenderer {
         Matrix4f modelMatrix = new Matrix4f();
         Vector3f sunPos = light2DSprite.getWorldGamePosition(camera.getPosition());
         modelMatrix.translate(sunPos);
-        Matrix4f modelViewMatrix = transformation.setViewSpriteMatrix(modelMatrix,transformation.getViewMatrix(camera));
+        Matrix4f modelViewMatrix = transformation.setViewSpriteMatrix(modelMatrix,transformation.updateViewMatrix(camera));
         modelViewMatrix.scale(new Vector3f(light2DSprite.getScale(), light2DSprite.getScale(), light2DSprite.getScale()), modelViewMatrix);
-        return transformation.getProjectionMatrix(FOV,WINDOW_WIDTH,WINDOW_HEIGHT,Z_NEAR,Z_FAR).mul(modelViewMatrix);
+        return transformation.updateProjectionMatrix(FOV,WINDOW_WIDTH,WINDOW_HEIGHT,Z_NEAR,Z_FAR).mul(modelViewMatrix);
     }
 
 

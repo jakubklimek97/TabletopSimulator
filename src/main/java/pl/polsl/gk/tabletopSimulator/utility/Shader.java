@@ -31,7 +31,7 @@ public abstract class Shader {
         InputStream vertexUrl = getClass().getClassLoader().getResourceAsStream("shaders/" + name + ".vs");
         InputStream fragmentUrl = getClass().getClassLoader().getResourceAsStream("shaders/" + name + ".fs");
         if (!(vertexUrl != null && fragmentUrl != null)) {
-            System.err.println("ERROR::Couldn't load shader " + name);
+            System.err.println("ERROR::Couldn't load shader " + name + "::CLASS::"+ this.getClass().getSimpleName());
         }
         try {
             vertexCode = ParseFileToString(vertexUrl);
@@ -56,12 +56,12 @@ public abstract class Shader {
             fragmentCompileStatus = ip.get(0);
         }
         if (fragmentCompileStatus != 1) {
-            System.out.println("ERROR::FRAGMENTSHADER::" + name);
+            System.out.println("ERROR::FRAGMENTSHADER::" + name + "::CLASS::"+ this.getClass().getSimpleName());
             System.out.println(glGetShaderInfoLog(fragmentShader));
             glDeleteShader(vertexShader);
             glDeleteShader(fragmentShader);
         } else if (vertexCompileStatus != 1) {
-            System.out.println("ERROR::VERTEXSHADER::" + name);
+            System.out.println("ERROR::VERTEXSHADER::" + name + "::CLASS::"+ this.getClass().getSimpleName());
             System.out.println(glGetShaderInfoLog(fragmentShader));
             glDeleteShader(vertexShader);
             glDeleteShader(fragmentShader);
@@ -78,7 +78,7 @@ public abstract class Shader {
                 shaderCompileStatus = ip.get(0);
             }
             if (shaderCompileStatus != 1) {
-                System.out.println("ERROR::SHADER_LINK::" + name);
+                System.out.println("ERROR::SHADER_LINK::" + name + "::CLASS::"+ this.getClass().getSimpleName());
                 System.out.println(glGetProgramInfoLog(shaderId));
                 glDeleteShader(vertexShader);
                 glDeleteShader(fragmentShader);
@@ -130,7 +130,8 @@ public abstract class Shader {
     public void createUniform(String uniform, int uniformLocation) {
         if (uniformLocation < 0) {
 
-            System.out.println("ERROR::UNIFORM::" + uniform);
+            System.out.println("ERROR::UNIFORM::" + uniform +"::CLASS::"+this.getClass().getSimpleName());
+            return;
         }
         uniforms.put(uniform, uniformLocation);
     }
@@ -138,7 +139,8 @@ public abstract class Shader {
     public void createUniform(String uniformName)  {
         int uniformLocation = glGetUniformLocation(shaderId, uniformName);
         if (uniformLocation < 0) {
-            System.out.println("ERROR::UNIFORM::" + uniformName);
+            System.out.println("ERROR::UNIFORM::" + uniformName +"::CLASS::"+this.getClass().getSimpleName());
+            return;
         }
         uniforms.put(uniformName, uniformLocation);
     }

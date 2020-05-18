@@ -15,7 +15,9 @@ public class LightAndFogShader extends Shader {
     private int modelViewMatrix;
     private int specularPower;
     private int ambientLight;
-
+    private int modelLightViewMatrix;
+    private int orthogonalProjectionMatrix;
+    private int shadowMap;
 
     public LightAndFogShader() {
         super(FILE);
@@ -32,6 +34,7 @@ public class LightAndFogShader extends Shader {
         createPointLightUniform("pointLight");
         createDirectionalLightUniform("directionalLight");
         createFogUniform("fog");
+        setupShadowMapping();
 
     }
 
@@ -41,9 +44,35 @@ public class LightAndFogShader extends Shader {
         modelViewMatrix = super.getUniformLocation("modelViewMatrix");
         specularPower = super.getUniformLocation("specularPower");
         ambientLight = super.getUniformLocation("ambientLight");
-
+        shadowMap = super.getUniformLocation("shadowMap");
+        modelLightViewMatrix = super.getUniformLocation("modelLightViewMatrix");
+        orthogonalProjectionMatrix = super.getUniformLocation("orthogonalProjectionMatrix");
 
     }
+
+    public void setupShadowMapping(){
+        super.createUniform("shadowMap");
+        super.createUniform("orthogonalProjectionMatrix");
+        super.createUniform("modelLightViewMatrix");
+
+    }
+
+    public void loadOrthogonalProjectionMatrix(Matrix4f orthogonalProjMatrix){
+        super.loadMatrix("orthogonalProjectionMatrix",orthogonalProjMatrix);
+    }
+
+    public void loadModelLightViewMatrix(Matrix4f modelLightViewMatrix){
+        super.loadMatrix("modelLightViewMatrix",modelLightViewMatrix);
+    }
+
+    public void loadShadowMap(int value){
+        super.loadInt("shadowMap", value);
+    }
+
+    public void loadTextureSampler(int value) {
+        super.loadInt("texture_sampler", value);
+    }
+
 
     public void loadLight(String uniformName, PointLight pointLight) {
         super.loadVector(uniformName + ".colour", pointLight.getColor());
@@ -144,10 +173,6 @@ public class LightAndFogShader extends Shader {
 
     public void loadModelViewMatrix(Matrix4f modelViewMatrix) {
         super.loadMatrix("modelViewMatrix", modelViewMatrix);
-    }
-
-    public void loadTextureSampler(int textureSampler) {
-        super.loadInt("texture_sampler", textureSampler);
     }
 
 

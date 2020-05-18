@@ -3,6 +3,8 @@
 in vec2 vertexTextureCoordinates;
 in vec3 vertexNormals;
 in vec3 vertexPosition;
+in mat4 vertexModelViewMatrix;
+in vec4 vertexLightViewPos;
 
 out vec4 fragColor;
 //ATTENUATION PARAMETERS
@@ -52,6 +54,7 @@ struct Fog
 };
 
 uniform sampler2D texture_sampler;
+uniform sampler2D shadowMap;
 uniform vec3 ambientLight;
 uniform float specularPower;
 uniform Material material;
@@ -65,25 +68,29 @@ vec4 specularMaterialColour;
 // SETUP MATERIAL COLOUR
 void setupMaterialColours(Material material, vec2 textCoord)
 {
-    if (material.checkTexture == 0)
-    {       // DEFAULT MATERIAL COLOUR (WITHOUT CUSTOM MATERIAL)
-            ambientMaterialColour = material.ambient;
-            diffuseMaterialColour = material.diffuse;
-            specularMaterialColour = material.specular;
-    }
+    if (material.checkTexture == 1)
+    {
+
+                 // MATERIAL COLOUR CALCUALTION
+                 ambientMaterialColour = texture(texture_sampler, textCoord);
+                 diffuseMaterialColour = ambientMaterialColour;
+                 specularMaterialColour = ambientMaterialColour;
+     }
     else
-    {       // MATERIAL COLOUR CALCUALTION
-            ambientMaterialColour = texture(texture_sampler, textCoord);
-            diffuseMaterialColour = ambientMaterialColour;
-            specularMaterialColour = ambientMaterialColour;
-    }
+    {
+                // DEFAULT MATERIAL COLOUR (WITHOUT CUSTOM MATERIAL)
+                ambientMaterialColour = material.ambient;
+                diffuseMaterialColour = material.diffuse;
+                specularMaterialColour = material.specular;
+     }
+
 }
 // DIFFUSE AND SPECULAR COLOUR CALCULATION
 vec4 calcLightColour(vec3 lightColour, float lightIntensity, vec3 position, vec3 toLightDir, vec3 normal)
 {
     // FINAL RESULT OF CALCUALTION VARIABLES
-    vec4 diffuseFinalColour;
-    vec4 specularFinalColour;
+    vec4 diffuseFinalColour  = vec4(0.0,0.0,0.0,0.0);
+    vec4 specularFinalColour = vec4(0.0,0.0,0.0,0.0);
 
     // DIFFUSE LIGHT CALCULATION
     float diffuseFactor = max(dot(normal, toLightDir), 0.0);
@@ -118,6 +125,9 @@ vec4 calculationPointLight(PointLight pointlight, vec3 position, vec3 normal)
     vec4 attenuationResult = lightColour / attenuationFinalFactor;
     return attenuationResult;
 }
+
+
+
 
 // CALCULATE DIRECTIONA LIGHT BASED ON LIGHT COLOUR
 vec4 calcDirectionalLight(DirectionalLight directionalLight, vec3 position, vec3 normal)
@@ -159,19 +169,64 @@ vec4 calculateFog( vec3 position, vec4 colour, vec3 ambientLight, Fog fog, Direc
 }
 
 
+
+float calculateShadows(vec4 position)
+{
+    vec3 projectionCoords = position.xyz;
+
+    projectionCoords = projectionCoords * 0.5 + 0.5;
+    float bias = 0.21;
+
+    float shadowFactor = 0.8;
+
+
+    vec2 increment = 1.0 / textureSize(shadowMap, 0 );
+    for( int row = -1; row <= 1; ++row)
+    {
+
+        for(int col = -1; col <= 1; ++col)
+        {
+
+            float textDepth = texture(shadowMap, projectionCoords.xy + vec2(row, col) * increment).r;
+            shadowFactor += projectionCoords.z - bias > textDepth ? 1.0 : 0.0;
+
+
+        }
+
+    }
+    shadowFactor /= 9.0;
+
+    if(projectionCoords.z > 1.0)
+    {
+
+        shadowFactor = 1.0;
+    }
+
+    return 1 - shadowFactor;
+
+
+}
+
 void main()
 {   // CHANGE ENTITY COLOUR BASED ON MATERIAL
     setupMaterialColours(material, vertexTextureCoordinates);
     // CALCULATE DIFFUSE  SPECULAR  FOR DIRECTIONAL  LIGHT
      vec4 diffuseSpecularComponent = calcDirectionalLight(directionalLight, vertexPosition, vertexNormals);
     // CALCULATE DIFFUSE  SPECULAR AND ATTENUATION FOR POINT LIGHT
+
+    if(pointLight.intensity > 1f)
+    {
      diffuseSpecularComponent += calculationPointLight(pointLight, vertexPosition, vertexNormals);
-    // ADD AMBIENT LIGHT TO FINAL CALCULATION
-    fragColor = diffuseSpecularComponent + ambientMaterialColour * vec4(ambientLight, 1) ;
+    }
+
+    float shadow = calculateShadows(vertexLightViewPos);
+    fragColor = clamp(ambientMaterialColour * vec4(ambientLight,1) + diffuseSpecularComponent *  shadow,0,1);
+
     // ADD FOG IF ACTIVE
    if(fog.activeFog == 1)
    {
     fragColor = calculateFog(vertexPosition, fragColor, ambientLight, fog, directionalLight);
    }
+
 
 }

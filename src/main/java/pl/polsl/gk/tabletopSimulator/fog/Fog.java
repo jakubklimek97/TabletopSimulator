@@ -9,7 +9,7 @@ public class Fog {
     private float densityFactor;
 
     private boolean active;
-    // 1 - linear, 2 - exp, 3 - exp2, any other - 3
+    // 1 - linear, 2 - exp, 3 >= exp2
     private  int equationType;
 
     private  float fogStart;

@@ -128,8 +128,8 @@ public class SceneFunctionality3 implements IScene {
          Vector3f lightDirection = new Vector3f(0, 1, 1);
          directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
          fog = new Fog();
-         Vector3f fogColour = new Vector3f(0,1,0);
-         float density = 0.17f;
+         Vector3f fogColour = new Vector3f(0.419f, 0.419f, 0.419f);
+         float density = 0.019f;
          fog.setColour(fogColour);
          fog.setDensityFactor(density);
          fog.setFogStart(2);
@@ -161,7 +161,7 @@ public class SceneFunctionality3 implements IScene {
 
     @Override
     public void Run() {
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         while ( !glfwWindowShouldClose(window) ) {
             mouseInput.input(window);
             glfwPollEvents();

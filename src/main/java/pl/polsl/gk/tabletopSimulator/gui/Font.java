@@ -24,7 +24,7 @@ public class Font {
         this.shader = shader;
         good = false;
         ByteBuffer fontData = null;
-        try(InputStream fontStream = getClass().getClassLoader().getResourceAsStream("fonts/"+ name + ".ttf")){
+         try(InputStream fontStream = getClass().getClassLoader().getResourceAsStream("fonts/"+ name + ".ttf")){
             byte[] fontByteArray = fontStream.readAllBytes();
             fontData = BufferUtils.createByteBuffer(fontByteArray.length);
             fontData.put(fontByteArray);

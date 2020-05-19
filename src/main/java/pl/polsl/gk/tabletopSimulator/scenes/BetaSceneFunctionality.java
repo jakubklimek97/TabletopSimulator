@@ -10,6 +10,8 @@ import pl.polsl.gk.tabletopSimulator.engine.renderers.Renderer;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.fog.Fog;
+import pl.polsl.gk.tabletopSimulator.gui.Font;
+import pl.polsl.gk.tabletopSimulator.gui.TextLine;
 import pl.polsl.gk.tabletopSimulator.handlers.KeyboardInput;
 import pl.polsl.gk.tabletopSimulator.handlers.MouseInput;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
@@ -20,6 +22,7 @@ import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSprite;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSpriteRenderer;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
+import pl.polsl.gk.tabletopSimulator.engine.managers.FontManager;
 
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -70,8 +73,9 @@ public class BetaSceneFunctionality implements IScene {
     private Light2DSprite theMoon;
     private float lightAngle;
     private final float angleInc;
-
-
+    private FontManager fontManager;
+    private Font font;
+    private TextLine version;
 
     @Override
     public void Init() {
@@ -166,7 +170,12 @@ public class BetaSceneFunctionality implements IScene {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
 
-
+        this.fontManager = FontManager.GetManager();
+        this.font = fontManager.GetFont("archivo-narrow/ArchivoNarrow-Regular");
+        this.version = new TextLine(this.font, 20);
+        this.version.SetScreenResolution(1280, 720);
+        this.version.SetPosition(0, 42);
+        this.version.SetText("Pora spac :D");
     }
 
     @Override
@@ -233,7 +242,7 @@ public class BetaSceneFunctionality implements IScene {
             directionalLight.getDirection().normalize();
             float lightAngle = (float)Math.toDegrees(Math.acos(directionalLight.getDirection().z));
 
-
+            version.Render(1.0f, 0.0f, 0.0f);
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }

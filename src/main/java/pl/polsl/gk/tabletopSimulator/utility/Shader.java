@@ -17,17 +17,17 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 public abstract class Shader {
 
-    private final Map<String, Integer> uniforms;
+    protected Map<String, Integer> uniforms;
 
-    private int shaderId;
+    protected int shaderId;
 
-    private boolean isGood;
+    protected boolean isGood;
 
     public Shader(String name) {
         uniforms = new HashMap<>();
         this.isGood = false;
-        String vertexCode = new String();
-        String fragmentCode = new String();
+        String vertexCode = "";
+        String fragmentCode = "";
         InputStream vertexUrl = getClass().getClassLoader().getResourceAsStream("shaders/" + name + ".vs");
         InputStream fragmentUrl = getClass().getClassLoader().getResourceAsStream("shaders/" + name + ".fs");
         if (!(vertexUrl != null && fragmentUrl != null)) {
@@ -100,9 +100,9 @@ public abstract class Shader {
 
     protected abstract void bindAllUniforms();
 
-    private String ParseFileToString(InputStream file) throws IOException {
+    public String ParseFileToString(InputStream file) throws IOException {
         StringBuilder strB = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(file));) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(file))) {
             String tmp;
             while ((tmp = br.readLine()) != null) {
                 strB.append(tmp).append("\n");

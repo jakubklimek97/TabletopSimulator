@@ -14,11 +14,12 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 public class GeometryShader extends Shader {
 
     public GeometryShader(String name){
+        super(name);
         uniforms = new HashMap<>();
         this.isGood = false;
-        String vertexCode = new String();
-        String fragmentCode = new String();
-        String geometryCode = new String();
+        String vertexCode = "";
+        String fragmentCode = "";
+        String geometryCode = "";
         InputStream vertexUrl = getClass().getClassLoader().getResourceAsStream("shaders/"+name+".vs");
         InputStream fragmentUrl = getClass().getClassLoader().getResourceAsStream("shaders/"+name+".fs");
         InputStream geometryUrl = getClass().getClassLoader().getResourceAsStream("shaders/"+name+".gs");
@@ -99,6 +100,21 @@ public class GeometryShader extends Shader {
             glDeleteShader(fragmentShader);
             glDeleteShader(geometryShader);
         }
+
+    }
+
+    @Override
+    protected void bindAttributes() {
+
+    }
+
+    @Override
+    protected void getAllUniformLocations() {
+
+    }
+
+    @Override
+    protected void bindAllUniforms() {
 
     }
 }

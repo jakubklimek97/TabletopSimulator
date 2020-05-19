@@ -49,8 +49,8 @@ public class TextLine {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         Shader shader = this.font.getShader();
-        shader.Use();
-        shader.setUniform("textColor", new Vector3f(r,g,b));
+        shader.use();
+        shader.loadVector("textColor", new Vector3f(r,g,b));
         glBindVertexArray(vao);
         glBindTexture(GL_TEXTURE_2D, this.font.getBitmapTexture());
         glDrawArrays(GL_LINES, 0, characterCount*2);

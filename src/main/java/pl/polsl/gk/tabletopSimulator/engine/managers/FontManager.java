@@ -1,4 +1,4 @@
-package pl.polsl.gk.tabletopSimulator.EngineManagers;
+package pl.polsl.gk.tabletopSimulator.engine.managers;
 
 import pl.polsl.gk.tabletopSimulator.gui.Font;
 import pl.polsl.gk.tabletopSimulator.utility.GeometryShader;

@@ -17,9 +17,6 @@ public class SceneManager {
             case QUIT:
                 currentScene = new SceneQuit();
                 break;
-            case TEST_FUNC_2:
-                currentScene = new SceneFunctionality2(this);
-                break;
             case TEST_FUNC_3:
                 currentScene = new SceneFunctionality3(this);
                 break;

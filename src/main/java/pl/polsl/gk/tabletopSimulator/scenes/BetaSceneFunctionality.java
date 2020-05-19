@@ -259,6 +259,7 @@ public class BetaSceneFunctionality implements IScene {
         skybox = new SkyboxManager(loader, transformManager.updateProjectionMatrix(FOV,1280,720,Z_NEAR,Z_FAR));
         lightAngle = 45f;
         angleInc = 0.01f;
+        renderer.setWindow(window);
     }
     private void freeCallbacks(){
 

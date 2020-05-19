@@ -14,6 +14,8 @@ public class Entity {
 
     private final Vector3f rotation;
 
+    private Vector3f pickColor;
+
 
     public Entity(Mesh mesh) {
         this.mesh = mesh;
@@ -54,4 +56,11 @@ public class Entity {
         this.scale = scale;
     }
 
+    public Vector3f getPickColor() {
+        return pickColor;
+    }
+
+    public void setPickColor(Vector3f pickColor) {
+        this.pickColor = pickColor;
+    }
 }

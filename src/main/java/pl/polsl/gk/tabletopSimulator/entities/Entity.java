@@ -16,6 +16,7 @@ public class Entity {
 
     private Vector3f pickColor;
 
+    private String name;
 
     public Entity(Mesh mesh) {
         this.mesh = mesh;
@@ -62,5 +63,13 @@ public class Entity {
 
     public void setPickColor(Vector3f pickColor) {
         this.pickColor = pickColor;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

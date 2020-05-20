@@ -101,7 +101,7 @@ public class Camera {
                 cameraInc.z * CAMERA_POS_STEP);
 
 
-        if (mouseInput.isLeftButtonPressed()) {
+        if (mouseInput.isRightButtonPressed()) {
             Vector2f rotVec = mouseInput.getDisplVec();
             moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
         }

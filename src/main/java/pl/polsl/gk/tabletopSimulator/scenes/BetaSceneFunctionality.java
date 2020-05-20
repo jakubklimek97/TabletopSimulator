@@ -77,6 +77,8 @@ public class BetaSceneFunctionality implements IScene {
     private Font font;
     private TextLine version;
 
+    private Entity lastPicked;
+
     @Override
     public void Init() {
 
@@ -112,16 +114,22 @@ public class BetaSceneFunctionality implements IScene {
         item1.setPosition(60f,90f,-165f);
         item1.setScale(2f);
         item1.setRotation(1f,-20f,10f);
+        item1.setPickColor(new Vector3f(1.0f, 1.0f, 0.0f));
+        item1.setName("Item1");
 
         Entity item2 = new Entity(mesh);
         item2.setPosition(190f,90f,-150f);
         item2.setScale(3f);
         item2.setRotation(1f,-20f,10f);
+        item2.setPickColor(new Vector3f(0.0f, 1.0f, 0.0f));
+        item2.setName("Item2");
 
         Entity item3 = new Entity(mesh3);
         item3.setPosition(10f,-142f,0f);
         item3.setScale(3f);
         item3.setRotation(1f,5.5f,10f);
+        item3.setPickColor(new Vector3f(0.0f, 0.0f, 1.0f));
+        item3.setName("Item3");
 
         items = new Entity[]{item1,item2,item3};
 
@@ -176,6 +184,7 @@ public class BetaSceneFunctionality implements IScene {
         this.version.SetScreenResolution(1280, 720);
         this.version.SetPosition(0, 42);
         this.version.SetText("Pora spac :D");
+        this.lastPicked = null;
     }
 
     @Override
@@ -188,6 +197,7 @@ public class BetaSceneFunctionality implements IScene {
         glClearColor(1.0f, 0f, 0f, 1.0f);
         while ( !glfwWindowShouldClose(window) ) {
             mouseInput.input(window);
+
             glfwPollEvents();
             glfwSwapBuffers(window);
             glEnable(GL_DEPTH_TEST);
@@ -241,6 +251,14 @@ public class BetaSceneFunctionality implements IScene {
             directionalLight.getDirection().z = zValue;
             directionalLight.getDirection().normalize();
             float lightAngle = (float)Math.toDegrees(Math.acos(directionalLight.getDirection().z));
+
+           if(mouseInput.isLeftButtonPressed()){
+               Entity currentPick = renderer.returnPickedEntity();
+               if(currentPick != null && lastPicked != currentPick){
+                   lastPicked = currentPick;
+                   version.SetText(lastPicked.getName());
+               }
+           }
 
             version.Render(1.0f, 0.0f, 0.0f);
         }

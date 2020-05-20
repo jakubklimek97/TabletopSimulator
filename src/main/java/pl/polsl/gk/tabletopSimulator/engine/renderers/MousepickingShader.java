@@ -16,7 +16,9 @@ public class MousepickingShader extends Shader {
 
     @Override
     protected void getAllUniformLocations() {
-
+            super.createUniform("entityColor");
+            super.createUniform("modelViewMatrix");
+            super.createUniform("projectionMatrix");
     }
 
     @Override
@@ -33,12 +35,6 @@ public class MousepickingShader extends Shader {
     public void loadModelViewMatrix(Matrix4f modelViewMatrix) {
         super.loadMatrix("modelViewMatrix", modelViewMatrix);
     }
-    public void loadOrthogonalProjectionMatrix(Matrix4f orthogonalProjMatrix){
-        super.loadMatrix("orthogonalProjectionMatrix",orthogonalProjMatrix);
-    }
 
-    public void loadModelLightViewMatrix(Matrix4f modelLightViewMatrix){
-        super.loadMatrix("modelLightViewMatrix",modelLightViewMatrix);
-    }
 
 }

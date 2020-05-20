@@ -51,6 +51,7 @@ public class Renderer {
         lightShader.unbind();
         specularPower = 10.0f;
         mousePickingShader = new MousepickingShader();
+        mousePickingShader.getAllUniformLocations();
     }
 
     public void clear() {
@@ -119,14 +120,9 @@ public class Renderer {
         Matrix4f  projectionMatrix = transformation.updateProjectionMatrix(FOV, width, height, Z_NEAR, Z_FAR);
         mousePickingShader.loadProjectionMatrix(projectionMatrix);
         Matrix4f viewMatrix = transformation.setupViewMatrix(camera);
-        Matrix4f orthoProjectionMatrix = transformation.getOrthoProjectionMatrix();
-        Matrix4f lightViewMatrix = transformation.getLightViewMatrix();
-        mousePickingShader.loadOrthogonalProjectionMatrix(orthoProjectionMatrix);
         for(Entity item: items){
             Matrix4f  modelViewMatrix = transformation.setupModelViewMatrix(item, viewMatrix);
             mousePickingShader.loadModelViewMatrix(modelViewMatrix);
-            Matrix4f modelLightViewMatrix = transformation.setupModelLightViewMatrix(item,lightViewMatrix);
-            mousePickingShader.loadModelLightViewMatrix(modelLightViewMatrix);
             mousePickingShader.setColor(item.getPickColor());
             item.getMesh().render();
         }

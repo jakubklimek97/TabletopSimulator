@@ -126,7 +126,7 @@ public class BetaSceneFunctionality implements IScene {
 
         Entity item3 = new Entity(mesh3);
         item3.setPosition(10f,-142f,0f);
-        item3.setScale(3f);
+        item3.setScale(50f);
         item3.setRotation(1f,5.5f,10f);
         item3.setPickColor(new Vector3f(0.0f, 0.0f, 1.0f));
         item3.setName("Item3");

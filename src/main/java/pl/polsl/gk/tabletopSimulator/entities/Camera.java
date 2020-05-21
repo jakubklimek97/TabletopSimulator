@@ -71,19 +71,19 @@ public class Camera {
 
         cameraInc.set(0, 0, 0);
         if (KeyboardInput.isKeyPressed(GLFW_KEY_W)) {
-            cameraInc.z = -10;
+            cameraInc.z = -100;
         } else if (KeyboardInput.isKeyPressed(GLFW_KEY_S)) {
-            cameraInc.z = 10;
+            cameraInc.z = 100;
         }
         if (KeyboardInput.isKeyPressed(GLFW_KEY_A)) {
-            cameraInc.x = -10;
+            cameraInc.x = -100;
         } else if (KeyboardInput.isKeyPressed(GLFW_KEY_D)) {
-            cameraInc.x = 10;
+            cameraInc.x = 100;
         }
         if (KeyboardInput.isKeyPressed(GLFW_KEY_Z)) {
-            cameraInc.y = -10;
+            cameraInc.y = -100;
         } else if (KeyboardInput.isKeyPressed(GLFW_KEY_X)) {
-            cameraInc.y = 10;
+            cameraInc.y = 100;
         }
         if (KeyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
             cameraInc.z = 0;

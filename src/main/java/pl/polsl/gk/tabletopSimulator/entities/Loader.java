@@ -6,6 +6,7 @@ import org.lwjgl.opengl.*;
 import pl.polsl.gk.tabletopSimulator.models.ModelInfo;
 import pl.polsl.gk.tabletopSimulator.textures.TextureInfo;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -62,14 +63,13 @@ public class Loader {
         int height = 0;
         ByteBuffer buffer = null;
         try {
-            InputStream in = new FileInputStream("src\\main\\resources\\textures\\skybox\\"+ skyboxType + "\\" + fileName + ".png");
-            PNGDecoder decoder = new PNGDecoder(in);
+            InputStream vertexUrl = getClass().getClassLoader().getResourceAsStream("textures/skybox/"+ skyboxType + "/" + fileName + ".png");
+            PNGDecoder decoder = new PNGDecoder(vertexUrl);
             width = decoder.getWidth();
             height = decoder.getHeight();
             buffer = ByteBuffer.allocateDirect(4 * width * height);
             decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
             buffer.flip();
-            in.close();
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Couldn't load file texture: " + fileName);

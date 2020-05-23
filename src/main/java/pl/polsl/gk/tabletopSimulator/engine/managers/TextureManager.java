@@ -55,15 +55,16 @@ public class TextureManager {
         int textureId = -1;
 
             // Error
-            try {
-                InputStream in = new FileInputStream(fileName);
+
+        try(InputStream vertexUrl1 = TextureManager.class.getClassLoader().getResourceAsStream("textures/" + fileName)){
+
                 // Load texture file
-                PNGDecoder decoder = new PNGDecoder(in);
+                PNGDecoder decoder = new PNGDecoder(vertexUrl1);
 
                 int width = decoder.getWidth();
                 int height = decoder.getHeight();
                 ByteBuffer buffer = ByteBuffer.allocateDirect(4 * width * height);
-                decoder.decode(buffer, width * 4, Format.RGBA);
+                decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
                 // Switching from writing to reading mode
                 buffer.flip();
 
@@ -87,7 +88,6 @@ public class TextureManager {
                         GL_UNSIGNED_BYTE, buffer);
                 // Generate Mip Map
                 glGenerateMipmap(GL_TEXTURE_2D);
-                in.close();
             } catch (IOException e) {
                 e.printStackTrace();
                 System.err.println("Unable to load texture" + fileName);

@@ -46,7 +46,7 @@ public class Renderer {
 
 
     public Renderer() {
-        orthogonalCoordsManager = new OrthogonalCoordsManager(-90.0f, 120.0f, -80.0f, 35.0f, -25.0f, 90.0f);
+        orthogonalCoordsManager = new OrthogonalCoordsManager(-120.0f, 310.0f, -120.0f, 225.0f, -1.0f, 20.0f);
         shadows = new Shadows();
         shadowShader = new ShadowShader();
         transformation = new TransformManager();
@@ -131,11 +131,12 @@ public class Renderer {
 
 
     }
+
     public void renderPickableEntities(Camera camera, Entity[] items, int width, int height, Fog fog){
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             System.out.println("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -174,6 +175,7 @@ public class Renderer {
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+
     public Entity returnPickedEntity(){
         return lastPickedEntity;
     }

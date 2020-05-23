@@ -25,6 +25,8 @@ import pl.polsl.gk.tabletopSimulator.utility.Shader;
 import pl.polsl.gk.tabletopSimulator.engine.managers.FontManager;
 
 
+import java.io.InputStream;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.ARBSeamlessCubeMap.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import static org.lwjgl.opengl.GL11.glEnable;
@@ -52,7 +54,7 @@ public class BetaSceneFunctionality implements IScene {
 
     private static final float Z_NEAR = 0.01f;
 
-    private static  final float Z_FAR = 1000.0f;
+    private static final float Z_FAR = 1000.0f;
 
     private PointLight pointLight;
 
@@ -62,7 +64,7 @@ public class BetaSceneFunctionality implements IScene {
 
     private Fog fog;
 
-    private Vector3f skyboxColourFog = new Vector3f(0.544f,0.62f,0.69f);
+    private Vector3f skyboxColourFog = new Vector3f(0.544f, 0.62f, 0.69f);
 
     private boolean dayOn = false;
     private boolean nightOn = true;
@@ -85,10 +87,10 @@ public class BetaSceneFunctionality implements IScene {
         setCallbacks();
 
         float reflectFactor = 9.0f;
-        TextureManager texture = new TextureManager("src\\main\\resources\\textures\\pngFiles\\Moon.png",1);
-        TextureManager texture2 = new TextureManager("src\\main\\resources\\textures\\pngFiles\\colormap-lowres.png",1);
-        TextureManager sun2DSprite = new TextureManager("src\\main\\resources\\textures\\sprites\\sun2D.png",0);
-        TextureManager moon2DSprite = new TextureManager("src\\main\\resources\\textures\\sprites\\moon2D.png",0);
+        TextureManager texture = new TextureManager("pngFiles/sun.png", 1);
+        TextureManager texture2 = new TextureManager("pngFiles/colormap-lowres.png", 1);
+        TextureManager sun2DSprite = new TextureManager("sprites/sun2D.png", 0);
+        TextureManager moon2DSprite = new TextureManager("sprites/moon2D.png", 0);
 
         Mesh mesh = null;
         Mesh mesh2 = null;
@@ -96,8 +98,8 @@ public class BetaSceneFunctionality implements IScene {
         Mesh mesh4 = null;
         Material material = new Material(texture, reflectFactor);
         Material material2 = new Material(texture2, reflectFactor);
-        Material material3 = new Material(texture2,reflectFactor);
-        Material material4 = new Material(texture,reflectFactor);
+        Material material3 = new Material(texture2, reflectFactor);
+        Material material4 = new Material(texture, reflectFactor);
         try{ mesh = OBJLoader.load("/OBJs/sphere.obj");
             mesh2 = OBJLoader.load("/OBJs/sphere.obj");
             mesh3 = OBJLoader.load("/OBJs/Small Tropical Island.obj");
@@ -126,46 +128,47 @@ public class BetaSceneFunctionality implements IScene {
 
         Entity item3 = new Entity(mesh3);
         item3.setPosition(10f,-142f,0f);
-        item3.setScale(50f);
+        item3.setScale(3f);
         item3.setRotation(1f,5.5f,10f);
         item3.setPickColor(new Vector3f(0.0f, 0.0f, 1.0f));
         item3.setName("Item3");
 
         items = new Entity[]{item1,item2,item3};
 
+
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
         Vector3f lightColour = new Vector3f(1, 1, 1);
-        Vector3f lightPosition = new Vector3f(1f,8.5f,5f);
-        float lightIntensity = 0.1f;
+        Vector3f lightPosition = new Vector3f(1f, 8.5f, 5f);
+        float lightIntensity = 0.0f;
         pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
         PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
         pointLight.setAttenuation(att);
 
 
-        float lightIntensity2 = 0.1f;
+        float lightIntensity2 = 1.5f;
         Vector3f lightColour2 = new Vector3f(1, 1, 1);
-         Vector3f lightDirection = new Vector3f(0, 1, 1);
-         directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
-         fog = new Fog();
-         Vector3f fogColour = new Vector3f(0.419f, 0.419f, 0.419f);
-         float density = 0.002f;
+        Vector3f lightDirection = new Vector3f(0, 1, 1);
+        directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
+        fog = new Fog();
+        Vector3f fogColour = new Vector3f(0.419f, 0.419f, 0.419f);
+        float density = 0.000f;
 
-         fog.setColour(fogColour);
-         fog.setDensityFactor(density);
-         fog.setFogStart(2);
-         fog.setFogEnd(10);
-         fog.setEquationType(2);
-         fog.setActive(true);
+        fog.setColour(fogColour);
+        fog.setDensityFactor(density);
+        fog.setFogStart(2);
+        fog.setFogEnd(10);
+        fog.setEquationType(2);
+        fog.setActive(true);
 
 
-       theLight2DSprite = new Light2DSprite(sun2DSprite,15);
+        theLight2DSprite = new Light2DSprite(sun2DSprite, 25);
         light2DSpriteRenderer = new Light2DSpriteRenderer();
         theLight2DSprite.setLightDir(directionalLight.getDirection());
         moonRenderer = new Light2DSpriteRenderer();
-        theMoon = new Light2DSprite(moon2DSprite,5);
+        theMoon = new Light2DSprite(moon2DSprite, 5);
         theMoon.setLightDir(directionalLight.getDirection().negate());
-      
-         directionalLight.setShadowPosotionMultiplier(10);
+
+        directionalLight.setShadowPosotionMultiplier(25);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         // Set the clear color
@@ -195,7 +198,7 @@ public class BetaSceneFunctionality implements IScene {
     @Override
     public void Run() {
         glClearColor(1.0f, 0f, 0f, 1.0f);
-        while ( !glfwWindowShouldClose(window) ) {
+        while (!glfwWindowShouldClose(window)) {
             mouseInput.input(window);
 
             glfwPollEvents();
@@ -204,67 +207,70 @@ public class BetaSceneFunctionality implements IScene {
             camera.input();
             camera.update(mouseInput);
             render(window);
-            skybox.render(camera,skyboxColourFog.x,skyboxColourFog.y,skyboxColourFog.z,dayOn,nightOn);
-           
+            skybox.render(camera, skyboxColourFog.x, skyboxColourFog.y, skyboxColourFog.z, dayOn, nightOn);
+
             // Now zValue and yValue below displace directionalLight z and y
-            if(directionalLight.getDirection().z < 0.5f){
+            if (directionalLight.getDirection().z < 0.5f) {
                 nightOn = false;
                 dayOn = true;
-                skyboxColourFog = new Vector3f(0.544f,0.62f,0.69f);
-                if(ambientLight.x <= 1.0f) ambientLight.x += 0.01f;
-                if(ambientLight.y <= 1.0f) ambientLight.y += 0.01f;
-                if(ambientLight.z <= 1.0f) ambientLight.z += 0.01f;
-
+                skyboxColourFog = new Vector3f(0.544f, 0.62f, 0.69f);
+              //  if (ambientLight.x <= 1.0f) ambientLight.x += 0.01f;
+              //  if (ambientLight.y <= 1.0f) ambientLight.y += 0.01f;
+              //  if (ambientLight.z <= 1.0f) ambientLight.z += 0.01f;
+//
                 light2DSpriteRenderer.render(theLight2DSprite, camera);
-                theLight2DSprite.setLightDir(directionalLight.getDirection());}
+                theLight2DSprite.setLightDir(directionalLight.getDirection());
+            }
 
-            if(directionalLight.getDirection().z > 0.5f) {
+            if (directionalLight.getDirection().z > 0.5f) {
                 dayOn = false;
                 nightOn = true;
-                skyboxColourFog = new Vector3f(0.419f,0.419f,0.419f);
-                if(ambientLight.x >= -1.0f) ambientLight.x -= 0.1f;
-                if(ambientLight.y >= -1.0f) ambientLight.y -= 0.1f;
-                if(ambientLight.z >= -1.0f) ambientLight.z -= 0.1f;
+                skyboxColourFog = new Vector3f(0.419f, 0.419f, 0.419f);
+              //  if (ambientLight.x >= -1.0f) ambientLight.x -= 0.1f;
+              //  if (ambientLight.y >= -1.0f) ambientLight.y -= 0.1f;
+              //  if (ambientLight.z >= -1.0f) ambientLight.z -= 0.1f;
 
                 moonRenderer.render(theMoon, camera);
-                theMoon.setLightDir(directionalLight.getDirection());}
+                theMoon.setLightDir(directionalLight.getDirection());
+            }
 
             // Update camera position
 
             float rotX = items[1].getRotation().x;
             rotX += 0.05f;
-            if ( rotX >= 360 ) {
+            if (rotX >= 360) {
                 rotX -= 360;
             }
             items[1].getRotation().x = rotX;
 
             lightAngle += angleInc;
-            if ( lightAngle < 0 ) {
+            if (lightAngle < 0) {
                 lightAngle = 0;
-            } else if (lightAngle > 180 ) {
+            } else if (lightAngle > 180) {
                 lightAngle = 180;
             }
-            float zValue = (float)Math.cos(Math.toRadians(lightAngle));
-            float yValue = (float)Math.sin(Math.toRadians(lightAngle));
+            float zValue = (float) Math.cos(Math.toRadians(lightAngle));
+            float yValue = (float) Math.sin(Math.toRadians(lightAngle));
             directionalLight.getDirection().x = 0;
             directionalLight.getDirection().y = yValue;
             directionalLight.getDirection().z = zValue;
             directionalLight.getDirection().normalize();
-            float lightAngle = (float)Math.toDegrees(Math.acos(directionalLight.getDirection().z));
+            float lightAngle = (float) Math.toDegrees(Math.acos(directionalLight.getDirection().z));
 
-           if(mouseInput.isLeftButtonPressed()){
-               Entity currentPick = renderer.returnPickedEntity();
-               if(currentPick != null && lastPicked != currentPick){
-                   lastPicked = currentPick;
-                   version.SetText(lastPicked.getName());
-               }
-           }
+            if (mouseInput.isLeftButtonPressed()) {
+                Entity currentPick = renderer.returnPickedEntity();
+                if (currentPick != null && lastPicked != currentPick) {
+                    lastPicked = currentPick;
+                    version.SetText(lastPicked.getName());
+                }
+            }
 
             version.Render(1.0f, 0.0f, 0.0f);
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }
-    public BetaSceneFunctionality(SceneManager sceneManager){
+
+    public BetaSceneFunctionality(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
         this.window = this.sceneManager.getWindow();
         mouseInput = new MouseInput();
@@ -274,32 +280,36 @@ public class BetaSceneFunctionality implements IScene {
         transformManager = new TransformManager();
         loader = new Loader();
 
-        skybox = new SkyboxManager(loader, transformManager.updateProjectionMatrix(FOV,1280,720,Z_NEAR,Z_FAR));
+        skybox = new SkyboxManager(loader, transformManager.updateProjectionMatrix(FOV, 1280, 720, Z_NEAR, Z_FAR));
         lightAngle = 45f;
         angleInc = 0.01f;
         renderer.setWindow(window);
     }
-    private void freeCallbacks(){
+
+    private void freeCallbacks() {
 
         glfwSetKeyCallback(window, null);
     }
-    private void setCallbacks(){
+
+    private void setCallbacks() {
         glfwSetKeyCallback(window, keyboardInput.getKeyboardCallback());
         glfwSetCursorPosCallback(window, mouseInput.getCursorPosCallback());
         glfwSetMouseButtonCallback(window, mouseInput.getMouseCallback());
         glfwSetCursorEnterCallback(window, mouseInput.getEnterCallback());
     }
-    public void handleEvents(long window, int key,  int scancode, int action, int mods){
-        if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+
+    public void handleEvents(long window, int key, int scancode, int action, int mods) {
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
             glfwSetWindowShouldClose(window, true);
     }
+
     private final SceneManager sceneManager;
     private final long window;
 
-    public void render(long window){
-        renderer.render(camera,items,1280, 720, ambientLight, pointLight, directionalLight, fog);
+    public void render(long window) {
+        renderer.render(camera, items, 1280, 720, ambientLight, pointLight, directionalLight, fog);
     }
 
     private int vao, vbo;
-    private  Shader firstShader;
+    private Shader firstShader;
 }

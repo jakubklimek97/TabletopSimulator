@@ -175,9 +175,9 @@ float calculateShadows(vec4 position)
     vec3 projectionCoords = position.xyz;
 
     projectionCoords = projectionCoords * 0.5 + 0.5;
-    float bias = 0.21;
+    float bias = 0.1;
 
-    float shadowFactor = 0.8;
+    float shadowFactor = 0.0;
 
 
     vec2 increment = 1.0 / textureSize(shadowMap, 0 );

@@ -7,7 +7,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Shadows {
 
-    private int FBO;
+    private final int FBO;
 
     private final TextureManager depthMap;
 

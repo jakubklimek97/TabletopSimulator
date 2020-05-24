@@ -79,7 +79,7 @@ public class Renderer {
         lightShader.use();
         lightShader.bindAllUniforms();
         lightShader.unbind();
-        specularPower = 10.0f;
+        specularPower = 3.5f;
 
     }
 

@@ -138,14 +138,14 @@ public class BetaSceneFunctionality implements IScene {
 
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
         Vector3f lightColour = new Vector3f(1, 1, 1);
-        Vector3f lightPosition = new Vector3f(1f, 8.5f, 5f);
-        float lightIntensity = 0.0f;
+        Vector3f lightPosition = new Vector3f(-741,290f,299f);
+        float lightIntensity = 0.6f;
         pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
         PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
         pointLight.setAttenuation(att);
 
 
-        float lightIntensity2 = 1.5f;
+        float lightIntensity2 = 0.2f;
         Vector3f lightColour2 = new Vector3f(1, 1, 1);
         Vector3f lightDirection = new Vector3f(0, 1, 1);
         directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
@@ -210,25 +210,31 @@ public class BetaSceneFunctionality implements IScene {
             skybox.render(camera, skyboxColourFog.x, skyboxColourFog.y, skyboxColourFog.z, dayOn, nightOn);
 
             // Now zValue and yValue below displace directionalLight z and y
-            if (directionalLight.getDirection().z < 0.5f) {
-                nightOn = false;
-                dayOn = true;
+            if (directionalLight.getDirection().z > 0.5f) {
+                    nightOn = false;
+                    dayOn = true;
                 skyboxColourFog = new Vector3f(0.544f, 0.62f, 0.69f);
-              //  if (ambientLight.x <= 1.0f) ambientLight.x += 0.01f;
-              //  if (ambientLight.y <= 1.0f) ambientLight.y += 0.01f;
-              //  if (ambientLight.z <= 1.0f) ambientLight.z += 0.01f;
-//
+                if (ambientLight.x <= 1.0f) ambientLight.x += 0.01f;
+                if (ambientLight.y <= 1.0f) ambientLight.y += 0.01f;
+                if (ambientLight.z <= 1.0f) ambientLight.z +=0.01f;
+
                 light2DSpriteRenderer.render(theLight2DSprite, camera);
                 theLight2DSprite.setLightDir(directionalLight.getDirection());
             }
 
-            if (directionalLight.getDirection().z > 0.5f) {
-                dayOn = false;
+            if (directionalLight.getDirection().z < 0.5f) {
+                if(directionalLight.getDirection().z > 0.489f) {
+                    skybox.setBlendTextureDay(false);
+                }
+                else {
+                    skybox.setBlendTextureDay(false);
+                }
                 nightOn = true;
+                dayOn = false;
                 skyboxColourFog = new Vector3f(0.419f, 0.419f, 0.419f);
-              //  if (ambientLight.x >= -1.0f) ambientLight.x -= 0.1f;
-              //  if (ambientLight.y >= -1.0f) ambientLight.y -= 0.1f;
-              //  if (ambientLight.z >= -1.0f) ambientLight.z -= 0.1f;
+                if (ambientLight.x >= -1.0f) ambientLight.x -= 0.01f;
+                if (ambientLight.y >= -1.0f) ambientLight.y -= 0.01f;
+                if (ambientLight.z >= -1.0f) ambientLight.z -= 0.01f;
 
                 moonRenderer.render(theMoon, camera);
                 theMoon.setLightDir(directionalLight.getDirection());

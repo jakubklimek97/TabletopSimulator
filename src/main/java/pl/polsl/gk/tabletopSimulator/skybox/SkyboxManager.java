@@ -71,8 +71,6 @@ public class SkyboxManager {
     private final SkyboxShader shader;
     private boolean start = true;
     public boolean blendTextureDay = false;
-
-
     public boolean blendTextureNight = false;
     private  float time = 0.001f;
 
@@ -123,7 +121,7 @@ public class SkyboxManager {
 
     public void bindTextures(boolean dayOn, boolean nightOn){
         time += 30f;
-        time %= 8000;
+        time %= 82000;
         int texture1 = 0;
         int texture2 = 0;
         float blendFactor = 0;
@@ -131,34 +129,35 @@ public class SkyboxManager {
             texture1 = dayTextureId;
             texture2 = dayTextureId;
             start = false;
-            blendFactor = (time - 5000) / (3000);
+            blendFactor = (time - 0)/(5000);
         }
 
         if(dayOn){
-            if(blendTextureNight) {
+            if(blendTextureNight ) {
                 texture1 = dayTextureId;
                 texture2 = nightTextureId;
-                blendFactor = (time - 5000) / (3000);
+                blendFactor = (time - 5000)/(3000);
             }
 
             else{
                 texture1 = dayTextureId;
                 texture2 = dayTextureId;
-                blendFactor = (time - 5000) / (3000);
+                blendFactor = (time - 0)/(5000);
             }
 
         }
 
         if(nightOn){
-            if(blendTextureDay){
-                texture1 = nightTextureId;
-                texture2 = dayTextureId;
-                blendFactor = (time - 5000) / (3000);
-            }
-            else{
+            if(!blendTextureDay){
                 texture1 = nightTextureId;
                 texture2 = nightTextureId;
-                blendFactor = (time - 5000) / (3000);
+                blendFactor =  Math.abs((time - 8000)/(13000)) + 0.1f;
+
+            }
+            else{
+                texture1 = dayTextureId;
+                texture2 = nightTextureId;
+                blendFactor = Math.abs((time - 20000)/(3000) * 0.5f) + 0.1f;
             }
 
         }

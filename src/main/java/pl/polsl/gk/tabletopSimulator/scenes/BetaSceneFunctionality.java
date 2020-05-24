@@ -184,7 +184,7 @@ public class BetaSceneFunctionality implements IScene {
         directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
         fog = new Fog();
         Vector3f fogColour = new Vector3f(0.419f, 0.419f, 0.419f);
-        float density = 0.000f;
+        float density = 0.002f;
 
         fog.setColour(fogColour);
         fog.setDensityFactor(density);
@@ -216,7 +216,7 @@ public class BetaSceneFunctionality implements IScene {
 
        this.fontManager = FontManager.GetManager();
        this.font = fontManager.GetFont("archivo-narrow/ArchivoNarrow-Regular");
-       this.version = new TextLine(this.font, 20);
+       this.version = new TextLine(this.font, 45);
        this.version.SetScreenResolution(1280, 720);
        this.version.SetPosition(0, 42);
        this.version.SetText("Kliknij obiekt aby go wybrac");

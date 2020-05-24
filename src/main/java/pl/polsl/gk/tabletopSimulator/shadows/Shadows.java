@@ -11,9 +11,9 @@ public class Shadows {
 
     private final TextureManager depthMap;
 
-    public static final int mapWidth = 1024;
+    public static final int mapWidth = 15000;
 
-    public static final int mapHeight = 1024;
+    public static final int mapHeight = 15000;
 
     public Shadows()  {
         FBO = glGenFramebuffers();

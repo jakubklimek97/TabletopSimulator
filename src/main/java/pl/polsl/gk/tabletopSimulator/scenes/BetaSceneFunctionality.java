@@ -151,7 +151,7 @@ public class BetaSceneFunctionality implements IScene {
         directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
         fog = new Fog();
         Vector3f fogColour = new Vector3f(0.419f, 0.419f, 0.419f);
-        float density = 0.000f;
+        float density = 0.002f;
 
         fog.setColour(fogColour);
         fog.setDensityFactor(density);

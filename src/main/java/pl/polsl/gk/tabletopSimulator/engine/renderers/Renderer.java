@@ -71,7 +71,7 @@ public class Renderer {
             System.out.println("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        orthogonalCoordsManager = new OrthogonalCoordsManager(-800.0f, 800.0f, -800.0f, 885.0f, -885.0f, 850.0f);
+        orthogonalCoordsManager = new OrthogonalCoordsManager(-1600.0f, 1600.0f, -1600.0f, 1685.0f, -325.0f, 650.0f);
         shadows = new Shadows();
         shadowShader = new ShadowShader();
         transformation = new TransformManager();

@@ -120,7 +120,7 @@ public class BetaSceneFunctionality implements IScene {
         item1.setName("Item1");
 
         Entity item2 = new Entity(mesh);
-        item2.setPosition(190f,90f,-150f);
+        item2.setPosition(-741,262f,299f);
         item2.setScale(3f);
         item2.setRotation(1f,-20f,10f);
         item2.setPickColor(new Vector3f(0.0f, 1.0f, 0.0f));
@@ -131,7 +131,7 @@ public class BetaSceneFunctionality implements IScene {
         item3.setScale(3f);
         item3.setRotation(1f,5.5f,10f);
         item3.setPickColor(new Vector3f(0.0f, 0.0f, 1.0f));
-        item3.setName("Item3");
+       item3.setName("Item3");
 
         items = new Entity[]{item1,item2,item3};
 
@@ -168,7 +168,7 @@ public class BetaSceneFunctionality implements IScene {
         theMoon = new Light2DSprite(moon2DSprite, 5);
         theMoon.setLightDir(directionalLight.getDirection().negate());
 
-        directionalLight.setShadowPosotionMultiplier(25);
+        directionalLight.setShadowPosotionMultiplier(15);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         // Set the clear color
@@ -181,13 +181,13 @@ public class BetaSceneFunctionality implements IScene {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
 
-        this.fontManager = FontManager.GetManager();
-        this.font = fontManager.GetFont("archivo-narrow/ArchivoNarrow-Regular");
-        this.version = new TextLine(this.font, 20);
-        this.version.SetScreenResolution(1280, 720);
-        this.version.SetPosition(0, 42);
-        this.version.SetText("Pora spac :D");
-        this.lastPicked = null;
+       this.fontManager = FontManager.GetManager();
+       this.font = fontManager.GetFont("archivo-narrow/ArchivoNarrow-Regular");
+       this.version = new TextLine(this.font, 20);
+       this.version.SetScreenResolution(1280, 720);
+       this.version.SetPosition(0, 42);
+       this.version.SetText("Pora spac :D");
+       this.lastPicked = null;
     }
 
     @Override
@@ -257,15 +257,15 @@ public class BetaSceneFunctionality implements IScene {
             directionalLight.getDirection().normalize();
             float lightAngle = (float) Math.toDegrees(Math.acos(directionalLight.getDirection().z));
 
-            if (mouseInput.isLeftButtonPressed()) {
-                Entity currentPick = renderer.returnPickedEntity();
-                if (currentPick != null && lastPicked != currentPick) {
-                    lastPicked = currentPick;
-                    version.SetText(lastPicked.getName());
-                }
-            }
+           if (mouseInput.isLeftButtonPressed()) {
+               Entity currentPick = renderer.returnPickedEntity();
+               if (currentPick != null && lastPicked != currentPick) {
+                   lastPicked = currentPick;
+                   version.SetText(lastPicked.getName());
+               }
+           }
 
-            version.Render(1.0f, 0.0f, 0.0f);
+           version.Render(1.0f, 0.0f, 0.0f);
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }

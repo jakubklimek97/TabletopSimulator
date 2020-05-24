@@ -46,20 +46,12 @@ public class Renderer {
 
 
     public Renderer() {
-        orthogonalCoordsManager = new OrthogonalCoordsManager(-120.0f, 310.0f, -120.0f, 225.0f, -1.0f, 20.0f);
-        shadows = new Shadows();
-        shadowShader = new ShadowShader();
-        transformation = new TransformManager();
-        lightShader = new LightAndFogShader();
-        lightShader.use();
-        lightShader.bindAllUniforms();
-        lightShader.unbind();
-        specularPower = 10.0f;
+
         mousePickingShader = new MousepickingShader();
         mousePickingShader.getAllUniformLocations();
         try(MemoryStack stack = MemoryStack.stackPush()){
             IntBuffer tmp = stack.callocInt(1);
-            glGenBuffers(tmp);
+            glGenFramebuffers(tmp);
             framebuffer = tmp.get(0);
             glGenTextures(tmp);
             textureColorbuffer = tmp.get(0);
@@ -72,13 +64,23 @@ public class Renderer {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-
         glBindRenderbuffer(GL_RENDERBUFFER, rbo);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1280, 720);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-           System.out.println("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+            System.out.println("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        orthogonalCoordsManager = new OrthogonalCoordsManager(-800.0f, 800.0f, -800.0f, 885.0f, -885.0f, 850.0f);
+        shadows = new Shadows();
+        shadowShader = new ShadowShader();
+        transformation = new TransformManager();
+        lightShader = new LightAndFogShader();
+        lightShader.use();
+        lightShader.bindAllUniforms();
+        lightShader.unbind();
+        specularPower = 10.0f;
+
     }
 
     public void clear() {

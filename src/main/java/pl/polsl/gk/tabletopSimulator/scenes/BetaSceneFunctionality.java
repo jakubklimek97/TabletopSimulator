@@ -10,8 +10,7 @@ import pl.polsl.gk.tabletopSimulator.engine.renderers.Renderer;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.fog.Fog;
-import pl.polsl.gk.tabletopSimulator.gui.Font;
-import pl.polsl.gk.tabletopSimulator.gui.TextLine;
+import pl.polsl.gk.tabletopSimulator.gui.*;
 import pl.polsl.gk.tabletopSimulator.handlers.KeyboardInput;
 import pl.polsl.gk.tabletopSimulator.handlers.MouseInput;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
@@ -29,6 +28,9 @@ import java.io.InputStream;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.ARBSeamlessCubeMap.GL_TEXTURE_CUBE_MAP_SEAMLESS;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL33C.*;
 
@@ -45,6 +47,7 @@ public class BetaSceneFunctionality implements IScene {
     private final Camera camera;
 
     private Entity[] items;
+    private HorizontalButtonMenu menu;
 
     private final KeyboardInput keyboardInput;
 
@@ -81,10 +84,40 @@ public class BetaSceneFunctionality implements IScene {
 
     private Entity lastPicked;
 
+    //TEST NA TERAZ
+    float[] vertices = {
+            -0.5f, 0.5f, 0.0f,
+            0.5f, 0.5f,0.0f,
+            -0.5f, -0.5f,0.0f,
+    };
+    int tvao, tvbo;
+    MenuShader menuSh;
+
+    //TEST NA TERAZ
+
     @Override
     public void Init() {
 
         setCallbacks();
+       menu = new HorizontalButtonMenu(MenuSide.BOTTOM, 72.0f, 1280, 720);
+        menu.AddButton(new TexturedButton(
+                new TextureManager("pngFiles/menuTestBtn/normal.png",0),
+                new TextureManager("pngFiles/menuTestBtn/hover.png",0),
+                new TextureManager("pngFiles/menuTestBtn/active.png",0),
+                () -> {
+                    System.out.print("Trafiono przycisk");
+                }
+        ));
+        menu.AddButton(new TexturedButton(
+                new TextureManager("pngFiles/menuTestBtn/normal.png",0),
+                new TextureManager("pngFiles/menuTestBtn/hover.png",0),
+                new TextureManager("pngFiles/menuTestBtn/active.png",0),
+                () -> {
+                    System.out.print("Trafiono przycisk2");
+                }
+        ));
+        menu.Prepare();
+
 
         float reflectFactor = 9.0f;
         TextureManager texture = new TextureManager("pngFiles/sun.png", 1);
@@ -178,7 +211,7 @@ public class BetaSceneFunctionality implements IScene {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        glEnable(GL_CULL_FACE);
+       glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
 
        this.fontManager = FontManager.GetManager();
@@ -186,7 +219,7 @@ public class BetaSceneFunctionality implements IScene {
        this.version = new TextLine(this.font, 20);
        this.version.SetScreenResolution(1280, 720);
        this.version.SetPosition(0, 42);
-       this.version.SetText("Pora spac :D");
+       this.version.SetText("Kliknij obiekt aby go wybrac");
        this.lastPicked = null;
     }
 
@@ -197,18 +230,22 @@ public class BetaSceneFunctionality implements IScene {
 
     @Override
     public void Run() {
-        glClearColor(1.0f, 0f, 0f, 1.0f);
+        glfwMakeContextCurrent(window);
         while (!glfwWindowShouldClose(window)) {
+            glClearColor(1.0f, 0f, 0f,0.5f);
             mouseInput.input(window);
 
             glfwPollEvents();
+
             glfwSwapBuffers(window);
+            int a = 5;
+            if(a != 5)
+                continue;
             glEnable(GL_DEPTH_TEST);
             camera.input();
             camera.update(mouseInput);
             render(window);
             skybox.render(camera, skyboxColourFog.x, skyboxColourFog.y, skyboxColourFog.z, dayOn, nightOn);
-
             // Now zValue and yValue below displace directionalLight z and y
             if (directionalLight.getDirection().z < 0.5f) {
                 nightOn = false;
@@ -265,7 +302,11 @@ public class BetaSceneFunctionality implements IScene {
                }
            }
 
+            glDisable(GL_DEPTH_TEST);
+           glDisable(GL_CULL_FACE);
+            menu.Render();
            version.Render(1.0f, 0.0f, 0.0f);
+            glEnable(GL_CULL_FACE);
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }
@@ -308,6 +349,7 @@ public class BetaSceneFunctionality implements IScene {
 
     public void render(long window) {
         renderer.render(camera, items, 1280, 720, ambientLight, pointLight, directionalLight, fog);
+
     }
 
     private int vao, vbo;

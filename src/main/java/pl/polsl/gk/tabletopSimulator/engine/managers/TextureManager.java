@@ -19,6 +19,10 @@ public class TextureManager {
     private int width;
     private int height;
 
+    private int numRows = 1;
+
+    private int numCols = 1;
+
 
     public TextureManager(String fileName, int type) {
         this(loadTexture(fileName, type));
@@ -96,7 +100,6 @@ public class TextureManager {
 
         return textureId;
     }
-
 
     public void cleanUp() {
         glDeleteTextures(textureId);

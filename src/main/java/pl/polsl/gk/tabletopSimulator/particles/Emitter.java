@@ -2,9 +2,7 @@ package pl.polsl.gk.tabletopSimulator.particles;
 
 import org.joml.Vector3f;
 import pl.polsl.gk.tabletopSimulator.Game;
-import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
-import pl.polsl.gk.tabletopSimulator.entities.Mesh;
-
+import pl.polsl.gk.tabletopSimulator.entities.Entity;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +13,7 @@ public class Emitter implements IEmitter {
 
     private boolean active;
 
-    private final List<Game> particles;
+    private final List<Entity> particles;
 
     private final Particle baseParticle;
 
@@ -93,10 +91,10 @@ public class Emitter implements IEmitter {
         if (lastCreationTime == 0) {
             lastCreationTime = now;
         }
-        Iterator<? extends Game> it = particles.iterator();
+        Iterator<? extends Entity> it = particles.iterator();
         while (it.hasNext()) {
             Particle particle = (Particle) it.next();
-            if (particle.updateTtl(elapsedTime) < 0) {
+            if (particle.updateLifteTimeMill(elapsedTime) < 0) {
                 it.remove();
             } else {
                 updatePosition(particle, elapsedTime);
@@ -143,7 +141,7 @@ public class Emitter implements IEmitter {
 
     @Override
     public void cleanup() {
-        for (Game particle : getParticles()) {
+        for (Entity particle : getParticles()) {
             particle.cleanup();
         }
     }
@@ -154,7 +152,7 @@ public class Emitter implements IEmitter {
     }
 
     @Override
-    public List<Game> getParticles() {
+    public List<Entity> getParticles() {
         return particles;
     }
 }

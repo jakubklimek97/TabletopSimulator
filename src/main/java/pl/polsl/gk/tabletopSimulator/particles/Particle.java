@@ -2,9 +2,10 @@ package pl.polsl.gk.tabletopSimulator.particles;
 
 import org.joml.Vector3f;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
+import pl.polsl.gk.tabletopSimulator.entities.Entity;
 import pl.polsl.gk.tabletopSimulator.entities.Mesh;
 
-public class Particle {
+public class Particle extends Entity {
 
     private long updateTextureMillis;
 
@@ -17,7 +18,7 @@ public class Particle {
     private int animationFrames;
 
     public Particle(Mesh mesh, Vector3f speed, long lifeTimeMillis, long updateTextureMillis){
-        // super(Mesh);
+         super(mesh);
         this.speed = new Vector3f(speed);
         this.lifeTimeMillis = lifeTimeMillis;
         this.updateTextureMillis = updateTextureMillis;
@@ -27,16 +28,17 @@ public class Particle {
     }
 
     public Particle(Particle baseParticle) {
-        //super(baseParticle.getMesh());
+        super(baseParticle.getMesh());
         Vector3f aux = baseParticle.getPosition();
         setPosition(aux.x, aux.y, aux.z);
-        setRotation(baseParticle.getRotation());
+        aux = baseParticle.getRotation();
+        setRotation(aux.x,aux.y,aux.z);
         setScale(baseParticle.getScale());
         this.speed = new Vector3f(baseParticle.speed);
-        this.ttl = baseParticle.geTtl();
+        this.lifeTimeMillis = baseParticle.getLifeTimeMillis();
         this.updateTextureMillis = baseParticle.getUpdateTextureMillis();
-        this.currentAnimTimeMillis = 0;
-        this.animFrames = baseParticle.getAnimFrames();
+        this.currentAnimationTimeMillis = 0;
+        this.animationFrames = baseParticle.getAnimationFrames();
     }
 
 
@@ -80,17 +82,17 @@ public class Particle {
         this.animationFrames = animationFrames;
     }
 
-    public long updateTtl(long elapsedTime) {
+    public long updateLifteTimeMill(long elapsedTime) {
         this.lifeTimeMillis -= elapsedTime;
         this.currentAnimationTimeMillis += elapsedTime;
         if ( this.currentAnimationTimeMillis >= this.getUpdateTextureMillis() && this.animationFrames > 0 ) {
             this.currentAnimationTimeMillis = 0;
-            int pos = this.getTextPos();
+            int pos = this.getTexturePos();
             pos++;
             if ( pos < this.animationFrames ) {
-                this.setTextPos(pos);
+                this.setTexturePos(pos);
             } else {
-                this.setTextPos(0);
+                this.setTexturePos(0);
             }
         }
         return this.lifeTimeMillis;

@@ -1,12 +1,11 @@
 package pl.polsl.gk.tabletopSimulator.entities;
 
-
 import org.joml.Vector3f;
 
 public class Entity {
 
 
-    private final Mesh mesh;
+    private  Mesh[] meshes;
 
     private final Vector3f position;
 
@@ -18,15 +17,36 @@ public class Entity {
 
     private String name;
 
-    public Entity(Mesh mesh) {
-        this.mesh = mesh;
+    private int texturePos;
+
+    public Entity(){
         position = new Vector3f();
         scale = 1;
         rotation = new Vector3f();
+        name = "Not set";
+        texturePos = 0;
+    }
+
+    public Entity(Mesh mesh) {
+       this();
+       this.meshes = new Mesh[]{mesh};
+    }
+
+    public Entity(Mesh[] meshes){
+        this();
+        this.meshes = meshes;
     }
 
     public Mesh getMesh() {
-        return mesh;
+        return meshes[0];
+    }
+
+    public  Mesh[] getMeshes(){
+        return meshes;
+    }
+
+    public void setMeshes(Mesh[] meshes){
+        this.meshes = meshes;
     }
 
     public Vector3f getPosition() {
@@ -72,4 +92,21 @@ public class Entity {
     public void setName(String name) {
         this.name = name;
     }
+
+    public void cleanup(){
+        int numberMeshes = this.meshes != null ? this.meshes.length : 0;
+        for(int i = 0; i<numberMeshes; i++){
+            this.meshes[i].clean();
+        }
+    }
+
+    public void setTexturePos(int texturePos){
+        this.texturePos = texturePos;
+    }
+
+    public int getTexturePos() {
+        return texturePos;
+    }
+
+
 }

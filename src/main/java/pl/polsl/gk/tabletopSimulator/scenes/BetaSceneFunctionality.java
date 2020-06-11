@@ -17,6 +17,8 @@ import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
 import pl.polsl.gk.tabletopSimulator.models.Material;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.loaders.OBJLoader;
+import pl.polsl.gk.tabletopSimulator.particles.Emitter;
+import pl.polsl.gk.tabletopSimulator.particles.Particle;
 import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSprite;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSpriteRenderer;
@@ -81,8 +83,9 @@ public class BetaSceneFunctionality implements IScene {
     private FontManager fontManager;
     private Font font;
     private TextLine version;
-
     private Entity lastPicked;
+    private Emitter emitter;
+
 
     //TEST NA TERAZ
     float[] vertices = {
@@ -221,6 +224,27 @@ public class BetaSceneFunctionality implements IScene {
        this.version.SetPosition(0, 42);
        this.version.SetText("Kliknij obiekt aby go wybrac");
        this.lastPicked = null;
+
+       Vector3f particleSpeed = new Vector3f(0,1,0);
+       particleSpeed.mul(2.5f);
+       long timeLifeParticle = 4000;
+       int maxParticleAmount = 200;
+       long creationPeriodMillis = 300;
+       float range = 0.2f;
+       float scale = 1.0f;
+       Mesh particleMesh = OBJLoader.load("/OBJs/particle/particle.obj");
+       TextureManager particleTexture = new TextureManager("");
+       Material particleMaterial = new Material(particleTexture,reflectFactor);
+       particleMesh.setMaterial(particleMaterial);
+       Particle particle = new Particle(particleMesh,particleSpeed,timeLifeParticle,100);
+       particle.setScale(scale);
+       emitter = new Emitter(particle,maxParticleAmount,creationPeriodMillis);
+       emitter.setActive(true);
+       emitter.setPositionRndRange(range);
+       emitter.setSpeedRndRange(range);
+       emitter.setAnimRange(10);
+       //scene particle?
+
     }
 
     @Override
@@ -307,6 +331,8 @@ public class BetaSceneFunctionality implements IScene {
                    version.SetText(lastPicked.getName());
                }
            }
+
+           emitter.update((long)(rotX * 1000));
 
             glDisable(GL_DEPTH_TEST);
            glDisable(GL_CULL_FACE);

@@ -90,8 +90,8 @@ public class OBJLoader {
             }
         }
 
-        int[] indicesArr;
-        indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
+
+        int[] indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
         return new Mesh(indicesArr, positionsArray, textureCoordsArr, textureNormalsArr);
 
 
@@ -151,7 +151,8 @@ public class OBJLoader {
             int length = dataTypeLines.length;
             indexes.indexPos = Integer.parseInt(dataTypeLines[0]) - 1;
 
-            if(length > 1){ // if obj file is empty ( not given textCoords)
+            if(length > 1){
+                // if obj file is empty ( not given textCoords)
                 String textCoords = dataTypeLines[1];
                 indexes.indexTextureCoords = textCoords.length() > 0 ? Integer.parseInt(textCoords) - 1 : -1;
                 if(length > 2){

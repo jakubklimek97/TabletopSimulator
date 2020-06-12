@@ -65,6 +65,21 @@ public class TransformManager {
         return modelViewMatrix.mul(modelMatrix);
     }
 
+    public Matrix4f setupModelMatrix(Entity item){
+        Vector3f rotation = item.getRotation();
+        modelMatrix.identity().translate(item.getPosition()).
+                rotateX((float)Math.toRadians(-rotation.x)).
+                rotateY((float)Math.toRadians(-rotation.y)).
+                rotateZ((float)Math.toRadians(-rotation.z)).
+                scale(item.getScale());
+        return modelMatrix;
+    }
+
+    public Matrix4f setupModelViewMatrix(Matrix4f modelMatrix, Matrix4f viewMatrix) {
+        modelViewMatrix.set(viewMatrix);
+        return modelViewMatrix.mul(modelMatrix);
+    }
+
     public Matrix4f updateOrthoProjectionMatrix(float left, float right, float bottom, float top, float zNear, float zFar) {
         orthoProjectionMatrix.identity();
         orthoProjectionMatrix.setOrtho(left, right, bottom, top, zNear, zFar);

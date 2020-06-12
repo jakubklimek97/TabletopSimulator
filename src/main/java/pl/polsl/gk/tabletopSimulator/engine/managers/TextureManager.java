@@ -57,7 +57,7 @@ public class TextureManager {
     }
 
     public TextureManager(String fileName){
-        this(TextureManager.class.getResourceAsStream(fileName));
+        this( TextureManager.class.getClassLoader().getResourceAsStream("textures/" + fileName));
    }
 
     public TextureManager(InputStream inputStream){

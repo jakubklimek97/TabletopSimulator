@@ -4,17 +4,21 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
+import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TransformManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.entities.Entity;
+import pl.polsl.gk.tabletopSimulator.entities.Mesh;
 import pl.polsl.gk.tabletopSimulator.fog.Fog;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
 import pl.polsl.gk.tabletopSimulator.engine.managers.OrthogonalCoordsManager;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.lights.LightAndFogShader;
+import pl.polsl.gk.tabletopSimulator.particles.Emitter;
+import pl.polsl.gk.tabletopSimulator.particles.Particle;
+import pl.polsl.gk.tabletopSimulator.particles.ParticleShader;
 import pl.polsl.gk.tabletopSimulator.shadows.ShadowShader;
 import pl.polsl.gk.tabletopSimulator.shadows.Shadows;
-import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 
 import java.nio.DoubleBuffer;
@@ -22,7 +26,6 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
@@ -36,6 +39,7 @@ public class Renderer {
     private final LightAndFogShader lightShader;
     private ShadowShader shadowShader;
     private Shadows shadows;
+    private ParticleShader particleShader;
     private final OrthogonalCoordsManager orthogonalCoordsManager;
 
     private Entity lastPickedEntity;
@@ -76,9 +80,7 @@ public class Renderer {
         shadowShader = new ShadowShader();
         transformation = new TransformManager();
         lightShader = new LightAndFogShader();
-        lightShader.use();
-        lightShader.bindAllUniforms();
-        lightShader.unbind();
+        particleShader = new ParticleShader();
         specularPower = 3.5f;
 
     }
@@ -87,7 +89,7 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(Camera camera, Entity[] items, int width, int height, Vector3f ambientLight,
+    public void render(Camera camera, Entity[] items, Emitter[] emitters, int width, int height, Vector3f ambientLight,
                        PointLight light, DirectionalLight directionalLight, Fog fog) {
         clear();
         renderShadows(camera,items,width,height,ambientLight,light,directionalLight);
@@ -95,7 +97,61 @@ public class Renderer {
         glViewport(0, 0, 1280, 720);
 
        renderScene(camera,items,width,height,ambientLight,light,directionalLight, fog);
+       renderParticles(camera,emitters,items);
        renderPickableEntities(camera, items, width, height,fog);
+    }
+
+    public void renderParticles(Camera camera, Emitter[] emitters, Entity[] items){
+        particleShader.use();
+
+        particleShader.loadTextureSampler(0);
+        Matrix4f projectionMatrix = transformation.getProjectionMatrix();
+        particleShader.loadProjectionMatrix(projectionMatrix);
+
+        Matrix4f viewMatrix = transformation.getViewMatrix();
+        int numEmitters = emitters != null ? emitters.length : 0;
+        glDepthMask(false);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+
+        for(int i = 0; i < numEmitters; i++){
+            Emitter emitter = emitters[i];
+            Mesh mesh = emitter.getBaseParticle().getMesh();
+
+            TextureManager textureManager = mesh.getMaterial().getTexture();
+            particleShader.loadNumCols(textureManager.getNumCols());
+            particleShader.loadNumRows(textureManager.getNumRows());
+
+          for(Entity entity: emitter.getParticles()){
+
+              int col = entity.getTexturePos() % textureManager.getNumCols();
+              int row = entity.getTexturePos() / textureManager.getNumCols();
+              float textureXOffset = (float) col / textureManager.getNumCols();
+              float textureYOffset = (float) row / textureManager.getNumRows();
+              particleShader.loadTextureXOffset(textureXOffset);
+              particleShader.loadTextureYOffset(textureYOffset);
+
+              Matrix4f modelMatrix = transformation.setupModelMatrix(entity);
+
+              viewMatrix.transpose3x3(modelMatrix);
+              viewMatrix.scale(entity.getScale());
+
+              Matrix4f modelViewMatrix = transformation.setupModelViewMatrix(modelMatrix, viewMatrix);
+              modelViewMatrix.scale(entity.getScale());
+              particleShader.loadModelViewMatrix(modelViewMatrix);
+
+              entity.getMesh().render();
+
+            }
+
+          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+          glDepthMask(true);
+          particleShader.unbind();
+
+        }
+
+
+
+
     }
 
 

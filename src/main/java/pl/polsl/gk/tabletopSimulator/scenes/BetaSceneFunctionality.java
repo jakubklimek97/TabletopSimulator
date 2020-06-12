@@ -85,6 +85,7 @@ public class BetaSceneFunctionality implements IScene {
     private TextLine version;
     private Entity lastPicked;
     private Emitter emitter;
+    private Emitter[] emitters;
 
 
     //TEST NA TERAZ
@@ -127,19 +128,26 @@ public class BetaSceneFunctionality implements IScene {
         TextureManager texture2 = new TextureManager("pngFiles/colormap-lowres.png", 1);
         TextureManager sun2DSprite = new TextureManager("sprites/sun2D.png", 0);
         TextureManager moon2DSprite = new TextureManager("sprites/moon2D.png", 0);
+        TextureManager particleTexture = new TextureManager("particles/particle.png",4,4);
 
         Mesh mesh = null;
         Mesh mesh2 = null;
         Mesh mesh3 = null;
         Mesh mesh4 = null;
+        Mesh particleMesh = null;
         Material material = new Material(texture, reflectFactor);
         Material material2 = new Material(texture2, reflectFactor);
         Material material3 = new Material(texture2, reflectFactor);
         Material material4 = new Material(texture, reflectFactor);
+        Material particleMaterial = new Material(particleTexture,reflectFactor);
+
+
+
         try{ mesh = OBJLoader.load("/OBJs/sphere.obj");
             mesh2 = OBJLoader.load("/OBJs/sphere.obj");
             mesh3 = OBJLoader.load("/OBJs/Small Tropical Island.obj");
             mesh4 = OBJLoader.load("/OBJs/cube.obj");
+            particleMesh = OBJLoader.load("/OBJs/particle/particle.obj");
         }
         catch (Exception e){
             System.out.println("ERROR");
@@ -167,7 +175,7 @@ public class BetaSceneFunctionality implements IScene {
         item3.setScale(3f);
         item3.setRotation(1f,5.5f,10f);
         item3.setPickColor(new Vector3f(0.0f, 0.0f, 1.0f));
-       item3.setName("Item3");
+        item3.setName("Item3");
 
         items = new Entity[]{item1,item2,item3};
 
@@ -196,6 +204,26 @@ public class BetaSceneFunctionality implements IScene {
         fog.setEquationType(2);
         fog.setActive(true);
 
+        Vector3f particleSpeed = new Vector3f(0,1,0);
+        particleSpeed.mul(2.5f);
+        long timeLifeParticle = 40000;
+        int maxParticleAmount = 200;
+        long creationPeriodMillis = 300;
+        //Vector3f range = new Vector3f(77.8f,77.5f,-339f);
+        float range = 0.2f;
+        float scale = 20.0f;
+
+        assert particleMesh != null;
+        particleMesh.setMaterial(particleMaterial);
+        Particle particle = new Particle(particleMesh,particleSpeed,timeLifeParticle,100);
+        particle.setScale(scale);
+        particle.setPosition(77.8f,77.5f,-339f);
+        emitter = new Emitter(particle,maxParticleAmount,creationPeriodMillis);
+        emitter.setActive(true);
+        emitter.setPositionRndRange(range);
+        emitter.setSpeedRndRange(range);
+        emitter.setAnimRange(10);
+        emitters = new Emitter[] {emitter};
 
         theLight2DSprite = new Light2DSprite(sun2DSprite, 25);
         light2DSpriteRenderer = new Light2DSpriteRenderer();
@@ -216,7 +244,8 @@ public class BetaSceneFunctionality implements IScene {
 
        glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
-
+        //TODO
+        // USTAWIENIE MESHOW I TEKSTUR PO USTAWIENIU PICKOWANIA PSUJE PICKOWANIE
        this.fontManager = FontManager.GetManager();
        this.font = fontManager.GetFont("archivo-narrow/ArchivoNarrow-Regular");
        this.version = new TextLine(this.font, 45);
@@ -224,26 +253,8 @@ public class BetaSceneFunctionality implements IScene {
        this.version.SetPosition(0, 42);
        this.version.SetText("Kliknij obiekt aby go wybrac");
        this.lastPicked = null;
-
-       Vector3f particleSpeed = new Vector3f(0,1,0);
-       particleSpeed.mul(2.5f);
-       long timeLifeParticle = 4000;
-       int maxParticleAmount = 200;
-       long creationPeriodMillis = 300;
-       float range = 0.2f;
-       float scale = 1.0f;
-       Mesh particleMesh = OBJLoader.load("/OBJs/particle/particle.obj");
-       TextureManager particleTexture = new TextureManager("");
-       Material particleMaterial = new Material(particleTexture,reflectFactor);
-       particleMesh.setMaterial(particleMaterial);
-       Particle particle = new Particle(particleMesh,particleSpeed,timeLifeParticle,100);
-       particle.setScale(scale);
-       emitter = new Emitter(particle,maxParticleAmount,creationPeriodMillis);
-       emitter.setActive(true);
-       emitter.setPositionRndRange(range);
-       emitter.setSpeedRndRange(range);
-       emitter.setAnimRange(10);
-       //scene particle?
+        //TODO
+        // NIE DODAWAJ TU MESTHOW I TEKSTUR
 
     }
 
@@ -332,7 +343,7 @@ public class BetaSceneFunctionality implements IScene {
                }
            }
 
-           emitter.update((long)(rotX * 1000));
+           emitter.update((long)(rotX/2 * 1000));
 
             glDisable(GL_DEPTH_TEST);
            glDisable(GL_CULL_FACE);
@@ -380,7 +391,7 @@ public class BetaSceneFunctionality implements IScene {
     private final long window;
 
     public void render(long window) {
-        renderer.render(camera, items, 1280, 720, ambientLight, pointLight, directionalLight, fog);
+        renderer.render(camera, items, emitters, 1280, 720, ambientLight, pointLight, directionalLight, fog);
 
     }
 

@@ -156,6 +156,7 @@ public class BetaSceneFunctionality implements IScene {
         mesh2.setMaterial(material2);
         mesh3.setMaterial(material3);
         mesh4.setMaterial(material4);
+        particleMesh.setMaterial(particleMaterial);
         Entity item1 = new Entity(mesh2);
         item1.setPosition(60f,90f,-165f);
         item1.setScale(2f);
@@ -204,25 +205,22 @@ public class BetaSceneFunctionality implements IScene {
         fog.setEquationType(2);
         fog.setActive(true);
 
-        Vector3f particleSpeed = new Vector3f(0,1,0);
+        Vector3f particleSpeed = new Vector3f(1,1,0);
         particleSpeed.mul(2.5f);
-        long timeLifeParticle = 40000;
-        int maxParticleAmount = 200;
+        long timeLifeParticle = 4000;
+        int maxParticleAmount = 500;
         long creationPeriodMillis = 300;
-        //Vector3f range = new Vector3f(77.8f,77.5f,-339f);
-        float range = 0.2f;
-        float scale = 20.0f;
+        float range = 1.2f;
+        float scale = 0.9f;
 
-        assert particleMesh != null;
-        particleMesh.setMaterial(particleMaterial);
         Particle particle = new Particle(particleMesh,particleSpeed,timeLifeParticle,100);
         particle.setScale(scale);
-        particle.setPosition(77.8f,77.5f,-339f);
+        particle.setPosition(60.8f,77.5f,-339f);
         emitter = new Emitter(particle,maxParticleAmount,creationPeriodMillis);
         emitter.setActive(true);
         emitter.setPositionRndRange(range);
         emitter.setSpeedRndRange(range);
-        emitter.setAnimRange(10);
+        emitter.setAnimRange(20);
         emitters = new Emitter[] {emitter};
 
         theLight2DSprite = new Light2DSprite(sun2DSprite, 25);
@@ -343,7 +341,7 @@ public class BetaSceneFunctionality implements IScene {
                }
            }
 
-           emitter.update((long)(rotX/2 * 1000));
+           emitter.update((long)(0.33333 * 1000));
 
             glDisable(GL_DEPTH_TEST);
            glDisable(GL_CULL_FACE);

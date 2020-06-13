@@ -341,7 +341,7 @@ public class BetaSceneFunctionality implements IScene {
                }
            }
 
-           emitter.update((long)(0.33333 * 1000));
+           emitter.update((long)(0.1 * 1000));
 
             glDisable(GL_DEPTH_TEST);
            glDisable(GL_CULL_FACE);

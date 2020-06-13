@@ -74,13 +74,12 @@ public class Renderer {
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             System.out.println("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+        particleShader = new ParticleShader();
         orthogonalCoordsManager = new OrthogonalCoordsManager(-1600.0f, 1600.0f, -1600.0f, 1685.0f, -325.0f, 650.0f);
         shadows = new Shadows();
         shadowShader = new ShadowShader();
         transformation = new TransformManager();
         lightShader = new LightAndFogShader();
-        particleShader = new ParticleShader();
         specularPower = 3.5f;
 
     }
@@ -97,8 +96,9 @@ public class Renderer {
         glViewport(0, 0, 1280, 720);
 
        renderScene(camera,items,width,height,ambientLight,light,directionalLight, fog);
-       renderParticles(camera,emitters,items);
+
        renderPickableEntities(camera, items, width, height,fog);
+        renderParticles(camera,emitters,items);
     }
 
     public void renderParticles(Camera camera, Emitter[] emitters, Entity[] items){
@@ -115,7 +115,7 @@ public class Renderer {
 
         for(int i = 0; i < numEmitters; i++){
             Emitter emitter = emitters[i];
-            Mesh mesh = emitter.getBaseParticle().getMesh();
+            Mesh mesh = (Mesh)emitter.getBaseParticle().getMesh();
 
             TextureManager textureManager = mesh.getMaterial().getTexture();
             particleShader.loadNumCols(textureManager.getNumCols());

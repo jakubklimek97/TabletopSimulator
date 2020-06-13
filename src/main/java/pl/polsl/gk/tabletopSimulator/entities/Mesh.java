@@ -23,10 +23,8 @@ public class Mesh {
     private final List<Integer> vboIdList;
     private final int vaoId;
     private final int vertexCount;
-    private TextureManager texture;
     private Material material;
 
-    private Vector3f colour;
 
     public Mesh(int[] indices, float[] positions, float[] textureCoords,float[] normals ) {
         IntBuffer indicesBuffer = null;
@@ -114,26 +112,6 @@ public class Mesh {
 
     public void setMaterial(Material material){
         this.material = material;
-    }
-
-    public TextureManager getTexture() {
-        return texture;
-    }
-
-    public void setTexture(TextureManager texture) {
-        this.texture = texture;
-    }
-
-    public Vector3f getColour() {
-        return colour;
-    }
-
-    public void setColour(Vector3f colour) {
-        this.colour = colour;
-    }
-
-    public boolean checkTexture(){
-        return this.texture != null;
     }
 
     public int getVaoId() {

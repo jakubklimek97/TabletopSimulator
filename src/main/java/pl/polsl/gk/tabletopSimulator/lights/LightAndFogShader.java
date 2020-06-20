@@ -2,7 +2,6 @@ package pl.polsl.gk.tabletopSimulator.lights;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
 import pl.polsl.gk.tabletopSimulator.fog.Fog;
 import pl.polsl.gk.tabletopSimulator.models.Material;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
@@ -19,7 +18,6 @@ public class LightAndFogShader extends Shader {
     private int modelLightViewMatrix;
     private int orthogonalProjectionMatrix;
     private int shadowMap;
-
     public LightAndFogShader() {
         super(FILE);
 

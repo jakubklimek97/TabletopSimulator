@@ -16,6 +16,7 @@ public class PostProcessing {
 	private static VerticalBlur vBlur;
 	private static HorizontalBlur hBlur;
 	private static BrightFilter brightFilter;
+	private static CombineFilter combineFilter;
 	
 
 	public static void init(Loader loader){
@@ -24,6 +25,7 @@ public class PostProcessing {
 		hBlur = new HorizontalBlur(Display.getWidth()/5, Display.getHeight()/5);
 		vBlur = new VerticalBlur(Display.getWidth()/5, Display.getHeight()/5);
 		brightFilter = new BrightFilter(Display.getWidth()/2, Display.getHeight()/2);
+		combineFilter = new CombineFilter();
 	}
 	
 	public static void doPostProcessing(int colourTexture){
@@ -31,14 +33,16 @@ public class PostProcessing {
 		brightFilter.render(colourTexture);
 		hBlur.render(brightFilter.getOutputTexture());
 		vBlur.render(hBlur.getOutputTexture());
-		contrastChanger.render(colourTexture);
+		combineFilter.render(colourTexture, vBlur.getOutputTexture());
 		end();
 	}
 	
 	public static void cleanUp(){
 		contrastChanger.cleanUp();
+		brightFilter.cleanUp();
 		hBlur.cleanUp();
 		vBlur.cleanUp();
+		combineFilter.cleanUp();
 	}
 	
 	private static void start(){

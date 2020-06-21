@@ -32,7 +32,7 @@ public class Terrain {
         }
         selected = new ArrayList<Integer>();
         terrainArray = new float[(TERRAIN_DIM+1)*(TERRAIN_DIM+1)*7];
-        FloatBuffer buff = FloatBuffer.wrap(terrainArray);
+        buff = FloatBuffer.wrap(terrainArray);
         for(int row = 0; row < TERRAIN_DIM+1; ++row){
             for(int col =0; col < TERRAIN_DIM+1; ++col){
                 buff.put(row);             //posX
@@ -84,9 +84,10 @@ public class Terrain {
             natIndicesBuffer.put(indicesBuffer);
             natIndicesBuffer.flip();
         }
+        nativeVertexBuffer = buff;
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, natVertexBuffer, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, terrainArray, GL_DYNAMIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, false,7*4,0);
 
         glEnableVertexAttribArray(0);
@@ -148,7 +149,7 @@ public class Terrain {
             nativeVertexBuffer.put(status.booleanValue() ? 0.0f : 1.0f);
             nativeVertexBuffer.position(0);
             glBindVertexArray(vao);
-            glBufferData(GL_ARRAY_BUFFER, nativeVertexBuffer, GL_DYNAMIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, terrainArray, GL_DYNAMIC_DRAW);
             glBindVertexArray(0);
         }
         if(status.booleanValue() == true){
@@ -218,7 +219,7 @@ public class Terrain {
 
         nativeVertexBuffer.position(0);
         glBindVertexArray(vao);
-        glBufferData(GL_ARRAY_BUFFER, nativeVertexBuffer, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, terrainArray, GL_DYNAMIC_DRAW);
         glBindVertexArray(0);
     }
     private void setNativeVertexBuffer(int position, float value){
@@ -232,7 +233,7 @@ public class Terrain {
     public void updateNativeVertexBuffer(){
         nativeVertexBuffer.position(0);
         glBindVertexArray(vao);
-        glBufferData(GL_ARRAY_BUFFER, nativeVertexBuffer, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, terrainArray, GL_DYNAMIC_DRAW);
         int error = glGetError();
         if(error != 0)
             System.out.println(error);
@@ -351,4 +352,5 @@ public class Terrain {
     private HashSet<Integer> notFlatFields;
     private boolean highlight = true; ///TODO: W wersji finalnej ma byc false i triggerowane przez ui
     private int lastMouseOver = 0;
+    private FloatBuffer buff;
 }

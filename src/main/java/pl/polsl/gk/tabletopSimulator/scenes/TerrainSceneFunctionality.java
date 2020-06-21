@@ -254,13 +254,10 @@ public class TerrainSceneFunctionality implements IScene {
             glClearColor(1.0f, 0f, 0f,0.5f);
             glClear(GL_COLOR_BUFFER_BIT);
             //glEnable(GL_DEPTH_TEST);
-            //camera.input();
-            //camera.update(mouseInput);
+            camera.input();
+            camera.update(mouseInput);
             renderer.renderTerrain(camera, terrain, 1280, 720, ambientLight, pointLight, directionalLight, fog);
-            if(i <1 ){
-                terrain.updateNativeVertexBuffer();
-                i++;
-            }
+
 
             /*render(window);/*
             skybox.render(camera, skyboxColourFog.x, skyboxColourFog.y, skyboxColourFog.z, dayOn, nightOn);

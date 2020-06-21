@@ -151,7 +151,7 @@ public class Renderer {
         tSha.loadProjectionMatrix(projectionMatrix);
         tSha.loadModelViewMatrix(viewMatrix);
         terrain.bindAndDraw();
-        //renderTerrainMouseOver(camera, terrain, width, height);
+        renderTerrainMouseOver(camera, terrain, width, height);
     }
     public void renderTerrainMouseOver(Camera camera, Terrain terrain, int width, int height){
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -184,10 +184,9 @@ public class Renderer {
         if(pixel[0] == 1.0f){
         }
         else{
-            int x = (int)(pixel[1] * 25.0f);
-            int z = (int)(pixel[2] * 25.0f);
-            System.out.println(x + " " + z);
-            //terrain.updateSelectedField(5,5);
+            int z = (int)(pixel[1] * 25.0f);
+            int x = (int)(pixel[2] * 25.0f);
+            terrain.updateSelectedField(x,z);
         }
 
     }

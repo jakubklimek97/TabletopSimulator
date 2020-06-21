@@ -2,6 +2,8 @@
 
 in vec2 position;
 
+out vec2 blurTextureCoords[11];
+
 uniform float targetHeight;
 
 void main(void){

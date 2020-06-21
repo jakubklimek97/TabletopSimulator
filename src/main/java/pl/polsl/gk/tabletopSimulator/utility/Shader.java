@@ -62,7 +62,7 @@ public abstract class Shader {
             glDeleteShader(fragmentShader);
         } else if (vertexCompileStatus != 1) {
             System.out.println("ERROR::VERTEXSHADER::" + name + "::CLASS::"+ this.getClass().getSimpleName());
-            System.out.println(glGetShaderInfoLog(fragmentShader));
+            System.out.println(glGetShaderInfoLog(vertexShader));
             glDeleteShader(vertexShader);
             glDeleteShader(fragmentShader);
         } else {

@@ -7,6 +7,7 @@ import org.lwjgl.system.MemoryStack;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TransformManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.entities.Entity;
+import pl.polsl.gk.tabletopSimulator.entities.Terrain;
 import pl.polsl.gk.tabletopSimulator.fog.Fog;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
 import pl.polsl.gk.tabletopSimulator.engine.managers.OrthogonalCoordsManager;
@@ -15,6 +16,7 @@ import pl.polsl.gk.tabletopSimulator.lights.LightAndFogShader;
 import pl.polsl.gk.tabletopSimulator.shadows.ShadowShader;
 import pl.polsl.gk.tabletopSimulator.shadows.Shadows;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
+import pl.polsl.gk.tabletopSimulator.utility.TerrainShader;
 
 
 import java.nio.DoubleBuffer;
@@ -133,7 +135,21 @@ public class Renderer {
 
 
     }
+    public void renderTerrain(Camera camera, Terrain terrain, int width, int height, Vector3f ambientLight,
+                              PointLight light, DirectionalLight directionalLight, Fog fog){
 
+        glViewport(0, 0, 1280, 720);
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        Matrix4f  projectionMatrix = transformation.updateProjectionMatrix(FOV, width, height, Z_NEAR, Z_FAR);
+        Matrix4f viewMatrix = transformation.setupViewMatrix(camera);
+        TerrainShader tSha = terrain.GetShader();
+        tSha.use();
+        tSha.loadProjectionMatrix(projectionMatrix);
+        tSha.loadModelViewMatrix(viewMatrix);
+        terrain.bindAndDraw();
+    }
     public void renderPickableEntities(Camera camera, Entity[] items, int width, int height, Fog fog){
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);

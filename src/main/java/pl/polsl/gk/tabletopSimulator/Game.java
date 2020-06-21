@@ -64,7 +64,8 @@ public class Game {
     private void main() {
         GL.createCapabilities();
         SceneManager sceneManager = new SceneManager(window);
-        sceneManager.SwitchScene(SceneList.TEST_FUNC_3);
+        //sceneManager.SwitchScene(SceneList.TEST_FUNC_3);
+        sceneManager.SwitchScene(SceneList.TERRAIN);
     }
 
     public static void main(String[] args) {

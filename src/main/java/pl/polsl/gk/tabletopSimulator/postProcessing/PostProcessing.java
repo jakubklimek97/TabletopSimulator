@@ -13,19 +13,29 @@ public class PostProcessing {
 	private static final float[] POSITIONS = { -1, 1, -1, -1, 1, 1, 1, -1 };	
 	private static RawModel quad;
 	private static ContrastChanger contrastChanger;
+	private static VerticalBlur vBlur;
+	private static HorizontalBlur hBlur;
+	
 
 	public static void init(Loader loader){
 		quad = loader.loadToVAO(POSITIONS, 2);
+		contrastChanger = new ContrastChanger();
+		hBlur = new HorizontalBlur(Display.getWidth(), Display.getHeight());
+		vBlur = new VerticalBlur(Display.getWidth(), Display.getHeight());
 	}
 	
 	public static void doPostProcessing(int colourTexture){
 		start();
-		contrastChanger = new ContrastChanger();
+		hBlur.render(colourTexture);
+		vBlur.render(hBlur.getOutputTexture());
+		contrastChanger.render(colourTexture);
 		end();
 	}
 	
 	public static void cleanUp(){
-
+		contrastChanger.cleanUp();
+		hBlur.cleanUp();
+		vBlur.cleanUp();
 	}
 	
 	private static void start(){

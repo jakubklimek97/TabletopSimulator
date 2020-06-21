@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL33C;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import pl.polsl.gk.tabletopSimulator.utility.GeometryShader;
+import pl.polsl.gk.tabletopSimulator.utility.TerrainMouseoverShader;
 import pl.polsl.gk.tabletopSimulator.utility.TerrainShader;
 
 import static org.lwjgl.opengl.GL33C.*;
@@ -98,7 +99,7 @@ public class Terrain {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, natIndicesBuffer, GL_STATIC_DRAW);
         glBindVertexArray(0);
         shader = new TerrainShader();
-        shader.use();
+        moShader = new TerrainMouseoverShader();
 
     }
     public Terrain(String filePath){
@@ -109,22 +110,47 @@ public class Terrain {
         glBindTexture(GL_TEXTURE_2D, glTextureId);
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, indicesAmount, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
     }
 
     public TerrainShader GetShader() {
         return shader;
+    }
+    public TerrainMouseoverShader GetMouseoverShader(){
+        return moShader;
+    }
+    public void toggleFieldHighlight(){
+        if(highlight){
+            for(int field : selected){
+                setNativeVertexBuffer(translateUserFieldPosToInternalArrayPos(field)*7+6, 0.0f);
+            }
+            setNativeVertexBuffer(translateUserFieldPosToInternalArrayPos(lastMouseOver)*7+5, 0.0f);
+        }
+        else{
+            for(int field : selected){
+                setNativeVertexBuffer(translateUserFieldPosToInternalArrayPos(field)*7+6, 1.0f);
+            }
+            setNativeVertexBuffer(translateUserFieldPosToInternalArrayPos(lastMouseOver)*7+5, 1.0f);
+        }
+        updateNativeVertexBuffer();
+        highlight = !highlight;
+    }
+    public void updateMouseOver(float x, float z){
+
     }
     public void toggleSelected(int x, int z){
         if(x > TERRAIN_DIM || z > TERRAIN_DIM || x < 0 || z < 0){
             return;
         }
         Boolean status = fieldsSelectStatus[z*TERRAIN_DIM+x];
-        nativeVertexBuffer.position(getQuadPositionInArray(x,z)*7+6);
-        nativeVertexBuffer.put(status.booleanValue()? 0.0f : 1.0f);
-        nativeVertexBuffer.position(0);
-        glBindVertexArray(vao);
-        glBufferData(GL_ARRAY_BUFFER, nativeVertexBuffer, GL_DYNAMIC_DRAW);
-        glBindVertexArray(0);
+        if(highlight) {
+            nativeVertexBuffer.position(getQuadPositionInArray(x, z) * 7 + 6);
+            nativeVertexBuffer.put(status.booleanValue() ? 0.0f : 1.0f);
+            nativeVertexBuffer.position(0);
+            glBindVertexArray(vao);
+            glBufferData(GL_ARRAY_BUFFER, nativeVertexBuffer, GL_DYNAMIC_DRAW);
+            glBindVertexArray(0);
+        }
         if(status.booleanValue() == true){
             selected.remove(selected.indexOf(z*TERRAIN_DIM+x));
         }
@@ -203,10 +229,13 @@ public class Terrain {
         nativeVertexBuffer.position(position);
         return nativeVertexBuffer.get(0);
     }
-    private void updateNativeVertexBuffer(){
+    public void updateNativeVertexBuffer(){
         nativeVertexBuffer.position(0);
         glBindVertexArray(vao);
         glBufferData(GL_ARRAY_BUFFER, nativeVertexBuffer, GL_DYNAMIC_DRAW);
+        int error = glGetError();
+        if(error != 0)
+            System.out.println(error);
         glBindVertexArray(0);
     }
     public void setSelectedHeightToLastSelected(){
@@ -249,11 +278,23 @@ public class Terrain {
             return true;
         int arrPos = translateUserFieldPosToInternalArrayPos(pos)*7;
         int upperPos = arrPos+ (TERRAIN_DIM+1)*7;
-        return (getNativeVertexBuffer(arrPos+1) == getNativeVertexBuffer(arrPos+8) && getNativeVertexBuffer(upperPos+1) == getNativeVertexBuffer(upperPos+8)
-        && getNativeVertexBuffer(arrPos+1) == getNativeVertexBuffer(upperPos+1));
+        return (getNativeVertexBuffer(arrPos+1) == getNativeVertexBuffer(arrPos+8)
+                && getNativeVertexBuffer(upperPos+1) == getNativeVertexBuffer(upperPos+8)
+                && getNativeVertexBuffer(arrPos+1) == getNativeVertexBuffer(upperPos+1));
     }
     private int translateUserFieldPosToInternalArrayPos(int pos){
         return getQuadPositionInArray(pos % TERRAIN_DIM, pos / TERRAIN_DIM);
+    }
+    public void updateSelectedField(int x, int z){
+        int pos = x + z * TERRAIN_DIM;
+        if(lastMouseOver != pos){
+        if(highlight){
+            setNativeVertexBuffer(translateUserFieldPosToInternalArrayPos(lastMouseOver)*7+5, 0.0f);
+            setNativeVertexBuffer(translateUserFieldPosToInternalArrayPos(pos)*7+5, 1.0f);
+            updateNativeVertexBuffer();
+        }
+       lastMouseOver = pos;
+        }
     }
     private void retrieveImage(String file, int width, int height) {
         File textureFile = new File("test2.bmp");
@@ -301,10 +342,13 @@ public class Terrain {
     private String terrainName;
     private int vao, vbo, ebo, glTextureId, mouseoverFbo;
     private TerrainShader shader;
+    private TerrainMouseoverShader moShader;
     private int indicesAmount;
     final int TERRAIN_DIM = 25;
     private int prevSelectedX = 0, prevSelectedZ = 0;
     private Boolean[] fieldsSelectStatus;
     private ArrayList<Integer> selected;
     private HashSet<Integer> notFlatFields;
+    private boolean highlight = true; ///TODO: W wersji finalnej ma byc false i triggerowane przez ui
+    private int lastMouseOver = 0;
 }

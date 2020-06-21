@@ -234,8 +234,18 @@ public class TerrainSceneFunctionality implements IScene {
         terrain.toggleSelected(2,0);
         terrain.toggleSelected(4,0);
         terrain.setSelectedHeightToLastSelected();
-        while (!glfwWindowShouldClose(window)) {
+        terrain.toggleFieldHighlight();
+        terrain.toggleFieldHighlight();
 
+        for(int i = 0; i < 5000; ++i){
+            terrain.updateNativeVertexBuffer();
+        }
+        int i = 0;
+        while (!glfwWindowShouldClose(window)) {
+            if(i <2 ){
+                terrain.updateNativeVertexBuffer();
+                i++;
+            }
             mouseInput.input(window);
 
             glfwPollEvents();
@@ -244,11 +254,14 @@ public class TerrainSceneFunctionality implements IScene {
             glClearColor(1.0f, 0f, 0f,0.5f);
             glClear(GL_COLOR_BUFFER_BIT);
             //glEnable(GL_DEPTH_TEST);
-            camera.input();
-            camera.update(mouseInput);
+            //camera.input();
+            //camera.update(mouseInput);
             renderer.renderTerrain(camera, terrain, 1280, 720, ambientLight, pointLight, directionalLight, fog);
-            Vector3f cameraPos = camera.getPosition();
-            System.out.println(cameraPos.x + " " + cameraPos.y + " " + cameraPos.z);
+            if(i <1 ){
+                terrain.updateNativeVertexBuffer();
+                i++;
+            }
+
             /*render(window);/*
             skybox.render(camera, skyboxColourFog.x, skyboxColourFog.y, skyboxColourFog.z, dayOn, nightOn);
             // Now zValue and yValue below displace directionalLight z and y

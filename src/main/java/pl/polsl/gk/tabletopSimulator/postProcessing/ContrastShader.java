@@ -4,15 +4,15 @@ import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
 public class ContrastShader extends Shader {
 
-    private static final String VERTEX_FILE = "/postProcessing/contrastVertex.txt";
-    private static final String FRAGMENT_FILE = "/postProcessing/contrastFragment.txt";
-	
+    private static final String CONTRAST_FILE = "contrastShader";
+
     public ContrastShader() {
-	super(VERTEX_FILE, FRAGMENT_FILE);
+	super(CONTRAST_FILE);
     }
 
     @Override
-    protected void getAllUniformLocations() {	
+    protected void getAllUniformLocations() {
+
     }
 
     @Override

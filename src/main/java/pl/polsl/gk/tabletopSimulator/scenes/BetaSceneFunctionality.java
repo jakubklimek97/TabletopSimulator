@@ -17,6 +17,8 @@ import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
 import pl.polsl.gk.tabletopSimulator.models.Material;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.loaders.OBJLoader;
+import pl.polsl.gk.tabletopSimulator.postProcessing.Fbo;
+import pl.polsl.gk.tabletopSimulator.postProcessing.PostProcessing;
 import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSprite;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSpriteRenderer;
@@ -221,6 +223,7 @@ public class BetaSceneFunctionality implements IScene {
        this.version.SetPosition(0, 42);
        this.version.SetText("Kliknij obiekt aby go wybrac");
        this.lastPicked = null;
+       renderer.initLoader(loader);
     }
 
     @Override
@@ -244,7 +247,9 @@ public class BetaSceneFunctionality implements IScene {
             glEnable(GL_DEPTH_TEST);
             camera.input();
             camera.update(mouseInput);
+
             render(window);
+
             skybox.render(camera, skyboxColourFog.x, skyboxColourFog.y, skyboxColourFog.z, dayOn, nightOn);
             // Now zValue and yValue below displace directionalLight z and y
             if (directionalLight.getDirection().z > 0.5f) {

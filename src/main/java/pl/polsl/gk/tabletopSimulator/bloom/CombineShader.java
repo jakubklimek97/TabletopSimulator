@@ -1,17 +1,17 @@
 package pl.polsl.gk.tabletopSimulator.bloom;
 
-import shaders.ShaderProgram;
+import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
-public class CombineShader extends ShaderProgram {
 
-	private static final String VERTEX_FILE = "/bloom/simpleVertex.txt";
-	private static final String FRAGMENT_FILE = "/bloom/combineFragment.txt";
-	
+public class CombineShader extends Shader {
+
+	private static final String COMBINE_FILE = "CombineShader";
+
 	private int location_colourTexture;
 	private int location_highlightTexture;
 	
 	protected CombineShader() {
-		super(VERTEX_FILE, FRAGMENT_FILE);
+		super(COMBINE_FILE);
 	}
 	
 	@Override
@@ -19,11 +19,18 @@ public class CombineShader extends ShaderProgram {
 		location_colourTexture = super.getUniformLocation("colourTexture");
 		location_highlightTexture = super.getUniformLocation("highlightTexture");
 	}
-	
-	protected void connectTextureUnits(){
-		super.loadInt(location_colourTexture, 0);
-		super.loadInt(location_highlightTexture, 1);
+
+	@Override
+	protected void bindAllUniforms() {
+		super.createUniform("colourTexture", location_colourTexture);
+		super.createUniform("highlightTexture", location_highlightTexture);
 	}
+
+	protected void connectTextureUnits() {
+		super.loadInt("colourTexture", location_colourTexture);
+		super.loadInt("highlightTexture", location_highlightTexture);
+	}
+
 
 	@Override
 	protected void bindAttributes() {

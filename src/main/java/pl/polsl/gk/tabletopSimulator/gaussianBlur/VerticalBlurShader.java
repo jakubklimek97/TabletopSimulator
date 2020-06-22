@@ -1,25 +1,30 @@
 package pl.polsl.gk.tabletopSimulator.gaussianBlur;
 
-import shaders.ShaderProgram;
+import pl.polsl.gk.tabletopSimulator.utility.Shader;
 
-public class VerticalBlurShader extends ShaderProgram{
+public class VerticalBlurShader extends Shader {
 
-	private static final String VERTEX_FILE = "/gaussianBlur/verticalBlurVertex.txt";
-	private static final String FRAGMENT_FILE = "/gaussianBlur/blurFragment.txt";
+	private static final String VERTICAL_BLUR_FILE = "verticalBlurShader";
 	
 	private int location_targetHeight;
 	
 	protected VerticalBlurShader() {
-		super(VERTEX_FILE, FRAGMENT_FILE);
+		super(VERTICAL_BLUR_FILE);
 	}
 	
 	protected void loadTargetHeight(float height){
-		super.loadFloat(location_targetHeight, height);
+		super.loadFloat("targetHeight", height);
 	}
 
 	@Override
 	protected void getAllUniformLocations() {	
 		location_targetHeight = super.getUniformLocation("targetHeight");
+	}
+
+	@Override
+	protected void bindAllUniforms() {
+		super.createUniform("targetHeight", location_targetHeight);
+
 	}
 
 	@Override

@@ -2,8 +2,8 @@ package pl.polsl.gk.tabletopSimulator.bloom;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import pl.polsl.gk.tabletopSimulator.postProcessing.ImageRenderer;
 
-import postProcessing.ImageRenderer;
 
 public class BrightFilter {
 
@@ -16,11 +16,11 @@ public class BrightFilter {
 	}
 	
 	public void render(int texture){
-		shader.start();
+		shader.use();
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
 		renderer.renderQuad();
-		shader.stop();
+		shader.unbind();
 	}
 	
 	public int getOutputTexture(){
@@ -29,7 +29,7 @@ public class BrightFilter {
 	
 	public void cleanUp(){
 		renderer.cleanUp();
-		shader.cleanUp();
+		shader.cleanup();
 	}
 	
 }

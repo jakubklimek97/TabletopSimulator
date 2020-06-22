@@ -3,7 +3,8 @@ package pl.polsl.gk.tabletopSimulator.gaussianBlur;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
-import postProcessing.ImageRenderer;
+import pl.polsl.gk.tabletopSimulator.postProcessing.ImageRenderer;
+
 
 public class HorizontalBlur {
 	
@@ -12,18 +13,19 @@ public class HorizontalBlur {
 	
 	public HorizontalBlur(int targetFboWidth, int targetFboHeight){
 		shader = new HorizontalBlurShader();
-		shader.start();
+		shader.use();
+		shader.bindAllUniforms();
 		shader.loadTargetWidth(targetFboWidth);
-		shader.stop();
+		shader.unbind();
 		renderer = new ImageRenderer(targetFboWidth, targetFboHeight);
 	}
 	
 	public void render(int texture){
-		shader.start();
+		shader.use();
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
 		renderer.renderQuad();
-		shader.stop();
+		shader.unbind();
 	}
 	
 	public int getOutputTexture(){
@@ -32,7 +34,7 @@ public class HorizontalBlur {
 	
 	public void cleanUp(){
 		renderer.cleanUp();
-		shader.cleanUp();
+		shader.cleanup();
 	}
 
 }

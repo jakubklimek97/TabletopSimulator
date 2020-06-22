@@ -7,11 +7,14 @@ import org.lwjgl.system.MemoryStack;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TransformManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.entities.Entity;
+import pl.polsl.gk.tabletopSimulator.entities.Loader;
 import pl.polsl.gk.tabletopSimulator.fog.Fog;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
 import pl.polsl.gk.tabletopSimulator.engine.managers.OrthogonalCoordsManager;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.lights.LightAndFogShader;
+import pl.polsl.gk.tabletopSimulator.postProcessing.Fbo;
+import pl.polsl.gk.tabletopSimulator.postProcessing.PostProcessing;
 import pl.polsl.gk.tabletopSimulator.shadows.ShadowShader;
 import pl.polsl.gk.tabletopSimulator.shadows.Shadows;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
@@ -27,6 +30,8 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
 
+
+    private Fbo fbo;
     private static final float FOV = (float) Math.toRadians(60.0f);
     private static final float Z_NEAR = 0.01f;
     private static final float Z_FAR = 1000.0f;
@@ -45,31 +50,32 @@ public class Renderer {
     private MousepickingShader mousePickingShader;
 
 
+
     public Renderer() {
 
-        mousePickingShader = new MousepickingShader();
-        mousePickingShader.getAllUniformLocations();
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            IntBuffer tmp = stack.callocInt(1);
-            glGenFramebuffers(tmp);
-            framebuffer = tmp.get(0);
-            glGenTextures(tmp);
-            textureColorbuffer = tmp.get(0);
-            glGenRenderbuffers(tmp);
-            rbo = tmp.get(0);
-        }
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-        glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1280, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1280, 720);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            System.out.println("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+       //mousePickingShader = new MousepickingShader();
+       //mousePickingShader.getAllUniformLocations();
+       //try(MemoryStack stack = MemoryStack.stackPush()){
+       //    IntBuffer tmp = stack.callocInt(1);
+       //    glGenFramebuffers(tmp);
+       //    framebuffer = tmp.get(0);
+       //    glGenTextures(tmp);
+       //    textureColorbuffer = tmp.get(0);
+       //    glGenRenderbuffers(tmp);
+       //    rbo = tmp.get(0);
+       //}
+       //glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+       //glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+       //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1280, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+       //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+       //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+       //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+       //glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+       //glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1280, 720);
+       //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+       //if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+       //    System.out.println("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+       //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         orthogonalCoordsManager = new OrthogonalCoordsManager(-1600.0f, 1600.0f, -1600.0f, 1685.0f, -325.0f, 650.0f);
         shadows = new Shadows();
@@ -80,7 +86,13 @@ public class Renderer {
         lightShader.bindAllUniforms();
         lightShader.unbind();
         specularPower = 3.5f;
+        fbo = new Fbo(1280, 720, Fbo.DEPTH_RENDER_BUFFER);
 
+
+    }
+
+    public void initLoader(Loader loader){
+        PostProcessing.init(loader);
     }
 
     public void clear() {
@@ -90,12 +102,13 @@ public class Renderer {
     public void render(Camera camera, Entity[] items, int width, int height, Vector3f ambientLight,
                        PointLight light, DirectionalLight directionalLight, Fog fog) {
         clear();
-        renderShadows(camera,items,width,height,ambientLight,light,directionalLight);
-
+        //renderShadows(camera,items,width,height,ambientLight,light,directionalLight);
         glViewport(0, 0, 1280, 720);
-
-       renderScene(camera,items,width,height,ambientLight,light,directionalLight, fog);
-       renderPickableEntities(camera, items, width, height,fog);
+        fbo.bindFrameBuffer();
+        renderScene(camera,items,width,height,ambientLight,light,directionalLight, fog);
+        fbo.unbindFrameBuffer();
+        PostProcessing.doPostProcessing(fbo.getDepthTexture());
+       //renderPickableEntities(camera, items, width, height,fog);
     }
 
 

@@ -26,6 +26,9 @@ public class SceneManager {
             case TERRAIN:
                 currentScene = new TerrainSceneFunctionality(this);
                 break;
+            case SKELETAL:
+                currentScene = new SkeletalSceneFunctionality(this);
+                break;
 
         }
         currentScene.Init();

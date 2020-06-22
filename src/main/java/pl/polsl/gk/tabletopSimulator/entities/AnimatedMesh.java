@@ -34,6 +34,9 @@ public class AnimatedMesh {
             AIMesh mesh = AIMesh.create(scene.mMeshes().get(i));
             verticesArray = new float[8*mesh.mNumVertices()];
             vertexBoneDataArray = new VertexBoneData[mesh.mNumVertices()];
+            for(int it = 0 ; it <mesh.mNumVertices(); ++it ){
+                vertexBoneDataArray[it] = new VertexBoneData();
+            }
             AIVector3D.Buffer txc = mesh.mTextureCoords(0);
             for(int vertice = 0; vertice < mesh.mNumVertices(); ++vertice){
                 System.out.println(vertice);
@@ -82,6 +85,7 @@ public class AnimatedMesh {
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             LoadMaterials(scene);
+            LoadBones(mesh);
             LoadAnimation(scene);
         }
 
@@ -99,6 +103,7 @@ public class AnimatedMesh {
             }
             else{
                 boneMapping.put(boneName, insertedBonesIndex);
+                bones[insertedBonesIndex] = new Bone();
                 boneIndex = insertedBonesIndex++;
             }
             bones[boneIndex].offsetMatrix = bone.mOffsetMatrix();
@@ -140,6 +145,9 @@ class VertexBoneData{
     public int[] boneIds = new int[4];
     public float[] boneWeights = new float[4];
     public void addBoneWeight(int boneId, float boneWeight){
+        if(numberOfInsertedBones == 1){
+            System.out.println("WIECEJ NIZ 1");
+        }
         if(!(numberOfInsertedBones < 4)){
             System.out.println("TOO MUCH BONES");
             return;

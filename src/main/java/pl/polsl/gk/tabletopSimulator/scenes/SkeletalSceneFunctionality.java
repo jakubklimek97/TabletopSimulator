@@ -72,7 +72,7 @@ public class SkeletalSceneFunctionality implements IScene {
     private TextLine version;
 
     private Entity lastPicked;
-
+    private AnimatedEntity testEntity;
     private Terrain terrain;
 
 
@@ -83,7 +83,7 @@ public class SkeletalSceneFunctionality implements IScene {
         terrain = new Terrain("Test.png");
         AnimatedMesh aMesh = new AnimatedMesh();
         aMesh.LoadMesh("human.fbx");
-
+        testEntity = new AnimatedEntity(aMesh);
     }
 
     @Override
@@ -108,7 +108,8 @@ public class SkeletalSceneFunctionality implements IScene {
             //glEnable(GL_DEPTH_TEST);
             camera.input();
             camera.update(mouseInput);
-            renderer.renderTerrain(camera, terrain, 1280, 720, ambientLight, pointLight, directionalLight, fog);
+            //renderer.renderTerrain(camera, terrain, 1280, 720, ambientLight, pointLight, directionalLight, fog);
+            testEntity.Draw();
 
 
 

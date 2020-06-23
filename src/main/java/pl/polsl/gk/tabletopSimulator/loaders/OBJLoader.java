@@ -2,6 +2,7 @@ package pl.polsl.gk.tabletopSimulator.loaders;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import pl.polsl.gk.tabletopSimulator.entities.InstancedMesh;
 import pl.polsl.gk.tabletopSimulator.entities.Mesh;
 
 import java.io.BufferedReader;
@@ -15,8 +16,11 @@ import java.util.List;
 
 public class OBJLoader {
 
+    public static Mesh loadMesh(String fileName) {
+        return load(fileName, 1);
+    }
 
-    public static Mesh load(String fileName) {
+    public static Mesh load(String fileName, int instances) {
 
         List<String> txtObjLines = readAllLines(fileName);
         List<Vector3f> normalsPosition = new ArrayList<>();
@@ -61,12 +65,12 @@ public class OBJLoader {
             }
 
         }
-        return  reorderList(vertices,texturesPosition,normalsPosition,faces);
+        return  reorderList(vertices,texturesPosition,normalsPosition,faces, instances);
     }
 
 
     private static Mesh reorderList(List<Vector3f> positionList, List<Vector2f> textureCoordsList,
-                                    List<Vector3f> normalList, List<Faces> facesList){
+                                    List<Vector3f> normalList, List<Faces> facesList, int instances){
 
         List<Integer> indices = new ArrayList<>();
 
@@ -90,10 +94,17 @@ public class OBJLoader {
             }
         }
 
-        int[] indicesArr;
-        indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
-        return new Mesh(indicesArr, positionsArray, textureCoordsArr, textureNormalsArr);
 
+        int[] indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
+
+
+        Mesh mesh;
+        if (instances > 1) {
+            mesh = new InstancedMesh(indicesArr, positionsArray, textureCoordsArr, textureNormalsArr, instances);
+        } else {
+            mesh = new Mesh(indicesArr, positionsArray, textureCoordsArr, textureNormalsArr);
+        }
+        return mesh;
 
     }
 
@@ -151,7 +162,8 @@ public class OBJLoader {
             int length = dataTypeLines.length;
             indexes.indexPos = Integer.parseInt(dataTypeLines[0]) - 1;
 
-            if(length > 1){ // if obj file is empty ( not given textCoords)
+            if(length > 1){
+                // if obj file is empty ( not given textCoords)
                 String textCoords = dataTypeLines[1];
                 indexes.indexTextureCoords = textCoords.length() > 0 ? Integer.parseInt(textCoords) - 1 : -1;
                 if(length > 2){

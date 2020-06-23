@@ -1,32 +1,59 @@
 package pl.polsl.gk.tabletopSimulator.entities;
 
-
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class Entity {
 
 
-    private final Mesh mesh;
+    private boolean selected;
+
+    private  Mesh[] meshes;
 
     private final Vector3f position;
 
     private float scale;
 
-    private final Vector3f rotation;
+    private final Quaternionf rotation;
 
     private Vector3f pickColor;
 
     private String name;
 
-    public Entity(Mesh mesh) {
-        this.mesh = mesh;
+    private int texturePos;
+    private boolean insideFrustum;
+
+
+    public Entity(){
         position = new Vector3f();
         scale = 1;
-        rotation = new Vector3f();
+        rotation = new Quaternionf();
+        insideFrustum = true;
+        selected = false;
+        name = "Not set";
+        texturePos = 0;
+    }
+
+    public Entity(Mesh mesh) {
+       this();
+       this.meshes = new Mesh[]{mesh};
+    }
+
+    public Entity(Mesh[] meshes){
+        this();
+        this.meshes = meshes;
     }
 
     public Mesh getMesh() {
-        return mesh;
+        return meshes[0];
+    }
+
+    public  Mesh[] getMeshes(){
+        return meshes;
+    }
+
+    public void setMeshes(Mesh[] meshes){
+        this.meshes = meshes;
     }
 
     public Vector3f getPosition() {
@@ -43,14 +70,16 @@ public class Entity {
         return scale;
     }
 
-    public Vector3f getRotation() {
+    public Quaternionf getRotation() {
         return rotation;
     }
 
-    public void setRotation(float x, float y, float z) {
-        rotation.x = x;
-        rotation.y = y;
-        rotation.z = z;
+    public boolean isInsideFrustum() {
+        return insideFrustum;
+    }
+
+    public final void setRotation(Quaternionf q) {
+        this.rotation.set(q);
     }
 
     public void setScale(float scale) {
@@ -72,4 +101,29 @@ public class Entity {
     public void setName(String name) {
         this.name = name;
     }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public void cleanup(){
+        int numberMeshes = this.meshes != null ? this.meshes.length : 0;
+        for(int i = 0; i<numberMeshes; i++){
+            this.meshes[i].clean();
+        }
+    }
+
+    public void setTexturePos(int texturePos){
+        this.texturePos = texturePos;
+    }
+
+    public int getTexturePos() {
+        return texturePos;
+    }
+
+
 }

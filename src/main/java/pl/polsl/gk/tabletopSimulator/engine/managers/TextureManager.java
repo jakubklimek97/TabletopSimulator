@@ -3,11 +3,14 @@ package pl.polsl.gk.tabletopSimulator.engine.managers;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.system.MemoryStack;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
@@ -15,15 +18,16 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class TextureManager {
 
-    private final int textureId;
+    private int textureId;
+
     private int width;
+
     private int height;
 
+    private int numRows = 1;
 
-    public TextureManager(String fileName, int type) {
-        this(loadTexture(fileName, type));
+    private int numCols = 1;
 
-    }
     public TextureManager(int width, int height, int pixelFormat){
         this.textureId = glGenTextures();
         this.width = width;
@@ -40,6 +44,45 @@ public class TextureManager {
 
     public TextureManager(int textureId) {
         this.textureId = textureId;
+    }
+
+    public TextureManager(String fileName, int type) {
+        this(loadTexture(fileName, type));
+    }
+
+    public TextureManager(String fileName, int numCols, int numRows){
+        this(fileName);
+        this.numCols = numCols;
+        this.numRows = numRows;
+    }
+
+    public TextureManager(String fileName){
+        this( TextureManager.class.getClassLoader().getResourceAsStream("textures/" + fileName));
+   }
+
+    public TextureManager(InputStream inputStream){
+
+        try {
+            PNGDecoder decoder = new PNGDecoder(inputStream);
+
+            this.width = decoder.getWidth();
+            this.height = decoder.getHeight();
+
+
+            ByteBuffer buf = ByteBuffer.allocateDirect(
+                    4 * decoder.getWidth() * decoder.getHeight());
+            decoder.decode(buf,decoder.getWidth() * 4, Format.RGBA);
+            buf.flip();
+
+            this.textureId = createTexture(buf);
+
+            inputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+
     }
 
     public void bind() {
@@ -97,11 +140,59 @@ public class TextureManager {
         return textureId;
     }
 
+    private int createTexture(ByteBuffer buffer){
+
+        int textureId = glGenTextures();
+
+        glBindTexture(GL_TEXTURE_2D, textureId);
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+
+        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,
+                GL_RGBA,GL_UNSIGNED_BYTE, buffer);
+
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        return  textureId;
+    }
+
+    public int getNumRows() {
+        return numRows;
+    }
+    public void setNumRows(int numRows) {
+        this.numRows = numRows;
+    }
+
+    public int getNumCols() {
+        return numCols;
+    }
+
+    public void setNumCols(int numCols) {
+        this.numCols = numCols;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
 
     public void cleanUp() {
         glDeleteTextures(textureId);
     }
-
-
 
 }

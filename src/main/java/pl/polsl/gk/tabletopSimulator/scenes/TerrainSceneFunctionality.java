@@ -2,6 +2,8 @@ package pl.polsl.gk.tabletopSimulator.scenes;
 
 
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 import pl.polsl.gk.tabletopSimulator.engine.managers.FontManager;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TransformManager;
@@ -21,6 +23,13 @@ import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSprite;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSpriteRenderer;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
+import pl.polsl.gk.tabletopSimulator.water.WaterFrameBuffers;
+import pl.polsl.gk.tabletopSimulator.water.WaterRenderer;
+import pl.polsl.gk.tabletopSimulator.water.WaterShader;
+import pl.polsl.gk.tabletopSimulator.water.WaterTile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.ARBSeamlessCubeMap.GL_TEXTURE_CUBE_MAP_SEAMLESS;
@@ -78,7 +87,11 @@ public class TerrainSceneFunctionality implements IScene {
     private Emitter[] emitters;
 
     private Entity lastPicked;
-
+    WaterFrameBuffers fbos = new WaterFrameBuffers();
+    WaterShader waterShader = new WaterShader();
+    WaterTile water = new WaterTile(400, -400, 0);
+    List<WaterTile> waters = new ArrayList<WaterTile>();
+     private static WaterRenderer waterRenderer;
     private Terrain terrain;
 
     //TEST NA TERAZ
@@ -242,6 +255,9 @@ public class TerrainSceneFunctionality implements IScene {
         emitter.setSpeedRndRange(range);
         emitter.setAnimRange(10);
         emitters = new Emitter[] {emitter};
+
+
+
     }
 
     @Override
@@ -292,10 +308,40 @@ public class TerrainSceneFunctionality implements IScene {
             //glEnable(GL_DEPTH_TEST);
             camera.input();
             camera.update(mouseInput);
+
+// just clip the FBO's
+            GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+
+
+           // camera.invertPitch(); // if you're using camera roll as well you'll need to invert Z
+
             //renderer.renderTerrain(camera, terrain, 1280, 720, ambientLight, pointLight, directionalLight, fog);
 
 
+
+
+
+
+
+            //fbos.bindReflectionFrameBuffer();
+           // float distance = 2 * (camera.getPosition().y - water.getHeight());
+
+           // camera.getPosition().y -= distance;
+
+
             render(window);
+
+            //fbos.bindRefractionFrameBuffer();
+
+           // render(window);
+
+           // GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+           // fbos.unbindCurrentFrameBuffer();
+
+           // render(window);
+
+          //  waterRenderer.render(waters,transformManager.getViewMatrix());
+
 
 
             skybox.render(camera, skyboxColourFog.x, skyboxColourFog.y, skyboxColourFog.z, dayOn, nightOn);
@@ -386,6 +432,8 @@ public class TerrainSceneFunctionality implements IScene {
         skybox = new SkyboxManager(loader, transformManager.updateProjectionMatrix(FOV, 1280, 720, Z_NEAR, Z_FAR));
         lightAngle = 45f;
         angleInc = 0.01f;
+         waterRenderer = new WaterRenderer(loader, waterShader, transformManager.getProjectionMatrix(), fbos);
+        waters.add(water);
         renderer.setWindow(window);
     }
 

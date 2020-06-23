@@ -23,6 +23,9 @@ public class SceneManager {
             case TEST_FUNC_3:
                 currentScene = new BetaSceneFunctionality(this);
                 break;
+            case TERRAIN:
+                currentScene = new TerrainSceneFunctionality(this);
+                break;
 
         }
         currentScene.Init();

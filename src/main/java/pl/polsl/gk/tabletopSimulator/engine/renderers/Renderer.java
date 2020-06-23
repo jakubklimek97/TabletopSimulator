@@ -10,6 +10,7 @@ import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.entities.Entity;
 import pl.polsl.gk.tabletopSimulator.entities.InstancedMesh;
 import pl.polsl.gk.tabletopSimulator.entities.Mesh;
+import pl.polsl.gk.tabletopSimulator.entities.Terrain;
 import pl.polsl.gk.tabletopSimulator.fog.Fog;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
 import pl.polsl.gk.tabletopSimulator.engine.managers.OrthogonalCoordsManager;
@@ -21,6 +22,10 @@ import pl.polsl.gk.tabletopSimulator.particles.Particle;
 import pl.polsl.gk.tabletopSimulator.particles.ParticleShader;
 import pl.polsl.gk.tabletopSimulator.shadows.ShadowShader;
 import pl.polsl.gk.tabletopSimulator.shadows.Shadows;
+import pl.polsl.gk.tabletopSimulator.utility.Shader;
+import pl.polsl.gk.tabletopSimulator.utility.TerrainMouseoverShader;
+import pl.polsl.gk.tabletopSimulator.utility.TerrainShader;
+
 
 
 import java.nio.DoubleBuffer;
@@ -176,7 +181,60 @@ public class Renderer {
 
 
     }
+    public void renderTerrain(Camera camera, Terrain terrain, int width, int height, Vector3f ambientLight,
+                              PointLight light, DirectionalLight directionalLight, Fog fog){
 
+        //glViewport(0, 0, 1280, 720);
+        //glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        Matrix4f  projectionMatrix = transformation.updateProjectionMatrix(FOV, width, height, Z_NEAR, Z_FAR);
+        Matrix4f viewMatrix = transformation.setupViewMatrix(camera);
+        TerrainShader tSha = terrain.GetShader();
+       // TerrainMouseoverShader tSha = terrain.GetMouseoverShader();
+        tSha.use();
+        tSha.loadProjectionMatrix(projectionMatrix);
+        tSha.loadModelViewMatrix(viewMatrix);
+        terrain.bindAndDraw();
+        renderTerrainMouseOver(camera, terrain, width, height);
+    }
+    public void renderTerrainMouseOver(Camera camera, Terrain terrain, int width, int height){
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            System.out.println("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        double xPos, yPos;
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            DoubleBuffer xPosBuf = stack.mallocDouble(1);
+            DoubleBuffer yPosBuf = stack.mallocDouble(1);
+            org.lwjgl.glfw.GLFW.glfwGetCursorPos(window, xPosBuf,yPosBuf);
+            xPos = xPosBuf.get(0);
+            yPos = yPosBuf.get(0);
+        }
+        yPos = Math.abs(yPos-720.0);
+        Matrix4f  projectionMatrix = transformation.updateProjectionMatrix(FOV, width, height, Z_NEAR, Z_FAR);
+        Matrix4f viewMatrix = transformation.setupViewMatrix(camera);
+        TerrainMouseoverShader tSha = terrain.GetMouseoverShader();
+        tSha.use();
+        tSha.loadProjectionMatrix(projectionMatrix);
+        tSha.loadModelViewMatrix(viewMatrix);
+        terrain.bindAndDraw();
+        float[] pixel = new float[3];
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glReadPixels((int)xPos, (int)yPos, 1, 1,GL_RGB, GL_FLOAT, pixel);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        if(pixel[0] == 1.0f){
+        }
+        else{
+            int z = (int)(pixel[1] * 25.0f);
+            int x = (int)(pixel[2] * 25.0f);
+            terrain.updateSelectedField(x,z);
+        }
+
+    }
     public void renderPickableEntities(Camera camera, Entity[] items, int width, int height, Fog fog){
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);

@@ -63,7 +63,7 @@ public class GeometryShader extends Shader {
         }
         else if(vertexCompileStatus != 1){
             System.out.println("ERROR::VERTEXSHADER::"+name);
-            System.out.println(glGetShaderInfoLog(fragmentShader));
+            System.out.println(glGetShaderInfoLog(vertexShader));
             glDeleteShader(vertexShader);
             glDeleteShader(fragmentShader);
             glDeleteShader(geometryShader);

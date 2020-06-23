@@ -12,7 +12,7 @@ public class Camera {
 
     private final Vector3f position;
     private final Vector3f rotation;
-    public static float CAMERA_POS_STEP = 0.05f;
+    public static float CAMERA_POS_STEP = 0.0005f;
     public static final float MOUSE_SENSITIVITY = 0.2f;
     private final Vector3f cameraInc;
 

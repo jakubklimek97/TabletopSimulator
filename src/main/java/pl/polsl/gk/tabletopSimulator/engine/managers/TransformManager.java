@@ -1,6 +1,7 @@
 package pl.polsl.gk.tabletopSimulator.engine.managers;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 
@@ -55,7 +56,7 @@ public class TransformManager {
     }
 
     public Matrix4f setupModelViewMatrix(Entity item, Matrix4f matrix) {
-        Vector3f rotation = item.getRotation();
+        Quaternionf rotation = item.getRotation();
         modelMatrix.identity().translate(item.getPosition()).
                 rotateX((float) Math.toRadians(-rotation.x)).
                 rotateY((float) Math.toRadians(-rotation.y)).
@@ -66,7 +67,7 @@ public class TransformManager {
     }
 
     public Matrix4f setupModelMatrix(Entity item){
-        Vector3f rotation = item.getRotation();
+        Quaternionf rotation = item.getRotation();
         modelMatrix.identity().translate(item.getPosition()).
                 rotateX((float)Math.toRadians(-rotation.x)).
                 rotateY((float)Math.toRadians(-rotation.y)).
@@ -87,7 +88,7 @@ public class TransformManager {
     }
 
     public Matrix4f setupModelLightViewMatrix(Entity item, Matrix4f matrix) {
-        Vector3f rotation = item.getRotation();
+        Quaternionf rotation = item.getRotation();
         modelLightMatrix.identity().translate(item.getPosition()).
                 rotateX((float) Math.toRadians(-rotation.x)).
                 rotateY((float) Math.toRadians(-rotation.y)).
@@ -106,13 +107,10 @@ public class TransformManager {
     }
 
     private Matrix4f updateGenericViewMatrix(Vector3f position, Vector3f rotation, Matrix4f matrix) {
-        matrix.identity();
         // First do the rotation so camera rotates over its position
-        matrix.rotate((float) Math.toRadians(rotation.x), new Vector3f(1, 0, 0))
-                .rotate((float) Math.toRadians(rotation.y), new Vector3f(0, 1, 0));
-        // Then do the translation
-        matrix.translate(-position.x, -position.y, -position.z);
-        return matrix;
+        return matrix.rotationX((float)Math.toRadians(rotation.x))
+                .rotateY((float)Math.toRadians(rotation.y))
+                .translate(-position.x, -position.y, -position.z);
     }
 
     public Matrix4f getOrthoProjectionMatrix() {
@@ -150,6 +148,33 @@ public class TransformManager {
         viewMatrix.mul(modelMatrix, viewMulModelMatrix);
         return viewMulModelMatrix;
 
+    }
+
+
+
+    public static  Matrix4f updateGenericViewMatrixVersion2(Vector3f position, Vector3f rotation, Matrix4f matrix) {
+        // First do the rotation so camera rotates over its position
+        return matrix.rotationX((float)Math.toRadians(rotation.x))
+                .rotateY((float)Math.toRadians(rotation.y))
+                .translate(-position.x, -position.y, -position.z);
+    }
+
+
+
+    public Matrix4f buildModelMatrix(Entity entity) {
+        Quaternionf rotation = entity.getRotation();
+        return modelMatrix.translationRotateScale(
+                entity.getPosition().x, entity.getPosition().y, entity.getPosition().z,
+                rotation.x, rotation.y, rotation.z, rotation.w,
+                entity.getScale(), entity.getScale(), entity.getScale());
+    }
+
+    public Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix) {
+        return buildModelViewMatrix(buildModelMatrix(entity), viewMatrix);
+    }
+
+    public Matrix4f buildModelViewMatrix(Matrix4f modelMatrix, Matrix4f viewMatrix) {
+        return viewMatrix.mulAffine(modelMatrix, modelViewMatrix);
     }
 
 }

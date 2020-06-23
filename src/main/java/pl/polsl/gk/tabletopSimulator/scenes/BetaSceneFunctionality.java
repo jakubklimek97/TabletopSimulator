@@ -128,7 +128,7 @@ public class BetaSceneFunctionality implements IScene {
         TextureManager texture2 = new TextureManager("pngFiles/colormap-lowres.png", 1);
         TextureManager sun2DSprite = new TextureManager("sprites/sun2D.png", 0);
         TextureManager moon2DSprite = new TextureManager("sprites/moon2D.png", 0);
-        TextureManager particleTexture = new TextureManager("particles/particle.png",4,4);
+        TextureManager particleTexture = new TextureManager("particles/particle_anim.png",4,4);
 
         Mesh mesh = null;
         Mesh mesh2 = null;
@@ -143,11 +143,11 @@ public class BetaSceneFunctionality implements IScene {
 
 
 
-        try{ mesh = OBJLoader.load("/OBJs/sphere.obj");
-            mesh2 = OBJLoader.load("/OBJs/sphere.obj");
-            mesh3 = OBJLoader.load("/OBJs/Small Tropical Island.obj");
-            mesh4 = OBJLoader.load("/OBJs/cube.obj");
-            particleMesh = OBJLoader.load("/OBJs/particle/particle.obj");
+        try{ mesh = OBJLoader.load("/OBJs/sphere.obj",1);
+            mesh2 = OBJLoader.load("/OBJs/sphere.obj",1);
+            mesh3 = OBJLoader.load("/OBJs/Small Tropical Island.obj",1);
+            mesh4 = OBJLoader.load("/OBJs/cube.obj",1);
+            particleMesh = OBJLoader.load("/OBJs/particle/particle.obj",400);
         }
         catch (Exception e){
             System.out.println("ERROR");
@@ -160,21 +160,21 @@ public class BetaSceneFunctionality implements IScene {
         Entity item1 = new Entity(mesh2);
         item1.setPosition(60f,90f,-165f);
         item1.setScale(2f);
-        item1.setRotation(1f,-20f,10f);
+        //item1.setRotation(1f,-20f,10f);
         item1.setPickColor(new Vector3f(1.0f, 1.0f, 0.0f));
         item1.setName("Item1");
 
         Entity item2 = new Entity(mesh);
         item2.setPosition(-741,262f,299f);
         item2.setScale(3f);
-        item2.setRotation(1f,-20f,10f);
+       // item2.setRotation(1f,-20f,10f);
         item2.setPickColor(new Vector3f(0.0f, 1.0f, 0.0f));
         item2.setName("Item2");
 
         Entity item3 = new Entity(mesh3);
         item3.setPosition(10f,-142f,0f);
         item3.setScale(3f);
-        item3.setRotation(1f,5.5f,10f);
+        //item3.setRotation(1f,5.5f,10f);
         item3.setPickColor(new Vector3f(0.0f, 0.0f, 1.0f));
         item3.setName("Item3");
 
@@ -205,22 +205,22 @@ public class BetaSceneFunctionality implements IScene {
         fog.setEquationType(2);
         fog.setActive(true);
 
-        Vector3f particleSpeed = new Vector3f(1,1,0);
+        Vector3f particleSpeed = new Vector3f(0,1,0);
         particleSpeed.mul(2.5f);
-        long timeLifeParticle = 4000;
-        int maxParticleAmount = 500;
-        long creationPeriodMillis = 300;
-        float range = 1.2f;
-        float scale = 0.9f;
+        long timeLifeParticle = 22800;
+        int maxParticleAmount = 1255;
+        long creationPeriodMillis = 1123;
+        float range = 2.2f;
+        float scale = 15.6f;
 
-        Particle particle = new Particle(particleMesh,particleSpeed,timeLifeParticle,100);
+        Particle particle = new Particle(particleMesh,particleSpeed,timeLifeParticle,800);
         particle.setScale(scale);
-        particle.setPosition(60.8f,77.5f,-339f);
+        particle.setPosition(-105f,77f,-206f);
         emitter = new Emitter(particle,maxParticleAmount,creationPeriodMillis);
         emitter.setActive(true);
         emitter.setPositionRndRange(range);
         emitter.setSpeedRndRange(range);
-        emitter.setAnimRange(20);
+        emitter.setAnimRange(10);
         emitters = new Emitter[] {emitter};
 
         theLight2DSprite = new Light2DSprite(sun2DSprite, 25);
@@ -231,28 +231,26 @@ public class BetaSceneFunctionality implements IScene {
         theMoon.setLightDir(directionalLight.getDirection().negate());
 
         directionalLight.setShadowPosotionMultiplier(15);
-        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        // Set the clear color
-        glEnable(GL_DEPTH_TEST);
-
-        // Support for transparencies
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-       glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        //TODO
-        // USTAWIENIE MESHOW I TEKSTUR PO USTAWIENIU PICKOWANIA PSUJE PICKOWANIE
-       this.fontManager = FontManager.GetManager();
-       this.font = fontManager.GetFont("archivo-narrow/ArchivoNarrow-Regular");
-       this.version = new TextLine(this.font, 45);
-       this.version.SetScreenResolution(1280, 720);
-       this.version.SetPosition(0, 42);
-       this.version.SetText("Kliknij obiekt aby go wybrac");
-       this.lastPicked = null;
-        //TODO
-        // NIE DODAWAJ TU MESTHOW I TEKSTUR
+     //  glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    //  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    //  // Set the clear color
+    //  glEnable(GL_DEPTH_TEST);
+    //  // Support for transparencies
+    //  glEnable(GL_BLEND);
+    //  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // glEnable(GL_CULL_FACE);
+    //  glCullFace(GL_BACK);
+      //TODO
+      // USTAWIENIE MESHOW I TEKSTUR PO USTAWIENIU PICKOWANIA PSUJE PICKOWANIE
+     this.fontManager = FontManager.GetManager();
+     this.font = fontManager.GetFont("archivo-narrow/ArchivoNarrow-Regular");
+     this.version = new TextLine(this.font, 45);
+     this.version.SetScreenResolution(1280, 720);
+     this.version.SetPosition(0, 42);
+     this.version.SetText("Kliknij obiekt aby go wybrac");
+     this.lastPicked = null;
+      //TODO
+      // NIE DODAWAJ TU MESTHOW I TEKSTUR
 
     }
 
@@ -271,6 +269,9 @@ public class BetaSceneFunctionality implements IScene {
             glfwPollEvents();
 
             glfwSwapBuffers(window);
+
+            emitter.update((long)(0.1 * 1000));
+
             int a = 5;
             if(a != 5)
                 continue;
@@ -308,6 +309,8 @@ public class BetaSceneFunctionality implements IScene {
 
                 moonRenderer.render(theMoon, camera);
                 theMoon.setLightDir(directionalLight.getDirection());
+               // position, rotation, viewMatrix
+                transformManager.updateViewMatrix(camera);
             }
 
             // Update camera position
@@ -333,21 +336,20 @@ public class BetaSceneFunctionality implements IScene {
             directionalLight.getDirection().normalize();
             float lightAngle = (float) Math.toDegrees(Math.acos(directionalLight.getDirection().z));
 
-           if (mouseInput.isLeftButtonPressed()) {
-               Entity currentPick = renderer.returnPickedEntity();
-               if (currentPick != null && lastPicked != currentPick) {
-                   lastPicked = currentPick;
-                   version.SetText(lastPicked.getName());
-               }
-           }
+          if (mouseInput.isLeftButtonPressed()) {
+              Entity currentPick = renderer.returnPickedEntity();
+              if (currentPick != null && lastPicked != currentPick) {
+                  lastPicked = currentPick;
+                  version.SetText(lastPicked.getName());
+              }
+          }
+          //glDisable(GL_DEPTH_TEST);
+        //glDisable(GL_CULL_FACE);
+        menu.Render();
 
-           emitter.update((long)(0.1 * 1000));
+      version.Render(1.0f, 0.0f, 0.0f);
 
-            glDisable(GL_DEPTH_TEST);
-           glDisable(GL_CULL_FACE);
-            menu.Render();
-           version.Render(1.0f, 0.0f, 0.0f);
-            glEnable(GL_CULL_FACE);
+       //glEnable(GL_CULL_FACE);
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }

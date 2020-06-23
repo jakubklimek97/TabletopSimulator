@@ -74,17 +74,7 @@ public class TextureManager {
             decoder.decode(buf,decoder.getWidth() * 4, Format.RGBA);
             buf.flip();
 
-            this.textureId = glGenTextures();
-
-            glBindTexture(GL_TEXTURE_2D,this.textureId);
-
-            glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-
-            glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,this.width,this.height,0,GL_RGBA,GL_UNSIGNED_BYTE,buf);
-            glGenerateMipmap(GL_TEXTURE_2D);
+            this.textureId = createTexture(buf);
 
             inputStream.close();
 

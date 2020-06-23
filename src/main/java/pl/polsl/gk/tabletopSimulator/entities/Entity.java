@@ -1,9 +1,12 @@
 package pl.polsl.gk.tabletopSimulator.entities;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class Entity {
 
+
+    private boolean selected;
 
     private  Mesh[] meshes;
 
@@ -11,18 +14,22 @@ public class Entity {
 
     private float scale;
 
-    private final Vector3f rotation;
+    private final Quaternionf rotation;
 
     private Vector3f pickColor;
 
     private String name;
 
     private int texturePos;
+    private boolean insideFrustum;
+
 
     public Entity(){
         position = new Vector3f();
         scale = 1;
-        rotation = new Vector3f();
+        rotation = new Quaternionf();
+        insideFrustum = true;
+        selected = false;
         name = "Not set";
         texturePos = 0;
     }
@@ -63,14 +70,16 @@ public class Entity {
         return scale;
     }
 
-    public Vector3f getRotation() {
+    public Quaternionf getRotation() {
         return rotation;
     }
 
-    public void setRotation(float x, float y, float z) {
-        rotation.x = x;
-        rotation.y = y;
-        rotation.z = z;
+    public boolean isInsideFrustum() {
+        return insideFrustum;
+    }
+
+    public final void setRotation(Quaternionf q) {
+        this.rotation.set(q);
     }
 
     public void setScale(float scale) {
@@ -91,6 +100,14 @@ public class Entity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     public void cleanup(){

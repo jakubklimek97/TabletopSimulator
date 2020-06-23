@@ -104,6 +104,8 @@ public class Renderer {
 
         glViewport(0, 0, 1280, 720);
 
+        renderParticles(camera,emitters,items);
+
        renderScene(camera,items,width,height,ambientLight,light,directionalLight, fog);
 
       // renderPickableEntities(camera, items, width, height,fog);

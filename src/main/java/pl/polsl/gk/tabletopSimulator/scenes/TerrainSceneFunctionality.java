@@ -15,6 +15,8 @@ import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.loaders.OBJLoader;
 import pl.polsl.gk.tabletopSimulator.models.Material;
+import pl.polsl.gk.tabletopSimulator.particles.Emitter;
+import pl.polsl.gk.tabletopSimulator.particles.Particle;
 import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSprite;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSpriteRenderer;
@@ -72,6 +74,8 @@ public class TerrainSceneFunctionality implements IScene {
     private FontManager fontManager;
     private Font font;
     private TextLine version;
+    private Emitter emitter;
+    private Emitter[] emitters;
 
     private Entity lastPicked;
 
@@ -92,129 +96,152 @@ public class TerrainSceneFunctionality implements IScene {
     public void Init() {
 
         setCallbacks();
-        terrain = new Terrain("Test.png");
-      /* menu = new HorizontalButtonMenu(MenuSide.BOTTOM, 72.0f, 1280, 720);
-        menu.AddButton(new TexturedButton(
-                new TextureManager("pngFiles/menuTestBtn/normal.png",0),
-                new TextureManager("pngFiles/menuTestBtn/hover.png",0),
-                new TextureManager("pngFiles/menuTestBtn/active.png",0),
-                () -> {
-                    System.out.print("Trafiono przycisk");
-                }
-        ));
-        menu.AddButton(new TexturedButton(
-                new TextureManager("pngFiles/menuTestBtn/normal.png",0),
-                new TextureManager("pngFiles/menuTestBtn/hover.png",0),
-                new TextureManager("pngFiles/menuTestBtn/active.png",0),
-                () -> {
-                    System.out.print("Trafiono przycisk2");
-                }
-        ));
-        menu.Prepare();*/
+        //terrain = new Terrain("Test.png");
+      menu = new HorizontalButtonMenu(MenuSide.BOTTOM, 72.0f, 1280, 720);
+       menu.AddButton(new TexturedButton(
+               new TextureManager("pngFiles/menuTestBtn/normal.png",0),
+               new TextureManager("pngFiles/menuTestBtn/hover.png",0),
+               new TextureManager("pngFiles/menuTestBtn/active.png",0),
+               () -> {
+                   System.out.print("Trafiono przycisk");
+               }
+       ));
+       menu.AddButton(new TexturedButton(
+               new TextureManager("pngFiles/menuTestBtn/normal.png",0),
+               new TextureManager("pngFiles/menuTestBtn/hover.png",0),
+               new TextureManager("pngFiles/menuTestBtn/active.png",0),
+               () -> {
+                   System.out.print("Trafiono przycisk2");
+               }
+       ));
+       menu.Prepare();
 
 
-       /* float reflectFactor = 9.0f;
-        TextureManager texture = new TextureManager("pngFiles/sun.png", 1);
-        TextureManager texture2 = new TextureManager("pngFiles/colormap-lowres.png", 1);
-        TextureManager sun2DSprite = new TextureManager("sprites/sun2D.png", 0);
-        TextureManager moon2DSprite = new TextureManager("sprites/moon2D.png", 0);
+       float reflectFactor = 9.0f;
+       TextureManager texture = new TextureManager("pngFiles/sun.png", 1);
+       TextureManager texture2 = new TextureManager("pngFiles/colormap-lowres.png", 1);
+       TextureManager sun2DSprite = new TextureManager("sprites/sun2D.png", 0);
+       TextureManager moon2DSprite = new TextureManager("sprites/moon2D.png", 0);
+        TextureManager particleTexture = new TextureManager("particles/particle_anim.png",4,4);
 
-        Mesh mesh = null;
-        Mesh mesh2 = null;
-        Mesh mesh3 = null;
-        Mesh mesh4 = null;
-        Material material = new Material(texture, reflectFactor);
-        Material material2 = new Material(texture2, reflectFactor);
-        Material material3 = new Material(texture2, reflectFactor);
-        Material material4 = new Material(texture, reflectFactor);
-        try{ mesh = OBJLoader.load("/OBJs/sphere.obj");
-            mesh2 = OBJLoader.load("/OBJs/sphere.obj");
-            mesh3 = OBJLoader.load("/OBJs/Small Tropical Island.obj");
-            mesh4 = OBJLoader.load("/OBJs/cube.obj");
-        }
-        catch (Exception e){
-            System.out.println("ERROR");
-        }
-        mesh.setMaterial(material);
-        mesh2.setMaterial(material2);
-        mesh3.setMaterial(material3);
-        mesh4.setMaterial(material4);
-        Entity item1 = new Entity(mesh2);
-        item1.setPosition(60f,90f,-165f);
-        item1.setScale(2f);
-        item1.setRotation(1f,-20f,10f);
-        item1.setPickColor(new Vector3f(1.0f, 1.0f, 0.0f));
-        item1.setName("Item1");
+       Mesh mesh = null;
+       Mesh mesh2 = null;
+       Mesh mesh3 = null;
+       Mesh mesh4 = null;
+        Mesh particleMesh = null;
+       Material material = new Material(texture, reflectFactor);
+       Material material2 = new Material(texture2, reflectFactor);
+       Material material3 = new Material(texture2, reflectFactor);
+       Material material4 = new Material(texture, reflectFactor);
+        Material particleMaterial = new Material(particleTexture,reflectFactor);
+       try{ mesh = OBJLoader.load("/OBJs/sphere.obj",1);
+           mesh2 = OBJLoader.load("/OBJs/sphere.obj",1);
+           mesh3 = OBJLoader.load("/OBJs/Small Tropical Island.obj",1);
+           mesh4 = OBJLoader.load("/OBJs/cube.obj", 400);
+           particleMesh = OBJLoader.load("/OBJs/particle/particle.obj",400);
+       }
+       catch (Exception e){
+           System.out.println("ERROR");
+       }
+       mesh.setMaterial(material);
+       mesh2.setMaterial(material2);
+       mesh3.setMaterial(material3);
+       mesh4.setMaterial(material4);
+        particleMesh.setMaterial(particleMaterial);
+       Entity item1 = new Entity(mesh2);
+       item1.setPosition(60f,90f,-165f);
+       item1.setScale(2f);
+      // item1.setRotation(1f,-20f,10f);
+       item1.setPickColor(new Vector3f(1.0f, 1.0f, 0.0f));
+       item1.setName("Item1");
 
-        Entity item2 = new Entity(mesh);
-        item2.setPosition(-741,262f,299f);
-        item2.setScale(3f);
-        item2.setRotation(1f,-20f,10f);
-        item2.setPickColor(new Vector3f(0.0f, 1.0f, 0.0f));
-        item2.setName("Item2");
+       Entity item2 = new Entity(mesh);
+       item2.setPosition(-741,262f,299f);
+       item2.setScale(3f);
+       //item2.setRotation(1f,-20f,10f);
+       item2.setPickColor(new Vector3f(0.0f, 1.0f, 0.0f));
+       item2.setName("Item2");
 
-        Entity item3 = new Entity(mesh3);
-        item3.setPosition(10f,-142f,0f);
-        item3.setScale(3f);
-        item3.setRotation(1f,5.5f,10f);
-        item3.setPickColor(new Vector3f(0.0f, 0.0f, 1.0f));
+       Entity item3 = new Entity(mesh3);
+       item3.setPosition(10f,-142f,0f);
+       item3.setScale(3f);
+       //item3.setRotation(1f,5.5f,10f);
+       item3.setPickColor(new Vector3f(0.0f, 0.0f, 1.0f));
        item3.setName("Item3");
 
-        items = new Entity[]{item1,item2,item3};
+       items = new Entity[]{item1,item2,item3};
 
 
-        ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
-        Vector3f lightColour = new Vector3f(1, 1, 1);
-        Vector3f lightPosition = new Vector3f(-741,290f,299f);
-        float lightIntensity = 0.6f;
-        pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
-        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
-        pointLight.setAttenuation(att);
+       ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
+       Vector3f lightColour = new Vector3f(1, 1, 1);
+       Vector3f lightPosition = new Vector3f(-741,290f,299f);
+       float lightIntensity = 0.6f;
+       pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
+       PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
+       pointLight.setAttenuation(att);
 
 
-        float lightIntensity2 = 0.2f;
-        Vector3f lightColour2 = new Vector3f(1, 1, 1);
-        Vector3f lightDirection = new Vector3f(0, 1, 1);
-        directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
-        fog = new Fog();
-        Vector3f fogColour = new Vector3f(0.419f, 0.419f, 0.419f);
-        float density = 0.002f;
+       float lightIntensity2 = 0.2f;
+       Vector3f lightColour2 = new Vector3f(1, 1, 1);
+       Vector3f lightDirection = new Vector3f(0, 1, 1);
+       directionalLight = new DirectionalLight(lightColour2, lightDirection, lightIntensity2);
+       fog = new Fog();
+       Vector3f fogColour = new Vector3f(0.419f, 0.419f, 0.419f);
+       float density = 0.002f;
 
-        fog.setColour(fogColour);
-        fog.setDensityFactor(density);
-        fog.setFogStart(2);
-        fog.setFogEnd(10);
-        fog.setEquationType(2);
-        fog.setActive(true);
+       fog.setColour(fogColour);
+       fog.setDensityFactor(density);
+       fog.setFogStart(2);
+       fog.setFogEnd(10);
+       fog.setEquationType(2);
+       fog.setActive(true);
 
 
-        theLight2DSprite = new Light2DSprite(sun2DSprite, 25);
-        light2DSpriteRenderer = new Light2DSpriteRenderer();
-        theLight2DSprite.setLightDir(directionalLight.getDirection());
-        moonRenderer = new Light2DSpriteRenderer();
-        theMoon = new Light2DSprite(moon2DSprite, 5);
-        theMoon.setLightDir(directionalLight.getDirection().negate());
+       theLight2DSprite = new Light2DSprite(sun2DSprite, 25);
+       light2DSpriteRenderer = new Light2DSpriteRenderer();
+       theLight2DSprite.setLightDir(directionalLight.getDirection());
+       moonRenderer = new Light2DSpriteRenderer();
+       theMoon = new Light2DSprite(moon2DSprite, 5);
+       theMoon.setLightDir(directionalLight.getDirection().negate());
 
-        directionalLight.setShadowPosotionMultiplier(15);
-        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        // Set the clear color
-        glEnable(GL_DEPTH_TEST);
+       directionalLight.setShadowPosotionMultiplier(15);
+       glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+       glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+       // Set the clear color
+       glEnable(GL_DEPTH_TEST);
 
-        // Support for transparencies
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+       // Support for transparencies
+       glEnable(GL_BLEND);
+       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-       glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+      glEnable(GL_CULL_FACE);
+       glCullFace(GL_BACK);
 
-       this.fontManager = FontManager.GetManager();
-       this.font = fontManager.GetFont("archivo-narrow/ArchivoNarrow-Regular");
-       this.version = new TextLine(this.font, 45);
-       this.version.SetScreenResolution(1280, 720);
-       this.version.SetPosition(0, 42);
-       this.version.SetText("Kliknij obiekt aby go wybrac");
-       this.lastPicked = null;*/
+      this.fontManager = FontManager.GetManager();
+      this.font = fontManager.GetFont("archivo-narrow/ArchivoNarrow-Regular");
+      this.version = new TextLine(this.font, 45);
+      this.version.SetScreenResolution(1280, 720);
+      this.version.SetPosition(0, 42);
+      this.version.SetText("Kliknij obiekt aby go wybrac");
+      this.lastPicked = null;
+
+        Vector3f particleSpeed = new Vector3f(0,1,0);
+        particleSpeed.mul(2.5f);
+        long timeLifeParticle = 22800;
+        int maxParticleAmount = 1255;
+        long creationPeriodMillis = 1123;
+        float range = 2.2f;
+        float scale = 15.6f;
+
+        Particle particle = new Particle(particleMesh,particleSpeed,timeLifeParticle,800);
+        particle.setScale(scale);
+        particle.setPosition(152f,63f,-190f);
+        emitter = new Emitter(particle,maxParticleAmount,creationPeriodMillis);
+        emitter.setActive(true);
+        emitter.setPositionRndRange(range);
+        emitter.setSpeedRndRange(range);
+        emitter.setAnimRange(10);
+        emitters = new Emitter[] {emitter};
     }
 
     @Override
@@ -222,44 +249,55 @@ public class TerrainSceneFunctionality implements IScene {
         freeCallbacks();
     }
 
+
+
+
+
+
     @Override
     public void Run() {
         glfwMakeContextCurrent(window);
-        camera.setPosition(0, 0, 1);
-        terrain.toggleSelected(0,0);
-        terrain.toggleSelected(1,1);
-        terrain.increaseSelectedHeight();
-        terrain.toggleSelected(0,2);
-        terrain.toggleSelected(2,2);
-        terrain.toggleSelected(2,0);
-        terrain.toggleSelected(4,0);
-        terrain.setSelectedHeightToLastSelected();
-        terrain.toggleFieldHighlight();
-        terrain.toggleFieldHighlight();
+       // camera.setPosition(0, 0, 1);
+       // terrain.toggleSelected(0,0);
+       // terrain.toggleSelected(1,1);
+       // terrain.increaseSelectedHeight();
+       // terrain.toggleSelected(0,2);
+       // terrain.toggleSelected(2,2);
+       // terrain.toggleSelected(2,0);
+       // terrain.toggleSelected(4,0);
+       // terrain.setSelectedHeightToLastSelected();
+       // terrain.toggleFieldHighlight();
+       // terrain.toggleFieldHighlight();
 
-        for(int i = 0; i < 5000; ++i){
-            terrain.updateNativeVertexBuffer();
-        }
-        int i = 0;
+       // for(int i = 0; i < 5000; ++i){
+       //     terrain.updateNativeVertexBuffer();
+       // }
+     //   int i = 0;
         while (!glfwWindowShouldClose(window)) {
-            if(i <2 ){
-                terrain.updateNativeVertexBuffer();
-                i++;
-            }
+        //    if(i <2 ){
+              //  terrain.updateNativeVertexBuffer();
+        //        i++;
+        //    }
             mouseInput.input(window);
 
             glfwPollEvents();
 
             glfwSwapBuffers(window);
+
             glClearColor(1.0f, 0f, 0f,0.5f);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            emitter.update((long)(0.1 * 1000));
+
             //glEnable(GL_DEPTH_TEST);
             camera.input();
             camera.update(mouseInput);
-            renderer.renderTerrain(camera, terrain, 1280, 720, ambientLight, pointLight, directionalLight, fog);
+            //renderer.renderTerrain(camera, terrain, 1280, 720, ambientLight, pointLight, directionalLight, fog);
 
 
-            /*render(window);/*
+            render(window);
+
+
             skybox.render(camera, skyboxColourFog.x, skyboxColourFog.y, skyboxColourFog.z, dayOn, nightOn);
             // Now zValue and yValue below displace directionalLight z and y
             if (directionalLight.getDirection().z > 0.5f) {
@@ -323,14 +361,14 @@ public class TerrainSceneFunctionality implements IScene {
                }
            }
 
-            glDisable(GL_DEPTH_TEST);
-           glDisable(GL_CULL_FACE);
-           // menu.Render();
+           // glDisable(GL_DEPTH_TEST);
+          // glDisable(GL_CULL_FACE);
+            menu.Render();
            version.Render(1.0f, 0.0f, 0.0f);
-            glEnable(GL_CULL_FACE);
+            //glEnable(GL_CULL_FACE);
 
 
-             */
+
         }
         sceneManager.SwitchScene(SceneList.QUIT);
     }
@@ -372,7 +410,7 @@ public class TerrainSceneFunctionality implements IScene {
     private final long window;
 
     public void render(long window) {
-        renderer.render(camera, items, 1280, 720, ambientLight, pointLight, directionalLight, fog);
+        renderer.render(camera, items, emitters,1280, 720, ambientLight, pointLight, directionalLight, fog);
 
     }
 

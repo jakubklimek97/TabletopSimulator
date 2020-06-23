@@ -1,7 +1,13 @@
 package pl.polsl.gk.tabletopSimulator.entities;
 
 
+import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -10,23 +16,126 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.polsl.gk.tabletopSimulator.engine.managers.TextureManager;
+import pl.polsl.gk.tabletopSimulator.loaders.OBJLoader;
 import pl.polsl.gk.tabletopSimulator.models.Material;
+import pl.polsl.gk.tabletopSimulator.models.ModelInfo;
 
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
-public class Mesh {
+public class Mesh  {
 
 
-    private final List<Integer> vboIdList;
-    private final int vaoId;
-    private final int vertexCount;
+    private  List<Vector3f> normalsPosition = new ArrayList<>();
+    private  List<Vector2f> texturesPosition = new ArrayList<>();
+    private  List<Vector3f> vertices = new ArrayList<>();
+    private  List<OBJLoader.Faces> faces = new ArrayList<>();
+    private  List<Integer> vboIdList;
+    private final List<Integer> vboList = new ArrayList<Integer>();
+    private final List<Integer> vaoList = new ArrayList<Integer>();
+    private  int vaoId;
+    private  int vertexCount;
     private TextureManager texture;
     private Material material;
 
     private Vector3f colour;
+
+    public float[] getPositions() {
+        return positions;
+    }
+
+    public void setPositions(float[] positions) {
+        this.positions = positions;
+    }
+
+    private float[] positions;
+
+    private void unbindVAO() {
+        GL30.glBindVertexArray(0);
+    }
+
+    public ModelInfo loadVAO(float[] positions, int dimensions){
+        int vaoID = createVAO();
+        this.setAttributeListData(0, dimensions, positions);
+        unbindVAO();
+        return new ModelInfo(vaoID, positions.length / dimensions);
+    }
+
+    private int createVAO() {
+        int vaoID = GL30.glGenVertexArrays();
+        vaoList.add(vaoID);
+        GL30.glBindVertexArray(vaoID);
+        return vaoID;
+    }
+
+    private FloatBuffer setFloatBufferData(float[] data) {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
+        buffer.put(data);
+        buffer.flip();
+        return buffer;
+    }
+
+
+    private void setAttributeListData(int attributeNumber, int coordinateSize, float[] data) {
+        int vboID = GL15.glGenBuffers();
+        vboList.add(vboID);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
+        FloatBuffer buffer = setFloatBufferData(data);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+        GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+    }
+
+
+
+    public List<Vector3f> getNormalsPosition() {
+        return normalsPosition;
+    }
+
+    public void setNormalsPosition(List<Vector3f> normalsPosition) {
+        this.normalsPosition = normalsPosition;
+    }
+
+    public List<Vector2f> getTexturesPosition() {
+        return texturesPosition;
+    }
+
+    public void setTexturesPosition(List<Vector2f> texturesPosition) {
+        this.texturesPosition = texturesPosition;
+    }
+
+    public List<Vector3f> getVertices() {
+        return vertices;
+    }
+
+    public void setVertices(List<Vector3f> vertices) {
+        this.vertices = vertices;
+    }
+
+    public List<OBJLoader.Faces> getFaces() {
+        return faces;
+    }
+
+    public void setFaces(List<OBJLoader.Faces> faces) {
+        this.faces = faces;
+    }
+
+    public Mesh(int[] indices, float[] positions, float[] textureCoords, float[] normals,
+                List<Vector2f> texturesPosition, List<Vector3f> vertices, List<OBJLoader.Faces> faces){
+        this(indices,positions,textureCoords,normals);
+        this.texturesPosition = texturesPosition;
+        this.vertices = vertices;
+        this.faces = faces;
+        this.vboIdList = null;
+        this.vaoId = 0;
+        this.vertexCount = 0;
+        this.positions = positions;
+
+
+    }
+
 
     public Mesh(int[] indices, float[] positions, float[] textureCoords,float[] normals ) {
         IntBuffer indicesBuffer = null;
@@ -98,7 +207,7 @@ public class Mesh {
             if (texCoordsBuffer != null) {
                 MemoryUtil.memFree(texCoordsBuffer);
             }
-            if(vecNormalsBuffer != null){
+            if (vecNormalsBuffer != null) {
                 MemoryUtil.memFree(vecNormalsBuffer);
             }
             if (indicesBuffer != null) {

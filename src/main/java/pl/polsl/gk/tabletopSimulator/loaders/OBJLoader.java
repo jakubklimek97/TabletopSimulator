@@ -13,16 +13,17 @@ import java.util.List;
 
 
 
-public class OBJLoader {
+public class OBJLoader  {
+    public static List<Vector3f> normalsPosition = new ArrayList<>();
+    public static List<Vector2f> texturesPosition = new ArrayList<>();
+    public static List<Vector3f> vertices = new ArrayList<>();
+    public static List<Faces> faces = new ArrayList<>();
+
 
 
     public static Mesh load(String fileName) {
 
         List<String> txtObjLines = readAllLines(fileName);
-        List<Vector3f> normalsPosition = new ArrayList<>();
-        List<Vector2f> texturesPosition = new ArrayList<>();
-        List<Vector3f> vertices = new ArrayList<>();
-        List<Faces> faces = new ArrayList<>();
 
         for (String txtObjLine : txtObjLines) {
             String[] dataType = txtObjLine.split("\\s+");
@@ -92,7 +93,7 @@ public class OBJLoader {
 
         int[] indicesArr;
         indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
-        return new Mesh(indicesArr, positionsArray, textureCoordsArr, textureNormalsArr);
+        return new Mesh(indicesArr, positionsArray, textureCoordsArr, textureNormalsArr,texturesPosition,vertices,facesList);
 
 
     }
@@ -133,7 +134,7 @@ public class OBJLoader {
         }
     }
 
-    private static class Faces {
+    public static class Faces {
 
         private final Indexes[] indexes;
 

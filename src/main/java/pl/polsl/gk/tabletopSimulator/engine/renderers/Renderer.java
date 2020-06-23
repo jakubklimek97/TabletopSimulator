@@ -86,21 +86,17 @@ public class Renderer {
         lightShader.bindAllUniforms();
         lightShader.unbind();
         specularPower = 3.5f;
-        fbo = new Fbo(1280, 720, Fbo.DEPTH_RENDER_BUFFER);
 
 
     }
 
-    public void initLoader(Loader loader){
-        PostProcessing.init(loader);
-    }
 
     public void clear() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     public void render(Camera camera, Entity[] items, int width, int height, Vector3f ambientLight,
-                       PointLight light, DirectionalLight directionalLight, Fog fog) {
+                       PointLight light, DirectionalLight directionalLight, Fog fog, Fbo fbo) {
         clear();
         //renderShadows(camera,items,width,height,ambientLight,light,directionalLight);
         glViewport(0, 0, 1280, 720);

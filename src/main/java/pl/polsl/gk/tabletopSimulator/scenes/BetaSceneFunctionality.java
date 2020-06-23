@@ -83,7 +83,7 @@ public class BetaSceneFunctionality implements IScene {
     private FontManager fontManager;
     private Font font;
     private TextLine version;
-
+    Fbo fbo =  new Fbo(1280, 720, Fbo.DEPTH_RENDER_BUFFER);
     private Entity lastPicked;
 
     //TEST NA TERAZ
@@ -147,6 +147,10 @@ public class BetaSceneFunctionality implements IScene {
         mesh2.setMaterial(material2);
         mesh3.setMaterial(material3);
         mesh4.setMaterial(material4);
+
+        mesh2.loadVAO(mesh.getPositions(),3);
+        mesh3.loadVAO(mesh.getPositions(),3);
+        mesh4.loadVAO(mesh.getPositions(),3);
         Entity item1 = new Entity(mesh2);
         item1.setPosition(60f,90f,-165f);
         item1.setScale(2f);
@@ -223,7 +227,7 @@ public class BetaSceneFunctionality implements IScene {
        this.version.SetPosition(0, 42);
        this.version.SetText("Kliknij obiekt aby go wybrac");
        this.lastPicked = null;
-       renderer.initLoader(loader);
+        PostProcessing.init(mesh4);
     }
 
     @Override
@@ -359,7 +363,7 @@ public class BetaSceneFunctionality implements IScene {
     private final long window;
 
     public void render(long window) {
-        renderer.render(camera, items, 1280, 720, ambientLight, pointLight, directionalLight, fog);
+        renderer.render(camera, items, 1280, 720, ambientLight, pointLight, directionalLight, fog, fbo);
 
     }
 

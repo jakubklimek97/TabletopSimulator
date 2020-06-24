@@ -145,8 +145,9 @@ public class Renderer {
 
         //glViewport(0, 0, 1280, 720);
         //glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        glCullFace(GL_BACK);
         Matrix4f  projectionMatrix = transformation.updateProjectionMatrix(FOV, width, height, Z_NEAR, Z_FAR);
         Matrix4f viewMatrix = transformation.setupViewMatrix(camera);
         TerrainShader tSha = terrain.GetShader();

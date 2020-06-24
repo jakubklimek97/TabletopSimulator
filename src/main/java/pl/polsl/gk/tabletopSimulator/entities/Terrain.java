@@ -58,8 +58,8 @@ public class Terrain {
             else{
                 col++;
                 int[] arr = {
-                        pos, pos+TERRAIN_DIM+1, pos+TERRAIN_DIM+2, //first triangle
-                        pos, pos+TERRAIN_DIM+2, pos+1              //second triangle
+                        pos, pos+TERRAIN_DIM+2,pos+TERRAIN_DIM+1, //first triangle
+                        pos, pos+1  , pos+TERRAIN_DIM+2           //second triangle
                 };
                 indicesBuffer.put(arr);
             }

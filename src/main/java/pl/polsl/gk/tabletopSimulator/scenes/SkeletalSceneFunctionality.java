@@ -158,8 +158,9 @@ public class SkeletalSceneFunctionality implements IScene {
                 try {
                     pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity ent = AnimMeshesLoader.loadAnimGameItem("human.fbx", "");
                     ent.setScale(0.02f);
-                    entits.add(ent);
-                    terrain.placeEntity(ent);
+
+                    if(terrain.placeEntity(ent))
+                        entits.add(ent);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

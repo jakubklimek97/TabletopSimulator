@@ -23,6 +23,7 @@ import pl.polsl.gk.tabletopSimulator.handlers.MouseInput;
 import pl.polsl.gk.tabletopSimulator.lights.DirectionalLight;
 import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.nuklear.InterfaceHandler;
+import pl.polsl.gk.tabletopSimulator.nuklear.UiLayoutMainMenu;
 import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSprite;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSpriteRenderer;
@@ -70,20 +71,26 @@ public class SceneSelectFunctionality implements IScene {
     @Override
     public void Run() {
         Calculator calc = new Calculator();
+        UiLayoutMainMenu menu = new UiLayoutMainMenu(sceneManager);
         Demo demo = new Demo();
         glfwMakeContextCurrent(window);
-        while (!glfwWindowShouldClose(window)) {
+        while (menu.nextScene == SceneList.SCENE_SELECT) {
             glClearColor(1.0f, 0f, 0f,0.5f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             uiHandler.newFrame();
-            calc.layout(uiHandler.getContext(), 50, 50);
-            demo.layout(uiHandler.getContext(), 620, 360);
+            //calc.layout(uiHandler.getContext(), 50, 50);
+            //demo.layout(uiHandler.getContext(), 620, 360);
+            menu.layout(uiHandler.getContext(), 590, 247);
             uiHandler.drawInterface();
 
             glfwSwapBuffers(window);
         }
-        sceneManager.SwitchScene(SceneList.QUIT);
+        if(glfwWindowShouldClose(window))
+            sceneManager.SwitchScene(SceneList.QUIT);
+        else{
+            sceneManager.SwitchScene(menu.nextScene);
+        }
     }
 
     public SceneSelectFunctionality(SceneManager sceneManager) {

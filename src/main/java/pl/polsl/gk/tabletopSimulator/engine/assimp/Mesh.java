@@ -147,25 +147,18 @@ public class Mesh {
     protected void initRender() {
         Texture texture = material != null ? material.getTexture() : null;
         if (texture != null) {
-            // Activate first texture bank
             glActiveTexture(GL_TEXTURE0);
-            // Bind the texture
             glBindTexture(GL_TEXTURE_2D, texture.getId());
         }
         Texture normalMap = material != null ? material.getNormalMap() : null;
         if (normalMap != null) {
-            // Activate second texture bank
             glActiveTexture(GL_TEXTURE1);
-            // Bind the texture
             glBindTexture(GL_TEXTURE_2D, normalMap.getId());
         }
-
-        // Draw the mesh
         glBindVertexArray(getVaoId());
     }
 
     protected void endRender() {
-        // Restore state
         glBindVertexArray(0);
 
         glBindTexture(GL_TEXTURE_2D, 0);

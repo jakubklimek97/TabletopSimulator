@@ -75,7 +75,9 @@ public class TextLine {
         charPositionArray[characterCount*2] = calledCharPositionArray[0];
         charPositionArray[characterCount*2+1] = calledCharPositionArray[1];
         glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, textQuadArray, GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
         characterQuad.free();
     }

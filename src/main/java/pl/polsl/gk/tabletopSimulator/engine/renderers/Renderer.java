@@ -111,7 +111,7 @@ public class Renderer {
 
        renderScene(camera,items,width,height,ambientLight,light,directionalLight, fog);
 
-      // renderPickableEntities(camera, items, width, height,fog);
+       renderPickableEntities(camera, items, width, height,fog);
 
         renderParticles(camera,emitters,items);
 

@@ -82,7 +82,6 @@ public class SkeletalSceneFunctionality implements IScene {
     private TextLine version;
 
     private Entity lastPicked;
-    private AnimatedEntity testEntity;
     private Terrain terrain;
     private Mesh[] testA = null;
     private ArrayList<pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity> entits = new ArrayList<pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity>();
@@ -94,9 +93,7 @@ public class SkeletalSceneFunctionality implements IScene {
 
         setCallbacks();
         terrain = new Terrain("Test.png");
-        AnimatedMesh aMesh = new AnimatedMesh();
-        aMesh.LoadMesh("human.fbx");
-        testEntity = new AnimatedEntity(aMesh);
+
         try {
             testA = StaticMeshesLoader.load("human.fbx","");
             tutTest = AnimMeshesLoader.loadAnimGameItem("human.fbx", "");

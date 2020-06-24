@@ -70,9 +70,7 @@ public class SceneSelectFunctionality implements IScene {
 
     @Override
     public void Run() {
-        Calculator calc = new Calculator();
         UiLayoutMainMenu menu = new UiLayoutMainMenu(sceneManager);
-        Demo demo = new Demo();
         glfwMakeContextCurrent(window);
         while (menu.nextScene == SceneList.SCENE_SELECT) {
             glClearColor(1.0f, 0f, 0f,0.5f);

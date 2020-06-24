@@ -114,9 +114,14 @@ public class SkeletalSceneFunctionality implements IScene {
         Animation anim = tutTest.getCurrentAnimation();
         AnimatedEntityShader shad = new AnimatedEntityShader();
         TransformManager mg = new TransformManager();
-       // tutTest.setScale(0.002f);
+       tutTest.setScale(0.02f);
+       tutTest.setPosition(0.5f, 0, 0.5f);
+       terrain.toggleSelected(0,0);
         //tutTest.setRotation(90.0f,90.0f,0);
         int mul = 0;
+        boolean terrainToggled = false;
+        boolean heightToggled = false;
+        boolean insertHuman = false;
         while (!glfwWindowShouldClose(window)) {
 
             mouseInput.input(window);
@@ -129,7 +134,23 @@ public class SkeletalSceneFunctionality implements IScene {
             //glEnable(GL_DEPTH_TEST);
             camera.input();
             camera.update(mouseInput);
-            //renderer.renderTerrain(camera, terrain, 1280, 720, ambientLight, pointLight, directionalLight, fog);
+            if(KeyboardInput.isKeyPressed(GLFW_KEY_1) && !terrainToggled){
+
+                terrain.ToggleMouseover();
+                terrainToggled = true;
+            }
+            else if(terrainToggled && !KeyboardInput.isKeyPressed(GLFW_KEY_1)){
+                terrainToggled = false;
+            }
+            if(KeyboardInput.isKeyPressed(GLFW_KEY_2) && !heightToggled){
+
+                terrain.increaseSelectedHeight();
+                heightToggled = true;
+            }
+            else if(heightToggled && !KeyboardInput.isKeyPressed(GLFW_KEY_2)){
+                heightToggled = false;
+            }
+            renderer.renderTerrain(camera, terrain, 1280, 720, ambientLight, pointLight, directionalLight, fog);
             //testEntity.Draw();
             //testA[0].render();
 

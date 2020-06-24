@@ -2,7 +2,7 @@
  * Copyright LWJGL. All rights reserved.
  * License terms: https://www.lwjgl.org/license
  */
-package pl.polsl.gk.tabletopSimulator.nuklear;
+package pl.polsl.gk.tabletopSimulator.scenes;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.nuklear.*;

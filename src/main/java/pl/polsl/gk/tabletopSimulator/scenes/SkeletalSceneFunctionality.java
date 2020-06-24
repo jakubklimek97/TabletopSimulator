@@ -237,7 +237,7 @@ public class SkeletalSceneFunctionality implements IScene {
     private final long window;
 
     public void render(long window) {
-        renderer.render(camera, items, 1280, 720, ambientLight, pointLight, directionalLight, fog);
+        //renderer.render(camera, items, 1280, 720, ambientLight, pointLight, directionalLight, fog);
 
     }
 

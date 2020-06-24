@@ -6,5 +6,6 @@ public enum SceneList {
     TEST_FUNC_2,
     TEST_FUNC_3,
     TERRAIN,
-    SKELETAL
+    SKELETAL,
+    SCENE_SELECT
 }

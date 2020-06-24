@@ -29,6 +29,9 @@ public class SceneManager {
             case SKELETAL:
                 currentScene = new SkeletalSceneFunctionality(this);
                 break;
+            case SCENE_SELECT:
+                currentScene = new SceneSelectFunctionality(this);
+                break;
 
         }
         currentScene.Init();

@@ -8,6 +8,8 @@ import pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.entities.Entity;
 
+import java.util.ArrayList;
+
 public class TransformManager {
 
     private final Matrix4f projectionMatrix;
@@ -36,7 +38,6 @@ public class TransformManager {
         lightViewMatrix = new Matrix4f();
         modelMatrix = new Matrix4f();
     }
-
     public void setupLightViewMatrix(Matrix4f lightViewMatrix) {
         this.lightViewMatrix.set(lightViewMatrix);
     }

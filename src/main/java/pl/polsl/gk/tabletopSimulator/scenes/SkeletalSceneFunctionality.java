@@ -28,6 +28,8 @@ import pl.polsl.gk.tabletopSimulator.utility.AnimatedEntityShader;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 import pl.polsl.gk.tabletopSimulator.engine.assimp.*;
 
+import java.util.ArrayList;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33C.*;
 
@@ -83,6 +85,7 @@ public class SkeletalSceneFunctionality implements IScene {
     private AnimatedEntity testEntity;
     private Terrain terrain;
     private Mesh[] testA = null;
+    private ArrayList<pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity> entits = new ArrayList<pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity>();
 
     private pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity tutTest;
 
@@ -150,23 +153,46 @@ public class SkeletalSceneFunctionality implements IScene {
             else if(heightToggled && !KeyboardInput.isKeyPressed(GLFW_KEY_2)){
                 heightToggled = false;
             }
+            if(KeyboardInput.isKeyPressed(GLFW_KEY_3) && !insertHuman){
+
+                try {
+                    pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity ent = AnimMeshesLoader.loadAnimGameItem("human.fbx", "");
+                    ent.setScale(0.02f);
+                    entits.add(ent);
+                    terrain.placeEntity(ent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                insertHuman = true;
+            }
+            else if(insertHuman && !KeyboardInput.isKeyPressed(GLFW_KEY_3)){
+                insertHuman = false;
+            }
             renderer.renderTerrain(camera, terrain, 1280, 720, ambientLight, pointLight, directionalLight, fog);
             //testEntity.Draw();
             //testA[0].render();
 
             AnimatedFrame frame = anim.getCurrentFrame();
-            Matrix4f[] boneTransforms = frame.getJointMatrices();
+
             Matrix4f projectionMatrix = mg.updateProjectionMatrix(FOV, 1280, 720, Z_NEAR, Z_FAR);
             shad.use();
             shad.loadProjectionMatrix(projectionMatrix);
             Matrix4f viewMatrix = mg.setupViewMatrix(camera);
-            Matrix4f modelViewMatrix = mg.setupModelViewMatrix(tutTest, viewMatrix);
-            shad.loadModelViewMatrix(modelViewMatrix);
-            shad.loadBoneTransformMatrix(boneTransforms, boneTransforms.length);
-            tutTest.getMesh().render();
-            if(mul++ %2 == 1 ){
-                anim.nextFrame();
+            for(pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity en: entits){
+                Animation ani = en.getCurrentAnimation();
+                AnimatedFrame fra = ani.getCurrentFrame();
+                Matrix4f[] boneTransforms = fra.getJointMatrices();
+                Matrix4f modelViewMatrix = mg.setupModelViewMatrix(en, viewMatrix);
+                shad.loadModelViewMatrix(modelViewMatrix);
+                shad.loadBoneTransformMatrix(boneTransforms, boneTransforms.length);
+                en.getMesh().render();
+                if(mul %2 == 1 ){
+                    ani.nextFrame();
+                }
             }
+            mul++;
+
+
 
 
         }

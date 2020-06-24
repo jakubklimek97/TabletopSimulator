@@ -5,8 +5,11 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 
+import pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.entities.Entity;
+
+import java.util.ArrayList;
 
 public class TransformManager {
 
@@ -36,7 +39,6 @@ public class TransformManager {
         lightViewMatrix = new Matrix4f();
         modelMatrix = new Matrix4f();
     }
-
     public void setupLightViewMatrix(Matrix4f lightViewMatrix) {
         this.lightViewMatrix.set(lightViewMatrix);
     }
@@ -57,6 +59,16 @@ public class TransformManager {
 
     public Matrix4f setupModelViewMatrix(Entity item, Matrix4f matrix) {
         Quaternionf rotation = item.getRotation();
+        modelMatrix.identity().translate(item.getPosition()).
+                rotateX((float) Math.toRadians(-rotation.x)).
+                rotateY((float) Math.toRadians(-rotation.y)).
+                rotateZ((float) Math.toRadians(-rotation.z)).
+                scale(item.getScale());
+        modelViewMatrix.set(matrix);
+        return modelViewMatrix.mul(modelMatrix);
+    }
+    public Matrix4f setupModelViewMatrix(AnimatedEntity item, Matrix4f matrix) {
+        Vector3f rotation = item.getRotation();
         modelMatrix.identity().translate(item.getPosition()).
                 rotateX((float) Math.toRadians(-rotation.x)).
                 rotateY((float) Math.toRadians(-rotation.y)).

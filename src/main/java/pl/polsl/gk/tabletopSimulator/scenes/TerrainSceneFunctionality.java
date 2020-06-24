@@ -268,6 +268,9 @@ public class TerrainSceneFunctionality implements IScene {
        // terrain.setSelectedHeightToLastSelected();
        // terrain.toggleFieldHighlight();
        // terrain.toggleFieldHighlight();
+        //terrain.setSelectedHeightToLastSelected();
+       // terrain.toggleFieldHighlight();
+        //.toggleFieldHighlight();
 
        // for(int i = 0; i < 5000; ++i){
        //     terrain.updateNativeVertexBuffer();

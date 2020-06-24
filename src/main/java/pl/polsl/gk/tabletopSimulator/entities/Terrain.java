@@ -2,9 +2,11 @@ package pl.polsl.gk.tabletopSimulator.entities;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL33C;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
+import pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity;
 import pl.polsl.gk.tabletopSimulator.utility.GeometryShader;
 import pl.polsl.gk.tabletopSimulator.utility.TerrainMouseoverShader;
 import pl.polsl.gk.tabletopSimulator.utility.TerrainShader;
@@ -26,6 +28,8 @@ import java.util.HashSet;
 public class Terrain {
     public Terrain(){
         fieldsSelectStatus = new Boolean[TERRAIN_DIM*TERRAIN_DIM];
+        placedEntities = new Entity[TERRAIN_DIM*TERRAIN_DIM];
+        placedAnimatedEntities = new AnimatedEntity[TERRAIN_DIM*TERRAIN_DIM];
         notFlatFields = new HashSet<Integer>();
         for(int i = 0; i < TERRAIN_DIM*TERRAIN_DIM; ++i){
             fieldsSelectStatus[i] = false;
@@ -54,8 +58,8 @@ public class Terrain {
             else{
                 col++;
                 int[] arr = {
-                        pos, pos+TERRAIN_DIM+1, pos+TERRAIN_DIM+2, //first triangle
-                        pos, pos+TERRAIN_DIM+2, pos+1              //second triangle
+                        pos, pos+TERRAIN_DIM+2,pos+TERRAIN_DIM+1, //first triangle
+                        pos, pos+1  , pos+TERRAIN_DIM+2           //second triangle
                 };
                 indicesBuffer.put(arr);
             }
@@ -171,6 +175,14 @@ public class Terrain {
             toggleSelected(x,z);
         }
     }
+    public void updateEntityHeight(int x, int z){
+        int pos = x + TERRAIN_DIM*z;
+        int internalPos = translateUserFieldPosToInternalArrayPos(pos)*7;
+        if(placedAnimatedEntities[pos] != null){
+            Vector3f v = placedAnimatedEntities[pos].getPosition();
+            placedAnimatedEntities[pos].setPosition(v.x,terrainArray[internalPos+1]+0.25f, v.z );
+        }
+    }
     public void increaseSelectedHeight(){
         HashSet<Integer> modifiedVertices = new HashSet<Integer>();
         HashSet<Integer> madeUneven = new HashSet<Integer>();
@@ -178,28 +190,33 @@ public class Terrain {
         for(int field: selected){
             int z = field / TERRAIN_DIM;
             int x = field % TERRAIN_DIM;
+            updateEntityHeight(x,z);
             int pos = getQuadPositionInArray(x,z);
             int upper = pos + TERRAIN_DIM+1;
             if(!modifiedVertices.contains(pos)){
-                nativeVertexBuffer.position(pos*7+1);
-                nativeVertexBuffer.put(nativeVertexBuffer.get(0)+0.25f);
+                //nativeVertexBuffer.position(pos*7+1);
+                terrainArray[pos*7+1] = terrainArray[pos*7+1]+0.25f;
+                //nativeVertexBuffer.put(nativeVertexBuffer.get(0)+0.25f);
                 modifiedVertices.add(pos);
             }
             pos++;
             if(!modifiedVertices.contains(pos)){
-                nativeVertexBuffer.position(pos*7+1);
-                nativeVertexBuffer.put(nativeVertexBuffer.get(0)+0.25f);
+                //nativeVertexBuffer.position(pos*7+1);
+               // nativeVertexBuffer.put(nativeVertexBuffer.get(0)+0.25f);
+                terrainArray[pos*7+1] = terrainArray[pos*7+1]+0.25f;
                 modifiedVertices.add(pos);
             }
             if(!modifiedVertices.contains(upper)){
-                nativeVertexBuffer.position(upper*7+1);
-                nativeVertexBuffer.put(nativeVertexBuffer.get(0)+0.25f);
+               // nativeVertexBuffer.position(upper*7+1);
+                //nativeVertexBuffer.put(nativeVertexBuffer.get(0)+0.25f);
+                terrainArray[upper*7+1] = terrainArray[upper*7+1]+0.25f;
                 modifiedVertices.add(upper);
             }
             upper++;
             if(!modifiedVertices.contains(upper)){
-                nativeVertexBuffer.position(upper*7+1);
-                nativeVertexBuffer.put(nativeVertexBuffer.get(0)+0.25f);
+                //nativeVertexBuffer.position(upper*7+1);
+                //nativeVertexBuffer.put(nativeVertexBuffer.get(0)+0.25f);
+                terrainArray[upper*7+1] = terrainArray[upper*7+1]+0.25f;
                 modifiedVertices.add(upper);
             }
 
@@ -211,16 +228,14 @@ public class Terrain {
             madeUneven.add(field-TERRAIN_DIM-1);
             madeUneven.add(field-TERRAIN_DIM);
             madeUneven.add(field-TERRAIN_DIM+1);
+
         }
         //at start everything is flat, so by ORing elements made uneven by this operation
         //and previously, we get actual list
         madeUneven.removeAll(selected);
         notFlatFields.addAll(madeUneven);
 
-        nativeVertexBuffer.position(0);
-        glBindVertexArray(vao);
-        glBufferData(GL_ARRAY_BUFFER, terrainArray, GL_DYNAMIC_DRAW);
-        glBindVertexArray(0);
+        updateNativeVertexBuffer();
     }
     private void setNativeVertexBuffer(int position, float value){
         nativeVertexBuffer.position(position);
@@ -231,12 +246,16 @@ public class Terrain {
         return nativeVertexBuffer.get(0);
     }
     public void updateNativeVertexBuffer(){
+        int error = 1;
         nativeVertexBuffer.position(0);
         glBindVertexArray(vao);
-        glBufferData(GL_ARRAY_BUFFER, terrainArray, GL_DYNAMIC_DRAW);
-        int error = glGetError();
-        if(error != 0)
-            System.out.println(error);
+        while(error != 0) {
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferData(GL_ARRAY_BUFFER, terrainArray, GL_DYNAMIC_DRAW);
+            error = glGetError();
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
     public void setSelectedHeightToLastSelected(){
@@ -297,6 +316,39 @@ public class Terrain {
        lastMouseOver = pos;
         }
     }
+    public void ToggleMouseover(){
+        int x = lastMouseOver % TERRAIN_DIM;
+        int z = lastMouseOver / TERRAIN_DIM;
+        toggleSelected(x,z);
+    }
+    public boolean placeEntity(Entity ent){
+        if(notFlatFields.contains(lastMouseOver)){
+            return false;
+        }
+        if(placedEntities[lastMouseOver] != null || placedAnimatedEntities[lastMouseOver] != null){
+            return false;
+        }
+        else{
+            int internalPos = translateUserFieldPosToInternalArrayPos(lastMouseOver)*7;
+            ent.setPosition(terrainArray[internalPos]+0.5f,terrainArray[internalPos+1], terrainArray[internalPos+2]+0.5f );
+            placedEntities[lastMouseOver] = ent;
+        }
+        return true;
+    }
+    public boolean placeEntity(AnimatedEntity ent){
+        if(notFlatFields.contains(lastMouseOver)){
+            return false;
+        }
+        if(placedEntities[lastMouseOver] != null || placedAnimatedEntities[lastMouseOver] != null){
+            return false;
+        }
+        else{
+            int internalPos = translateUserFieldPosToInternalArrayPos(lastMouseOver)*7;
+            ent.setPosition(terrainArray[internalPos]+0.5f,terrainArray[internalPos+1], terrainArray[internalPos+2]+0.5f );
+            placedAnimatedEntities[lastMouseOver] = ent;
+        }
+        return true;
+    }
     private void retrieveImage(String file, int width, int height) {
         File textureFile = new File("test2.bmp");
         BufferedImage img = null;
@@ -353,4 +405,6 @@ public class Terrain {
     private boolean highlight = true; ///TODO: W wersji finalnej ma byc false i triggerowane przez ui
     private int lastMouseOver = 0;
     private FloatBuffer buff;
+    private Entity[] placedEntities;
+    private AnimatedEntity[] placedAnimatedEntities;
 }

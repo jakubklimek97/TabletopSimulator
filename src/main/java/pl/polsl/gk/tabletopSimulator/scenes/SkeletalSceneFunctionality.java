@@ -1,8 +1,14 @@
 package pl.polsl.gk.tabletopSimulator.scenes;
 
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedFrame;
+import pl.polsl.gk.tabletopSimulator.engine.anim.Animation;
+import pl.polsl.gk.tabletopSimulator.engine.assimp.Mesh;
+import pl.polsl.gk.tabletopSimulator.engine.managers.AnimMeshesLoader;
 import pl.polsl.gk.tabletopSimulator.engine.managers.FontManager;
+import pl.polsl.gk.tabletopSimulator.engine.managers.StaticMeshesLoader;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TransformManager;
 import pl.polsl.gk.tabletopSimulator.engine.renderers.Renderer;
 import pl.polsl.gk.tabletopSimulator.entities.*;
@@ -18,7 +24,9 @@ import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.skybox.SkyboxManager;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSprite;
 import pl.polsl.gk.tabletopSimulator.sun.Light2DSpriteRenderer;
+import pl.polsl.gk.tabletopSimulator.utility.AnimatedEntityShader;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
+import pl.polsl.gk.tabletopSimulator.engine.assimp.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33C.*;
@@ -74,7 +82,9 @@ public class SkeletalSceneFunctionality implements IScene {
     private Entity lastPicked;
     private AnimatedEntity testEntity;
     private Terrain terrain;
+    private Mesh[] testA = null;
 
+    private pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity tutTest;
 
     @Override
     public void Init() {
@@ -84,6 +94,12 @@ public class SkeletalSceneFunctionality implements IScene {
         AnimatedMesh aMesh = new AnimatedMesh();
         aMesh.LoadMesh("human.fbx");
         testEntity = new AnimatedEntity(aMesh);
+        try {
+            testA = StaticMeshesLoader.load("human.fbx","");
+            tutTest = AnimMeshesLoader.loadAnimGameItem("human.fbx", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -95,7 +111,12 @@ public class SkeletalSceneFunctionality implements IScene {
     public void Run() {
         glfwMakeContextCurrent(window);
         camera.setPosition(0, 0, 1);
-
+        Animation anim = tutTest.getCurrentAnimation();
+        AnimatedEntityShader shad = new AnimatedEntityShader();
+        TransformManager mg = new TransformManager();
+       // tutTest.setScale(0.002f);
+        //tutTest.setRotation(90.0f,90.0f,0);
+        int mul = 0;
         while (!glfwWindowShouldClose(window)) {
 
             mouseInput.input(window);
@@ -109,8 +130,22 @@ public class SkeletalSceneFunctionality implements IScene {
             camera.input();
             camera.update(mouseInput);
             //renderer.renderTerrain(camera, terrain, 1280, 720, ambientLight, pointLight, directionalLight, fog);
-            testEntity.Draw();
+            //testEntity.Draw();
+            //testA[0].render();
 
+            AnimatedFrame frame = anim.getCurrentFrame();
+            Matrix4f[] boneTransforms = frame.getJointMatrices();
+            Matrix4f projectionMatrix = mg.updateProjectionMatrix(FOV, 1280, 720, Z_NEAR, Z_FAR);
+            shad.use();
+            shad.loadProjectionMatrix(projectionMatrix);
+            Matrix4f viewMatrix = mg.setupViewMatrix(camera);
+            Matrix4f modelViewMatrix = mg.setupModelViewMatrix(tutTest, viewMatrix);
+            shad.loadModelViewMatrix(modelViewMatrix);
+            shad.loadBoneTransformMatrix(boneTransforms, boneTransforms.length);
+            tutTest.getMesh().render();
+            if(mul++ %2 == 1 ){
+                anim.nextFrame();
+            }
 
 
         }

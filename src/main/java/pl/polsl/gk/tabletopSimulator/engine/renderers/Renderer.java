@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
+import pl.polsl.gk.tabletopSimulator.engine.anim.AnimatedEntity;
 import pl.polsl.gk.tabletopSimulator.engine.managers.TransformManager;
 import pl.polsl.gk.tabletopSimulator.entities.Camera;
 import pl.polsl.gk.tabletopSimulator.entities.Entity;
@@ -15,6 +16,7 @@ import pl.polsl.gk.tabletopSimulator.lights.PointLight;
 import pl.polsl.gk.tabletopSimulator.lights.LightAndFogShader;
 import pl.polsl.gk.tabletopSimulator.shadows.ShadowShader;
 import pl.polsl.gk.tabletopSimulator.shadows.Shadows;
+import pl.polsl.gk.tabletopSimulator.utility.AnimatedEntityShader;
 import pl.polsl.gk.tabletopSimulator.utility.Shader;
 import pl.polsl.gk.tabletopSimulator.utility.TerrainMouseoverShader;
 import pl.polsl.gk.tabletopSimulator.utility.TerrainShader;
@@ -46,12 +48,14 @@ public class Renderer {
     private int rbo;
     private int textureColorbuffer;
     private MousepickingShader mousePickingShader;
+    private AnimatedEntityShader animatedShader;
 
 
     public Renderer() {
 
         mousePickingShader = new MousepickingShader();
         mousePickingShader.getAllUniformLocations();
+        animatedShader = new AnimatedEntityShader();
         try(MemoryStack stack = MemoryStack.stackPush()){
             IntBuffer tmp = stack.callocInt(1);
             glGenFramebuffers(tmp);

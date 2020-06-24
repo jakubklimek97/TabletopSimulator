@@ -1,15 +1,18 @@
 package pl.polsl.gk.tabletopSimulator.entities;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
+import pl.polsl.gk.tabletopSimulator.engine.managers.TransformManager;
 import pl.polsl.gk.tabletopSimulator.utility.AnimatedEntityShader;
 
 import static org.lwjgl.opengl.GL33C.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 import static org.lwjgl.assimp.Assimp.*;
 
@@ -28,6 +31,13 @@ public class AnimatedMesh {
         glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0 );
         glBindVertexArray(0);
     }
+    public ArrayList<Matrix4f> prepareAndGetBonesTransformArrayList(){
+        ArrayList<Matrix4f> mat = new ArrayList<Matrix4f>();
+        for(int i = 0; i < this.insertedBonesIndex; ++i){
+            mat.add(bones[i].finalTransform);
+        }
+        return mat;
+    }
     private void initMesh(AIScene scene){
         int meshCount = scene.mNumMeshes();
         rootNode = scene.mRootNode();
@@ -37,12 +47,12 @@ public class AnimatedMesh {
             AIMesh mesh = AIMesh.create(scene.mMeshes().get(i));
             verticesArray = new float[8*mesh.mNumVertices()];
             vertexBoneDataArray = new VertexBoneData[mesh.mNumVertices()];
+            int vertexNum = mesh.mNumVertices();
             for(int it = 0 ; it <mesh.mNumVertices(); ++it ){
                 vertexBoneDataArray[it] = new VertexBoneData();
             }
             AIVector3D.Buffer txc = mesh.mTextureCoords(0);
             for(int vertice = 0; vertice < mesh.mNumVertices(); ++vertice){
-                System.out.println(vertice);
                 AIVector3D vtx = mesh.mVertices().get(vertice);
                 verticesArray[vertice*8] = vtx.x();
                 verticesArray[vertice*8+1] = vtx.y();
@@ -70,6 +80,9 @@ public class AnimatedMesh {
             if(i > 0){
                 System.out.println("ERROR:: model contains more than 1 mesh");
             }
+            LoadMaterials(scene);
+            LoadBones(mesh);
+            LoadAnimation(scene);
             vao = glGenVertexArrays();
             vbo = glGenBuffers();
             ebo = glGenBuffers();
@@ -84,24 +97,55 @@ public class AnimatedMesh {
             glEnableVertexAttribArray(0);
             glEnableVertexAttribArray(1);
             glEnableVertexAttribArray(2);
+
+            int[] boneIds = new int[4*vertexNum];
+            float[] boneWeights = new float[4*vertexNum];
+            for(int idx = 0; idx < vertexNum; ++idx){
+                boneIds[4*idx] = vertexBoneDataArray[idx].boneIds[0];
+                boneIds[4*idx+1] = vertexBoneDataArray[idx].boneIds[1];
+                boneIds[4*idx+2] = vertexBoneDataArray[idx].boneIds[2];
+                boneIds[4*idx+3] = vertexBoneDataArray[idx].boneIds[3];
+                boneWeights[4*idx] = vertexBoneDataArray[idx].boneWeights[0];
+                boneWeights[4*idx+1] = vertexBoneDataArray[idx].boneWeights[1];
+                boneWeights[4*idx+2] = vertexBoneDataArray[idx].boneWeights[2];
+                boneWeights[4*idx+3] = vertexBoneDataArray[idx].boneWeights[3];
+            }
+
+            int vtxBoneIdVbo = glGenBuffers();
+            glBindBuffer(GL_ARRAY_BUFFER, vtxBoneIdVbo);
+            glBufferData(GL_ARRAY_BUFFER, boneIds, GL_STATIC_DRAW);
+            glVertexAttribIPointer(3, 4, GL_INT, 4*4,0);
+            glEnableVertexAttribArray(3);
+            int vtxBoneWeightVbo = glGenBuffers();
+            glBindBuffer(GL_ARRAY_BUFFER, vtxBoneWeightVbo);
+            glBufferData(GL_ARRAY_BUFFER, boneWeights, GL_STATIC_DRAW);
+            glVertexAttribPointer(4, 4, GL_FLOAT, false, 4*4, 0);
+            glEnableVertexAttribArray(4);
+
+
+
             glBindVertexArray(0);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-            LoadMaterials(scene);
-            LoadBones(mesh);
-            LoadAnimation(scene);
-            TransformBones(0);
+
+            TransformBones(0.5f);
         }
 
     }
     private Matrix4f getUsableMatrix(AIMatrix4x4 matrix){
         return new Matrix4f(
-                matrix.a1(), matrix.a2(), matrix.a3(), matrix.a4(),
-                matrix.b1(), matrix.b2(), matrix.b3(), matrix.b4(),
-                matrix.c1(), matrix.c2(), matrix.c3(), matrix.c4(),
-                matrix.d1(), matrix.d2(), matrix.d3(), matrix.d4()
+                matrix.a1(), matrix.b1(), matrix.c1(), matrix.d1(),
+                matrix.a2(), matrix.b2(), matrix.c2(), matrix.d2(),
+                matrix.a3(), matrix.b3(), matrix.c3(), matrix.d3(),
+                matrix.a4(), matrix.b4(), matrix.c4(), matrix.d4()
         );
     }
+    private Vector3f getUsableVector(AIVector3D vec){
+        return new Vector3f(
+                vec.x(), vec.y(), vec.z()
+        );
+    }
+
     private void LoadBones(AIMesh mesh){
         int bonesCount = mesh.mNumBones();
         bones = new Bone[bonesCount];
@@ -109,6 +153,7 @@ public class AnimatedMesh {
         for(int boneIdx = 0; boneIdx < bonesCount; ++ boneIdx){
             AIBone bone = AIBone.create(ptrBonesArr.get(boneIdx));
             String boneName = bone.mName().dataString();
+            System.out.println(boneName);
             int boneIndex;
             if(boneMapping.containsKey(boneName)){
                 boneIndex = boneMapping.get(boneName);
@@ -143,13 +188,22 @@ public class AnimatedMesh {
         Matrix4f nodeTransform = getUsableMatrix(node.mTransformation());
         AINodeAnim animationNode = findNode(animation, nodeName);
         if(animationNode != null){
+            Vector3f translationVector = calculateTranslation(animationTime, animationNode);
+            Quaternionf rotationQuaternion = calculateRotation(animationTime, animationNode);
+            Vector3f scaleVector = calculateScaling(animationTime, animationNode);
+
+            //nodeTransform.scale(scaleVector);
+            //nodeTransform.rotate(rotationQuaternion);
+            nodeTransform.translate(translationVector);
 
         }
-        Matrix4f newTransformation = transform.mul(nodeTransform);
-
+        Matrix4f newTransformation = new Matrix4f();
+        Matrix4f copyTransformMatrix = new Matrix4f(transform);
+        copyTransformMatrix.mul(nodeTransform, newTransformation);
+        Matrix4f boneTransform = new Matrix4f(newTransformation);
         if(boneMapping.containsKey(nodeName)) {
             int boneIndex = boneMapping.get(nodeName);
-            bones[boneIndex].finalTransform = newTransformation.mul(bones[boneIndex].offsetMatrix);
+            bones[boneIndex].finalTransform = boneTransform.mul(bones[boneIndex].offsetMatrix);
         }
 
         PointerBuffer pChildren = node.mChildren();
@@ -157,6 +211,96 @@ public class AnimatedMesh {
             applyTransform(animationTime, AINode.create(pChildren.get(i)), newTransformation);
         }
     }
+    private Quaternionf calculateRotation(float animationTime, AINodeAnim node){
+        AIQuatKey.Buffer rotationChannels = node.mRotationKeys();
+        int rotationChallensCount = node.mNumRotationKeys();
+        if(rotationChallensCount == 1){
+            AIQuaternion quat = rotationChannels.get(0).mValue();
+            return new Quaternionf(quat.x(), quat.y(), quat.z(), quat.w());
+        }
+        AIQuaternion prevRotation = null;
+        AIQuaternion nextRotation = null;
+        float factor = 0;
+        Quaternionf out = new Quaternionf();
+        for(int i = 0; i < rotationChallensCount - 1; ++i){
+            if(animationTime < rotationChannels.get(i+1).mTime()){
+                AIQuatKey prevKey = rotationChannels.get(i);
+                AIQuatKey nextKey = rotationChannels.get(i+1);
+                float deltaTime = (float)(nextKey.mTime() - prevKey.mTime());
+                factor = (float)((animationTime - prevKey.mTime())/deltaTime);
+                prevRotation = prevKey.mValue();
+                nextRotation = nextKey.mValue();
+                break;
+            }
+        }
+        if(prevRotation != null && nextRotation != null){
+            Quaternionf prevQuater = new Quaternionf(prevRotation.x(), prevRotation.y(), prevRotation.z(), prevRotation.w());
+            Quaternionf nextQuater = new Quaternionf(nextRotation.x(), nextRotation.y(), nextRotation.z(), nextRotation.w());
+            prevQuater.slerp(nextQuater, factor, out);
+            out.normalize();
+        }
+        return out;
+    }
+    private Vector3f calculateTranslation(float animationTime, AINodeAnim node){
+        AIVectorKey.Buffer positionChannels = node.mPositionKeys();
+        int positionChannelsCount = node.mNumPositionKeys();
+        if(positionChannelsCount == 1){
+            return getUsableVector(positionChannels.get(0).mValue());
+        }
+        AIVector3D prevTranslation = null;
+        AIVector3D nextTranslation = null;
+        float factor = 0;
+        for(int i = 0; i < positionChannelsCount - 1; ++i){
+                if(animationTime < positionChannels.get(i+1).mTime()){
+                        AIVectorKey prevKey = positionChannels.get(i);
+                        AIVectorKey nextKey = positionChannels.get(i+1);
+                        float deltaTime = (float)(nextKey.mTime() - prevKey.mTime());
+                        factor = (float)((animationTime - prevKey.mTime())/deltaTime);
+                        prevTranslation = prevKey.mValue();
+                        nextTranslation = nextKey.mValue();
+                        break;
+                }
+        }
+        if(prevTranslation != null && nextTranslation != null){
+            Vector3f prevVector = getUsableVector(prevTranslation);
+            Vector3f nextVector = getUsableVector(nextTranslation);
+            Vector3f delta = nextVector.sub(prevVector);
+            Vector3f out = prevVector.add(delta.mul(factor));
+            return out;
+        }
+        return new Vector3f(0,0,0);
+    }
+    private Vector3f calculateScaling(float animationTime, AINodeAnim node){
+        AIVectorKey.Buffer scalingChannels = node.mScalingKeys();
+        int scalingChannelsCount = node.mNumScalingKeys();
+        if(scalingChannelsCount == 1){
+            return getUsableVector(scalingChannels.get(0).mValue());
+        }
+        AIVector3D prevScale = null;
+        AIVector3D nextScale = null;
+        float factor = 0;
+        for(int i = 0; i < scalingChannelsCount - 1; ++i){
+            if(animationTime < scalingChannels.get(i+1).mTime()){
+                AIVectorKey prevKey = scalingChannels.get(i);
+                AIVectorKey nextKey = scalingChannels.get(i+1);
+                float deltaTime = (float)(nextKey.mTime() - prevKey.mTime());
+                factor = (float)((animationTime - prevKey.mTime())/deltaTime);
+                prevScale = prevKey.mValue();
+                nextScale = nextKey.mValue();
+                break;
+            }
+        }
+        if(prevScale != null && nextScale != null){
+            Vector3f prevVector = getUsableVector(prevScale);
+            Vector3f nextVector = getUsableVector(nextScale);
+            Vector3f delta = nextVector.sub(prevVector);
+            Vector3f out = prevVector.add(delta.mul(factor));
+            return out;
+        }
+        return new Vector3f(0,0,0);
+    }
+
+
     private AINodeAnim findNode(AIAnimation animation, String nodeName){
         PointerBuffer pChannels = animation.mChannels();
         for(int i = 0; i < animation.mNumChannels(); ++i){
